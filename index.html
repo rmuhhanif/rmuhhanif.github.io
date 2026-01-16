@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhammad Hanif | Home</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Container interaksi untuk News */
+        .news-section { 
+            transition: all 0.5s ease; 
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .news-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .news-section:hover .card { 
+            opacity: 0.3; 
+            transform: scale(0.98); 
+            filter: blur(1px);
+        }
+
+        .news-section .card:hover { 
+            opacity: 1; 
+            transform: scale(1.02); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-top-color: transparent;
+            background: #fff;
+            z-index: 5;
+            filter: blur(0);
+        }
+
+        .card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 2rem;
+        }
+
+        /* Styling tambahan untuk Hero Section */
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 5rem); /* Lebih gede, lebih berani */
+            line-height: 1;
+            font-weight: 800;
+            margin: 4rem 0;
+            letter-spacing: -4px; /* Efek tipografi modern yang rapat */
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .competency-box {
+            background: #f9f9f9;
+            padding: 2.5rem;
+            border-radius: 30px;
+        }
+
+        .competency-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            gap: 1rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .competency-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: #000;
+            border-radius: 50%;
+        }
+
+        @media (max-width: 900px) {
+            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .hero-title { margin: 1.5rem 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo"><a href="index.html">MUHAMMAD HANIF</a></div>
+        <div class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <a href="experience.html">Experience</a>
+            <a href="achievements.html">Awards</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="blog.html">Writings</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section style="padding-top: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <h2 style="margin-bottom: 0;">About Me</h2>
+                <p style="font-size: 0.7rem; font-weight: 800; letter-spacing: 2px; color: var(--text-light);">UGM / MATHEMATICS</p>
+            </div>
+            
+            <h1 class="hero-title">
+                Solving for <span style="color: var(--text-light);">X</span>, <br> 
+                while sharing the <span style="color: var(--text-light);">Process.</span>
+            </h1>
+
+            <div class="about-grid">
+                <div style="font-size: 1.15rem; line-height: 1.7; color: #333;">
+                    <p style="margin-bottom: 1.5rem;">
+                        I am <strong>Muhammad Hanif</strong>, a dedicated Mathematics student at Universitas Gadjah Mada with a strong passion for applying mathematical principles to solve real-world problems, particularly in the field of <strong>cryptography</strong>.
+                    </p>
+                    <p style="margin-bottom: 1.5rem;">
+                        My academic journey has been shaped by a deep interest in mathematics, demonstrated by achievements in national competitions such as the National Science Olympiad (OSN). 
+                    </p>
+                    <p style="color: var(--text-light); margin-bottom: 2.5rem;">
+                        Beyond academics, I am also an <strong>Educational Key Opinion Leader</strong> with over 200,000 Instagram followers, creating impactful learning content that inspires students and promotes mathematical thinking across digital platforms.
+                    </p>
+                    <a href="experience.html" class="btn" style="display: inline-block;">Explore Academic Path —</a>
+                </div>
+
+                <div class="competency-box">
+                    <h4 style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-light); margin-bottom: 1.5rem;">Expertise</h4>
+                    <ul class="competency-list">
+                        <li><span class="dot"></span> Cryptography & Algebra</li>
+                        <li><span class="dot"></span> Olympiad Level Logic</li>
+                        <li><span class="dot"></span> Content Creator/li>
+                        <li><span class="dot"></span> LaTeX & Computational Math</li>
+                        <li><span class="dot"></span> Public Speaking</li>
+                    </ul>
+                    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                        <p style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.5rem;">Academic Performance:</p>
+                        <p style="font-weight: 800; font-size: 1.3rem; margin: 0;">3.99 / 4.00 GPA</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-top: 8rem;">
+            <h2>News & Media</h2>
+            <div class="news-section">
+                <a href="https://www.ruangguru.com/blog/profil-hanif-clash-of-champions" target="_blank" class="news-link">
+                    <div class="card">
+                        <div>Ruangguru</div>
+                        <div>
+                            <h3>Profil Hanif Clash of Champions: Si Raja Matematika dari UGM</h3>
+                            <p>Mengenal lebih dalam perjalanan Hanif dalam kompetisi Clash of Champions.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://www.idntimes.com/hype/entertainment/biodata-dan-profil-hanif-clash-of-champions-raja-matematika-ugm-01-cccnm-8f190p" target="_blank" class="news-link">
+                    <div class="card">
+                        <div>IDN Times</div>
+                        <div>
+                            <h3>Biodata dan Profil Hanif: Mahasiswa Berprestasi UGM</h3>
+                            <p>Ulasan komprehensif mengenai latar belakang pendidikan dan prestasi nasional.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://kumparan.com/profil-tokoh/profil-hanif-clash-of-champions-peserta-asal-ugm-234fEZEsjfk" target="_blank" class="news-link">
+                    <div class="card">
+                        <div>Kumparan</div>
+                        <div>
+                            <h3>Mengenal Hanif, Peserta Clash of Champions Asal UGM</h3>
+                            <p>Cerita di balik partisipasi Hanif dalam ajang adu kecerdasan paling bergengsi.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://tirto.id/profil-biodata-hanif-clash-of-champions-alasan-keluar-dari-coc-g1Dp" target="_blank" class="news-link">
+                    <div class="card">
+                        <div>Tirto.id</div>
+                        <div>
+                            <h3>Profil & Alasan Hanif Memilih Fokus pada Akademik</h3>
+                            <p>Insight mengenai dedikasi Hanif terhadap studi matematika di UGM.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://www.jogjapos.id/pendidikan/107445020/profil-hanif-mahasiswa-ugm-ipk-4-ini-siap-berjuang-di-clash-of-champions-ruang-guru-batch-1" target="_blank" class="news-link">
+                    <div class="card">
+                        <div>Jogja Pos</div>
+                        <div>
+                            <h3>Mahasiswa UGM IPK 4 Berjuang di Batch 1 CoC</h3>
+                            <p>Laporan mengenai wakil Yogyakarta di kancah kompetisi digital nasional.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://ugm.ac.id/id/berita/unggul-di-onmipa-2025-tim-mahasiswa-ugm-raih-juara-umum/" target="_blank" class="news-link">
+                    <div class="card">
+                        <div>UGM News</div>
+                        <div>
+                            <h3>Tim UGM Raih Juara Umum di ONMIPA-PT 2025</h3>
+                            <p>Kontribusi Hanif dalam mempertahankan dominasi matematika UGM di tingkat nasional.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://mipa.ugm.ac.id/2025/12/16/fmipa-ugm-berikan-apresiasi-puluhan-kontingen-onmipa-dan-pimnas-2025/" target="_blank" class="news-link">
+                    <div class="card">
+                        <div>FMIPA UGM</div>
+                        <div>
+                            <h3>Apresiasi Kontingen ONMIPA dan PIMNAS 2025</h3>
+                            <p>Penghargaan resmi dari fakultas atas capaian prestasi akademik luar biasa.</p>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://www.instagram.com/rmuhhanif/" target="_blank" class="news-link">
+                    <div class="card">
+                        <div>Instagram</div>
+                        <div>
+                            <h3>Official Profile @rmuhhanif</h3>
+                            <p>Ikuti perjalanan harian, konten edukasi, dan update terbaru melalui media sosial.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <footer style="padding: 5rem 8%; border-top: 1px solid var(--border); text-align: center; margin-top: 5rem;">
+        <p style="font-size: 0.8rem; color: var(--text-light); letter-spacing: 1px;">© 2026 MUHAMMAD HANIF. ALL RIGHTS RESERVED.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhammad Hanif | Contact</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        .contact-container {
+            max-width: 800px;
+            margin-top: 4rem;
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 2.5rem;
+            margin-bottom: 6rem;
+        }
+
+        .contact-form input, 
+        .contact-form textarea {
+            padding: 1.2rem 0;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            outline: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-form input:focus, 
+        .contact-form textarea:focus {
+            border-bottom: 1px solid var(--text);
+        }
+
+        .social-links-group {
+            display: flex;
+            flex-direction: column;
+            transition: all 0.5s ease;
+        }
+
+        .social-item {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            padding: 2.5rem 0;
+            border-top: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .social-links-group:hover .social-item {
+            opacity: 0.3;
+            transform: scale(0.98);
+        }
+
+        .social-links-group .social-item:hover {
+            opacity: 1;
+            transform: scale(1.03);
+            background: #fff;
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            z-index: 10;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            border-top-color: transparent;
+        }
+
+        .social-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-light);
+            font-weight: 700;
+        }
+
+        .social-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        /* Status Message Styling */
+        #form-status {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .social-item { grid-template-columns: 1fr; gap: 0.5rem; }
+            .social-links-group:hover .social-item { transform: none; opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo"><a href="index.html">MUHAMMAD HANIF</a></div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="experience.html">Experience</a>
+            <a href="achievements.html">Awards</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="blog.html">Writings</a>
+            <a href="contact.html" class="active">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="contact-container">
+            <h2>Inquiry</h2>
+            <h1>Hit me up for collabs!</h1>
+            <p style="color: var(--text-light); margin-bottom: 4rem;">
+                Interested in cryptography projects, seminar speakers, or educational content collaboration.
+            </p>
+
+            <form 
+                id="contact-form"
+                action="https://formspree.io/f/xlggdkaq" 
+                method="POST" 
+                class="contact-form"
+            >
+                <input type="text" name="name" placeholder="Full Name" required>
+                <input type="email" name="email" placeholder="Email Address" required>
+                <textarea name="message" placeholder="Tell me about your project or inquiry" rows="4" required></textarea>
+                
+                <input type="hidden" name="_subject" value="New Inquiry from Portfolio Website">
+                
+                <div>
+                    <button id="submit-btn" type="submit" class="btn" style="width: fit-content; border: none; cursor: pointer;">Send Message</button>
+                    <p id="form-status"></p>
+                </div>
+            </form>
+
+            <div class="social-links-group">
+                <a href="mailto:muhammadhanif2005@mail.ugm.ac.id" class="social-item">
+                    <span class="social-label">Email</span>
+                    <span class="social-value">muhammadhanif2005@mail.ugm.ac.id</span>
+                </a>
+
+                <a href="https://www.instagram.com/rmuhhanif/" target="_blank" class="social-item">
+                    <span class="social-label">Instagram</span>
+                    <span class="social-value">@rmuhhanif</span>
+                </a>
+
+                <a href="https://www.tiktok.com/@rmuhhanif" target="_blank" class="social-item">
+                    <span class="social-label">TikTok</span>
+                    <span class="social-value">@rmuhhanif</span>
+                </a>
+
+                <a href="https://www.linkedin.com/in/xmuhhanif/" target="_blank" class="social-item">
+                    <span class="social-label">LinkedIn</span>
+                    <span class="social-value">@xmuhhanif</span>
+                </a>
+
+                <a href="https://whatsapp.com/channel/0029Vaj5EufEgGfVKFibKg1s" target="_blank" class="social-item">
+                    <span class="social-label">Whatsapp CH</span>
+                    <span class="social-value">Haniffafifuu 🌶️</span>
+                </a>
+
+                <div class="social-item" style="cursor: default;">
+                    <span class="social-label">Location</span>
+                    <span class="social-value">Yogyakarta, Indonesia</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="padding: 5rem 8%; border-top: 1px solid var(--border); text-align: center; margin-top: 5rem;">
+        <p style="font-size: 0.8rem; color: var(--text-light); letter-spacing: 1px;">© 2026 MUHAMMAD HANIF. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById("contact-form");
+        const status = document.getElementById("form-status");
+        const button = document.getElementById("submit-btn");
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const data = new FormData(event.target);
+            
+            // Set tampilan saat loading
+            button.disabled = true;
+            button.innerHTML = "Sending...";
+            status.innerHTML = "";
+
+            fetch(event.target.action, {
+                method: form.method,
+                body: data,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // TAMPILAN TERIMA KASIH
+                    status.style.color = "#000";
+                    status.innerHTML = "Thank you! Your message has been sent successfully.";
+                    button.innerHTML = "Message Sent";
+                    form.reset();
+                } else {
+                    response.json().then(data => {
+                        status.style.color = "red";
+                        if (Object.hasOwn(data, 'errors')) {
+                            status.innerHTML = data["errors"].map(error => error["message"]).join(", ");
+                        } else {
+                            status.innerHTML = "Oops! Ada kendala teknis saat mengirim.";
+                        }
+                    })
+                }
+            }).catch(error => {
+                status.style.color = "red";
+                status.innerHTML = "Oops! Pastikan koneksi internet kamu aktif.";
+            }).finally(() => {
+                // Biarkan tombol tetap disabled agar tidak double send
+                // atau reset tombol setelah beberapa detik:
+                setTimeout(() => {
+                    button.disabled = false;
+                    button.innerHTML = "Send Message";
+                }, 5000);
+            });
+        }
+        form.addEventListener("submit", handleSubmit);
+    </script>
+</body>
+</html>

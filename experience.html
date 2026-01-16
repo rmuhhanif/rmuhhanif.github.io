@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhammad Hanif | Experience</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        .experience-list {
+            margin-top: 4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 2rem;
+            padding: 2.5rem;
+            border-top: 1px solid var(--border);
+            background: #ffffff;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .experience-list:hover .card { opacity: 0.3; transform: scale(0.99); filter: blur(1px); }
+        .experience-list .card:hover { 
+            opacity: 1; transform: scale(1.01); filter: blur(0); 
+            border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.06); 
+            z-index: 10; border-top-color: transparent;
+        }
+
+        /* Group Styling */
+        .sub-experience { margin-bottom: 2.5rem; }
+        .sub-experience:last-child { margin-bottom: 0; }
+        .sub-experience h4 { font-size: 1.1rem; margin-bottom: 0.5rem; font-weight: 700; }
+        .sub-experience p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
+
+        /* Transcript Table Styling */
+        .transcript-wrapper {
+            margin-top: 1.5rem;
+            max-height: 450px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: #fafafa;
+        }
+
+        .transcript-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+
+        .transcript-table th { 
+            position: sticky; top: 0; background: #eee; 
+            padding: 12px; text-align: left; font-weight: 800;
+        }
+
+        .transcript-table td { padding: 10px 12px; border-bottom: 1px solid #eee; }
+        .grade { font-weight: 700; text-align: center; }
+
+        .badge-academic {
+            display: inline-flex;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        .badge { background: #000; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; }
+
+        @media (max-width: 768px) { .card { grid-template-columns: 1fr; padding: 1.5rem; } }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo"><a href="index.html">MUHAMMAD HANIF</a></div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="experience.html" class="active">Experience</a>
+            <a href="achievements.html">Awards</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="blog.html">Writings</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Professional Path</h2>
+        <h1>Experience & Education.</h1>
+
+        <div class="experience-list">
+
+            <div class="card">
+                <div><strong>Universitas Gadjah Mada</strong><br><small>2023 — Now</small></div>
+                <div>
+                    <div class="sub-experience">
+                        <h4>Academic Summary</h4>
+                        <div class="badge-academic">
+                            <span class="badge">GPA: 3.99</span>
+                            <span class="badge">Last IPS: 4.00</span>
+                            <span class="badge">109 SKS</span>
+                        </div>
+                        
+                        <div class="transcript-wrapper">
+                            <table class="transcript-table">
+                                <thead>
+                                    <tr><th>Mata Kuliah</th><th>SKS</th><th>Nilai</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Fisika Dasar I</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Agama Islam</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Logika Matematika dan Himpunan</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Kimia Dasar I</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Statistika</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Kalkulus I</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pemrograman</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Praktikum Pemrograman</td><td>1.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Kalkulus II</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Bahasa Indonesia</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Aljabar Linear Elementer</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Struktur Aljabar I</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Matematika Diskrit</td><td>4.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Geometri Analitik</td><td>3.00</td><td class="grade">A-</td></tr>
+                                    <tr><td>Pengantar Teori Bilangan</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pancasila</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Struktur Aljabar II</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Kalkulus Multivariabel I</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Kalkulus Lanjut</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Geometri Transformasi</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Program Linear</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Analisis Numerik</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Statistika Matematika I</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Teori Graf</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Persamaan Diferensial Elementer</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Aljabar Linear</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Teori Grup Hingga</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Kombinatorik</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Kalkulus Multivariabel II</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Fungsi Variabel Kompleks I</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Analisis I</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Matematika Komputasi</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Persamaan Diferensial Parsial</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Sistem Dinamik</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Fungsi Variabel Kompleks II</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Teori Pengkodean</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Topologi</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Proses Stokastik</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Career in Mathematics</td><td>1.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Pengantar Analisis II</td><td>3.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Kewarganegaraan</td><td>2.00</td><td class="grade">A</td></tr>
+                                    <tr><td>Kalkulus Variasi</td><td>3.00</td><td class="grade">-</td></tr>
+                                    <tr><td>Pengantar Model Matematika</td><td>3.00</td><td class="grade">-</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="sub-experience">
+                        <h4>Lecture Assistant</h4>
+                        <p style="text-align: justify;">
+                            Served as a teaching assistant in 2024–2025 for Calculus I (IUP FMIPA, 2024), Mathematical Logic (IUP
+                            Economics, 2025), and Matematika 1 (Ekonomi, 2025), where I led tutorials and supported student learning.
+                            Graded assignments for Mathematical Logic (IUP Economics, 2025), Introduction to Algebraic Structure I
+                            (2025), Calculus I (IUP FMIPA, 2025) and Matematika 1 (Ekonomi, 2025). Also appointed as one of some
+                            tutors in METRIK (Mathematics Lecture Consultation Media) during Aug–Dec 2024 and Aug-Dec 2025,
+                            providing academic consultations for Calculus I and Introduction to Mathematical Logic and Sets under the
+                            Mathematics Department, FMIPA UGM.
+                        </p>
+                    </div>
+
+                    <div class="sub-experience">
+                        <h4>Lomba Matematika Nasional (LMNas) UGM</h4>
+                        <p style="text-align: justify; margin-bottom: 1rem;">
+                            Involved in the problem selection process for LMNas, one of Indonesia’s largest national mathematics competitions for middle and high school students, ensuring high standards of logic and olympiad-level rigor.
+                        </p>
+                        
+                        <div style="border-left: 2px solid #eee; padding-left: 15px; margin-top: 10px;">
+                            <div style="margin-bottom: 10px;">
+                                <strong style="font-size: 0.9rem; color: #000;">Sub-coordinator (LMNas 36)</strong>
+                                <span style="font-size: 0.8rem; color: var(--text-light); float: right;">Mar 2025 – Dec 2025</span>
+                                <p style="text-align: justify; font-size: 0.9rem; margin-top: 2px;">Led the development and review of Olympiad-level problems; assisted the coordinator in overseeing team progress.</p>
+                            </div>
+
+                            <div style="margin-bottom: 10px;">
+                                <strong style="font-size: 0.9rem; color: #000;">Staff of Problem Selection (LMNas 35)</strong>
+                                <span style="font-size: 0.8rem; color: var(--text-light); float: right;">Mar 2024 – Nov 2024</span>
+                                <p style="text-align: justify; font-size: 0.9rem; margin-top: 2px;">Created and filtered problems for the main competition rounds.</p>
+                            </div>
+
+                            <div>
+                                <strong style="font-size: 0.9rem; color: #000;">External Quality Checker (LMNas 34)</strong>
+                                <span style="font-size: 0.8rem; color: var(--text-light); float: right;">Sep 2023 – Nov 2023</span>
+                                <p style="text-align: justify; font-size: 0.9rem; margin-top: 2px;">Evaluated and refined problems submitted by external contributors to maintain competition quality.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sub-experience">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                            <h4>Himatika UGM</h4>
+                            <span style="font-size: 0.8rem; color: var(--text-light);">Feb 2024 — Dec 2024</span>
+                        </div>
+                        <div style="border-left: 2px solid #eee; padding-left: 15px; margin-top: 5px;">
+                            <strong style="font-size: 0.9rem; color: #444; font-weight: 600;">Staff of Academic Department</strong>
+                            <p style="text-align: justify; font-size: 0.95rem; color: var(--text-light); margin-top: 5px;">
+                                Managed academic activities for the Undergraduate Mathematics Major at UGM. In charge of managing the Question Database and overseeing <strong>Kompak</strong> (Mathematics Competition Community) to support student academic development.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sub-experience">
+                        <h4>Calculus II Solution Book Project</h4>
+                        <p style="text-align: justify;">
+                            Leading a collaborative project to author a comprehensive solution book for <strong>17 years of Calculus II Midterm Exams (UTS)</strong> at FMIPA UGM. 
+                            This initiative aims to provide high-quality, student-friendly learning resources to bridge academic gaps within the campus community.
+                        </p>
+                        <div style="margin-top: 10px;">
+                            <a href="https://drive.google.com/file/d/1FRCJhXcJBPK1vopYJdg3yhYMxHPvxpEl/view" target="_blank" class="badge" style="text-decoration: none; background: #333;">
+                                View Draft PDF (In Progress)
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card">
+                <div><strong>Ruangguru</strong><br><small>Mei 2024 — Sekarang</small></div>
+                <div>
+                    <div class="sub-experience">
+                        <h4>Key Opinion Leader</h4>
+                        <p style="text-align: justify;">
+                            Began as a cast member in Clash of Champions and grew into an educational content ambassador for Ruangguru. 
+                            Created and delivered engaging digital content through Instagram and video campaigns such as Smart Payday Promo, 
+                            promoting learning enthusiasm among students and supporting the platform’s outreach efforts.
+                        </p>
+                    </div>
+                    <div class="sub-experience">
+                        <h4>Star Master Teacher Brain Academy</h4>
+                        <p style="text-align: justify;">
+                            Recognized as a Star Master Teacher for delivering high-quality, interactive online classes in mathematics 
+                            and student motivation. Taught not only academic subjects but also led inspirational sessions to encourage 
+                            students in pursuing top universities (PTN).
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div><strong>Professional Tutoring</strong><br><small>Jan 2023 — Present</small></div>
+                <div>
+                    <div class="sub-experience">
+                        <h4>Mathematics Olympiad Tutor & Setter</h4>
+                        <p style="text-align: justify;">
+                            Extensively involved in nurturing the next generation of mathematical talents by tutoring students from various prestigious schools and communities. 
+                            Focusing on regional and national mathematics olympiads (OSN/KSN levels), providing both conceptual depth and problem-solving strategies.
+                        </p>
+                        
+                        <div style="border-left: 1px solid #e0e0e0; padding-left: 1.2rem; margin-top: 15px;">
+                            <div style="margin-bottom: 1rem;">
+                                <strong style="font-size: 0.9rem; color: #444; font-weight: 600;">Tutoring & Training</strong>
+                                <p style="text-align: justify; font-size: 0.9rem; color: #666; margin-top: 4px;">
+                                    Served as a tutor for Regional Training of Central Java Province, SMA N 1 Cepu, SMP N 1 Lamongan, SMP N 1 Manokwari, Sobat Arin, and Komunitas Olimpiade Jogja.
+                                </p>
+                            </div>
+
+                            <div>
+                                <strong style="font-size: 0.9rem; color: #444; font-weight: 600;">Problem Setting & Reviewing</strong>
+                                <p style="text-align: justify; font-size: 0.9rem; color: #666; margin-top: 4px;">
+                                    Actively creates and reviews high-level Olympiad problems for educational platforms including Senyum Cerdas Nusantara and Scuola Olimpiade.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div><strong>Speaking & Engagement</strong><br><small>2024 — Present</small></div>
+                <div>
+                    <div class="sub-experience">
+                        <h4>Guest Speaker & Keynote</h4>
+                        <p style="text-align: justify; margin-bottom: 1.2rem;">
+                            Actively sharing insights on mathematics, academic motivation, and personal development through various national webinars and public forums to inspire the next generation of scholars.
+                        </p>
+                        
+                        <div style="border-left: 1px solid #e0e0e0; padding-left: 1.2rem; margin-top: 10px;">
+                            
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                    <strong style="font-size: 0.95rem; color: #444; font-weight: 600;">National Webinar MCR & LRP 2024</strong>
+                                    <span style="font-size: 0.75rem; color: #999; text-transform: uppercase;">Nov 2024</span>
+                                </div>
+                                <em style="font-size: 0.85rem; color: #777; display: block; margin-top: 2px;">"LAMBDA: Launch and Boost Your Sparkling Steps Towards Mathematician Space" — UNESA</em>
+                                <p style="text-align: justify; font-size: 0.9rem; color: #666; margin-top: 6px;">
+                                    Delivered a motivational talk on building a career in mathematics and the Olympiad journey to inspire students nationwide.
+                                </p>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                    <strong style="font-size: 0.95rem; color: #444; font-weight: 600;">MIPA Talk: MIPA Expo UGM</strong>
+                                    <span style="font-size: 0.75rem; color: #999; text-transform: uppercase;">Oct 2024</span>
+                                </div>
+                                <em style="font-size: 0.85rem; color: #777; display: block; margin-top: 2px;">"Clash of Numbers: Petualangan Seru dalam Dunia Matematika" — FMIPA UGM</em>
+                                <p style="text-align: justify; font-size: 0.9rem; color: #666; margin-top: 6px;">
+                                    Shared experiences in national competitions and academic life, focusing on the excitement of mathematical exploration.
+                                </p>
+                            </div>
+
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                                    <strong style="font-size: 0.95rem; color: #444; font-weight: 600;">Bukan Pelajar Biasa</strong>
+                                    <span style="font-size: 0.75rem; color: #999; text-transform: uppercase;">Jul 2024</span>
+                                </div>
+                                <em style="font-size: 0.85rem; color: #777; display: block; margin-top: 2px;">Community Talk — Masjid Nurul Ashari, Yogyakarta</em>
+                                <p style="text-align: justify; font-size: 0.9rem; color: #666; margin-top: 6px;">
+                                    Discussed student motivation and building a resilient mindset to face academic and personal challenges.
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div><strong>Cryptography Projects</strong><br><small>Open Source</small></div>
+                <div>
+                    <div class="sub-experience">
+                        <h4>Crypt-Module (TypeScript)</h4>
+                        <p style="text-align: justify;">
+                            Developed an open-source cryptography module hosted on GitHub. This project focuses on implementing secure encryption and decryption algorithms, demonstrating a strong intersection between mathematical logic and software development.
+                        </p>
+                        <div style="margin-top: 10px;">
+                            <a href="https://github.com/rmuhhanif/crypt-module" target="_blank" class="badge" style="text-decoration: none; background: #333;">
+                                View on GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer style="padding: 5rem 8%; border-top: 1px solid var(--border); text-align: center; margin-top: 5rem;">
+        <p style="font-size: 0.8rem; color: var(--text-light); letter-spacing: 1px;">© 2026 MUHAMMAD HANIF. ALL RIGHTS RESERVED.</p>
+    </footer>
+</body>
+</html>
