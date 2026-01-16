@@ -55,7 +55,7 @@ nav {
 }
 
 .container { 
-    padding: 10rem 8% 5rem; 
+    padding: 8rem 8% 5rem; 
     max-width: 1200px; 
     margin: 0 auto; 
 }
@@ -65,7 +65,7 @@ h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: 
 
 .card { 
     border-top: 1px solid var(--border); 
-    padding: 2rem 0; 
+    padding: 1.5rem 0; 
     margin-bottom: 1rem; 
     display: grid; 
     grid-template-columns: 200px 1fr; 
@@ -119,9 +119,9 @@ h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: 
     }
 
     .container {
-        padding-top: 12rem; /* Jarak atas ditambah karena nav jadi lebih tinggi */
-        padding-left: 5%;
-        padding-right: 5%;
+        padding-top: 7.5rem; /* Jarak atas ditambah karena nav jadi lebih tinggi */
+        padding-left: 6%;
+        padding-right: 6%;
     }
 
     .nav-links {
