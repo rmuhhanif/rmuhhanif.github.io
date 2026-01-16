@@ -14,6 +14,7 @@ body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden; /* Mencegah scroll ke samping yang merusak tampilan */
 }
 
 nav {
@@ -24,7 +25,7 @@ nav {
     position: fixed;
     width: 100%;
     top: 0;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(20px);
     z-index: 1000;
     border-bottom: 1px solid var(--border);
@@ -35,25 +36,42 @@ nav {
     color: var(--text);
     font-weight: 800;
     letter-spacing: -1px;
+    font-size: 1.1rem;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2.5rem; /* Menggunakan gap lebih baik daripada margin-left */
 }
 
 .nav-links a {
     text-decoration: none;
     color: var(--text);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    margin-left: 2.5rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: opacity 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.container { padding: 10rem 8% 5rem; max-width: 1200px; margin: 0 auto; }
+.container { 
+    padding: 10rem 8% 5rem; 
+    max-width: 1200px; 
+    margin: 0 auto; 
+}
 
 h1 { font-size: 4rem; font-weight: 700; letter-spacing: -2px; line-height: 1.1; margin-bottom: 2rem; }
 h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-light); margin-bottom: 1.5rem; }
 
-.card { border-top: 1px solid var(--border); padding: 2rem 0; margin-bottom: 1rem; display: grid; grid-template-columns: 200px 1fr; gap: 2rem; }
+.card { 
+    border-top: 1px solid var(--border); 
+    padding: 2rem 0; 
+    margin-bottom: 1rem; 
+    display: grid; 
+    grid-template-columns: 200px 1fr; 
+    gap: 2rem; 
+}
+
 .card h3 { font-size: 1.25rem; font-weight: 600; }
 .card p { color: var(--text-light); }
 
@@ -64,15 +82,18 @@ h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: 
     color: white;
     text-decoration: none;
     font-size: 0.85rem;
-    font-weight: 600;
-    border-radius: 2px;
+    font-weight: 700;
+    border-radius: 4px;
+    transition: transform 0.2s ease;
 }
 
-/* --- KODE BARU UNTUK INDIKATOR AKTIF --- */
+.btn:hover { transform: translateY(-2px); }
+
+/* INDIKATOR AKTIF */
 .nav-links a.active {
     color: var(--text);
     position: relative;
-    opacity: 1;
+    opacity: 1 !important;
 }
 
 .nav-links a.active::after {
@@ -85,19 +106,51 @@ h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: 
     background-color: var(--text);
 }
 
-.nav-links a:not(.active) {
-    opacity: 0.5; /* Membuat menu lain agak pudar agar menu aktif menonjol */
-}
+.nav-links a:not(.active) { opacity: 0.4; }
+.nav-links a:hover { opacity: 1; }
 
-.nav-links a:hover {
-    opacity: 1; /* Saat diarahkan kursor, menu yang pudar jadi terang lagi */
-}
-/* -------------------------------------- */
-
-/* Responsif untuk HP */
+/* --- RESPONSIVE UNTUK HP (Mobile) --- */
 @media (max-width: 768px) {
-    h1 { font-size: 2.5rem; }
-    .card { grid-template-columns: 1fr; gap: 0.5rem; }
-    nav { padding: 1.5rem 5%; }
-    .nav-links { display: none; } 
+    nav {
+        padding: 1rem 5%;
+        flex-direction: column; /* Logo di atas, menu di bawah */
+        gap: 1rem;
+        position: fixed; /* Tetap menempel di atas */
+    }
+
+    .container {
+        padding-top: 12rem; /* Jarak atas ditambah karena nav jadi lebih tinggi */
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+
+    .nav-links {
+        display: flex; /* Menu tetap muncul */
+        gap: 0.8rem;
+        flex-wrap: wrap; /* Menu akan turun ke bawah jika tidak muat ke samping */
+        justify-content: center;
+        width: 100%;
+    }
+
+    .nav-links a {
+        font-size: 0.65rem; /* Ukuran teks diperkecil agar muat */
+        margin-left: 0;
+    }
+
+    h1 { font-size: 2.2rem; letter-spacing: -1px; }
+    
+    .card { 
+        grid-template-columns: 1fr; 
+        gap: 0.5rem; 
+    }
+}
+
+/* Khusus layar sangat kecil */
+@media (max-width: 480px) {
+    .nav-links {
+        gap: 0.5rem;
+    }
+    .nav-links a {
+        font-size: 0.6rem;
+    }
 }
