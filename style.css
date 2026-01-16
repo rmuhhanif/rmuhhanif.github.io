@@ -147,7 +147,7 @@ footer p {
 
     /* Menghilangkan semua margin-top yang mungkin ada di tag section atau div */
     section, div {
-        margin-top: 0 !important;
+        margin-top: 4 !important;
     }
 
     footer {
