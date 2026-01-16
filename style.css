@@ -14,11 +14,12 @@ body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden; /* Mencegah scroll ke samping yang merusak tampilan */
+    overflow-x: hidden;
 }
 
+/* --- Navigasi --- */
 nav {
-    padding: 1.5rem 8%;
+    padding: 1.2rem 8%; /* Sedikit lebih ramping */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -41,7 +42,7 @@ nav {
 
 .nav-links {
     display: flex;
-    gap: 2.5rem; /* Menggunakan gap lebih baik daripada margin-left */
+    gap: 2.5rem;
 }
 
 .nav-links a {
@@ -54,19 +55,26 @@ nav {
     transition: all 0.3s ease;
 }
 
+/* --- Container (Optimasi Jarak) --- */
 .container { 
-    padding: 8rem 8% 5rem; 
+    padding: 9rem 8% 0; /* Padding bawah kita NOL kan, biar mepet footer */
     max-width: 1200px; 
     margin: 0 auto; 
 }
 
-h1 { font-size: 4rem; font-weight: 700; letter-spacing: -2px; line-height: 1.1; margin-bottom: 2rem; }
-h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-light); margin-bottom: 1.5rem; }
+/* Memastikan elemen terakhir di dalam container tidak punya margin bawah */
+.container > *:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 2rem;
+}
+
+h1 { font-size: 4rem; font-weight: 700; letter-spacing: -2px; line-height: 1.1; margin-bottom: 1.5rem; }
+h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-light); margin-bottom: 1rem; }
 
 .card { 
     border-top: 1px solid var(--border); 
     padding: 1.5rem 0; 
-    margin-bottom: 1rem; 
+    margin-bottom: 0; /* Menghilangkan margin antar card agar tidak renggang */
     display: grid; 
     grid-template-columns: 200px 1fr; 
     gap: 2rem; 
@@ -77,19 +85,32 @@ h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: 
 
 .btn {
     display: inline-block;
-    padding: 1rem 2rem;
+    padding: 0.8rem 1.8rem;
     background: var(--accent);
     color: white;
     text-decoration: none;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 700;
     border-radius: 4px;
     transition: transform 0.2s ease;
 }
 
-.btn:hover { transform: translateY(-2px); }
+/* --- Footer (Rapat & Bersih) --- */
+footer {
+    padding: 2rem 8%;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    margin-top: 0 !important; /* Memaksa footer menempel ke konten */
+    background-color: var(--bg);
+}
 
-/* INDIKATOR AKTIF */
+footer p {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    letter-spacing: 1px;
+}
+
+/* --- Indikator Aktif --- */
 .nav-links a.active {
     color: var(--text);
     position: relative;
@@ -109,48 +130,46 @@ h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: 
 .nav-links a:not(.active) { opacity: 0.4; }
 .nav-links a:hover { opacity: 1; }
 
-/* --- RESPONSIVE UNTUK HP (Mobile) --- */
+/* --- Responsive HP (TOTAL TIGHT) --- */
 @media (max-width: 768px) {
     nav {
-        padding: 1rem 5%;
-        flex-direction: column; /* Logo di atas, menu di bawah */
-        gap: 1rem;
-        position: fixed; /* Tetap menempel di atas */
+        padding: 0.8rem 5%;
+        flex-direction: column;
+        gap: 0.5rem;
     }
 
     .container {
-        padding-top: 7.5rem; /* Jarak atas ditambah karena nav jadi lebih tinggi */
+        padding-top: 7rem; /* Judul naik lebih dekat ke menu */
+        padding-bottom: 0;
         padding-left: 6%;
         padding-right: 6%;
     }
 
-    .nav-links {
-        display: flex; /* Menu tetap muncul */
-        gap: 0.8rem;
-        flex-wrap: wrap; /* Menu akan turun ke bawah jika tidak muat ke samping */
-        justify-content: center;
-        width: 100%;
+    /* Menghilangkan semua margin-top yang mungkin ada di tag section atau div */
+    section, div {
+        margin-top: 0 !important;
     }
 
-    .nav-links a {
-        font-size: 0.65rem; /* Ukuran teks diperkecil agar muat */
-        margin-left: 0;
+    footer {
+        padding: 1.5rem 5%;
+        margin-top: 0 !important;
     }
 
-    h1 { font-size: 2.2rem; letter-spacing: -1px; }
+    h1 { font-size: 2.1rem; letter-spacing: -1px; margin-bottom: 1rem; }
     
     .card { 
         grid-template-columns: 1fr; 
-        gap: 0.5rem; 
+        gap: 0.4rem;
+        padding: 1.2rem 0;
     }
+
+    .nav-links {
+        gap: 0.6rem;
+    }
+
+    .nav-links a { font-size: 0.6rem; }
 }
 
-/* Khusus layar sangat kecil */
 @media (max-width: 480px) {
-    .nav-links {
-        gap: 0.5rem;
-    }
-    .nav-links a {
-        font-size: 0.6rem;
-    }
+    .container { padding-top: 6.5rem; }
 }
