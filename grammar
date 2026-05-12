@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhammad Hanif | Memory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================================================
+           1. BASE STYLES & VARIABLES
+           ========================================================================== */
+        :root {
+            --bg: #ffffff;
+            --text: #111111;
+            --text-light: #666666;
+            --border: #eeeeee;
+            --accent: #000000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* --- Navigasi --- */
+        nav {
+            padding: 1.2rem 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 800;
+            letter-spacing: -1px;
+            font-size: 1.1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a.active {
+            color: var(--text);
+            position: relative;
+            opacity: 1 !important;
+        }
+
+        .nav-links a.active::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--text);
+        }
+
+        .nav-links a:not(.active) { opacity: 0.4; }
+        .nav-links a:hover { opacity: 1; }
+
+        /* --- Container --- */
+        .container { 
+            padding: 9rem 8% 0; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
+
+        .container > *:last-child {
+            margin-bottom: 0 !important;
+            padding-bottom: 2rem;
+        }
+
+        /* --- Typography & Elements --- */
+        h1 { 
+            font-size: 4rem; 
+            font-weight: 700; 
+            letter-spacing: -2px; 
+            line-height: 1.1; 
+            margin-bottom: 1.5rem; 
+        }
+        
+        h2 { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            color: var(--text-light); 
+            margin-bottom: 1rem; 
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.8rem;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 4px;
+            border: 2px solid var(--accent);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Tombol Outline untuk Pilihan Mode/Level */
+        .btn-outline {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn-outline.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 2rem 8%;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            margin-top: 0 !important; 
+            background-color: var(--bg);
+        }
+
+        footer p {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            letter-spacing: 1px;
+        }
+
+        /* --- Responsive Dasar --- */
+        @media (max-width: 768px) {
+            nav { padding: 0.8rem 5%; flex-direction: column; gap: 0.5rem; }
+            .container { padding-top: 7rem; padding-bottom: 0; padding-left: 6%; padding-right: 6%; }
+            section, div.game-wrapper { margin-top: 0 !important; }
+            footer { padding: 1.5rem 5%; margin-top: 0 !important; }
+            h1 { font-size: 2.1rem; letter-spacing: -1px; margin-bottom: 1rem; }
+            .nav-links { gap: 0.6rem; }
+            .nav-links a { font-size: 0.6rem; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding-top: 6.5rem; }
+        }
+
+        /* ==========================================================================
+           2. GAME STYLES & CONTROLS
+           ========================================================================== */
+        
+        .game-controls {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 2.5rem;
+            border-radius: 30px; 
+            margin-bottom: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .stats-label {
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            color: var(--text-light); 
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .stats-value {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+            margin: 0;
+        }
+
+        .stats-value.danger { color: #ef4444; }
+
+        /* Board & Overlays */
+        .board-container {
+            position: relative;
+            min-height: 400px; /* Memberikan ruang jika overlay muncul */
+        }
+
+        .game-board {
+            display: grid;
+            gap: 1.5rem;
+            perspective: 1000px;
+        }
+
+        /* Tampilan Overlay Game Over */
+        .game-over-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(5px);
+            display: none; /* Disembunyikan secara default */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .game-over-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ef4444;
+            letter-spacing: -2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-over-desc {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        /* Grid Classes */
+        .grid-easy { grid-template-columns: repeat(4, 1fr); }
+        .grid-medium { grid-template-columns: repeat(4, 1fr); }
+        .grid-hard { grid-template-columns: repeat(6, 1fr); }
+
+        .memory-card {
+            background: transparent;
+            height: 140px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .memory-card:active { transform: scale(0.97); }
+        .memory-card.flip { transform: rotateY(180deg); }
+
+        .front-face, .back-face {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            border-radius: 20px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 2px solid transparent;
+        }
+
+        .front-face {
+            background: #f9f9f9;
+            color: var(--text-light);
+            font-size: 2rem;
+            font-weight: 800;
+            border: 2px dashed var(--border);
+            transition: all 0.3s;
+        }
+
+        .memory-card:hover .front-face {
+            background: var(--bg);
+            border-color: var(--text);
+            color: var(--text);
+        }
+
+        .back-face {
+            background: var(--accent);
+            color: var(--bg);
+            transform: rotateY(180deg);
+        }
+
+        .memory-card.matched .back-face {
+            background: var(--bg);
+            color: var(--text);
+            border: 2px solid var(--text);
+        }
+
+        /* Responsive Game Board */
+        @media (max-width: 900px) {
+            .grid-hard { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .game-controls { flex-direction: column; gap: 1rem; }
+            .grid-easy, .grid-medium, .grid-hard { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .memory-card { height: 120px; font-size: 0.85rem; }
+            .game-info { flex-direction: column; text-align: center; border-radius: 20px; padding: 1.5rem;}
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- HEADER / NAV -->
+    <nav>
+        <div class="logo"><a href="index.html">MUHAMMAD HANIF</a></div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="experience.html">Experience</a>
+            <a href="achievements.html">Awards</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="blog.html" class="active">Archives</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <!-- CONTAINER KONTEN -->
+    <div class="container">
+        
+        <div class="game-wrapper">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <h2 style="margin-bottom: 0;">Brain Teaser</h2>
+                <h2 style="margin-bottom: 0;"></h2>
+            </div>
+            
+            <h1>
+                Memorizing <span style="color: var(--text-light);">Structures</span>, <br> 
+                Acing the <span style="color: var(--text-light);">Grammar.</span>
+            </h1>
+
+            <div style="font-size: 1.15rem; line-height: 1.7; color: var(--text-light); max-width: 800px; margin-bottom: 2rem;">
+                <p>
+                 <strong style="color: var(--text);">Complex Grammar Structures:</strong> Balik kartu dan temukan pasangan kalimat yang tepat <em>(Inversion, Subjunctive, dll)</em>. Pilih mode dan tingkat kesulitanmu untuk mencetak skor tertinggi!
+                </p>
+            </div>
+
+            <!-- Kontrol Setting Game -->
+            <div class="game-controls">
+                <div class="control-group">
+                    <span class="stats-label" style="margin: 0; margin-right: 10px;">MODE:</span>
+                    <button class="btn btn-outline active" id="btn-mode-zen" onclick="setMode('zen')">Zen</button>
+                    <button class="btn btn-outline" id="btn-mode-time" onclick="setMode('time')">Time Attack</button>
+                    <button class="btn btn-outline" id="btn-mode-survive" onclick="setMode('survive')">Survival</button>
+                </div>
+                <div class="control-group">
+                    <span class="stats-label" style="margin: 0; margin-right: 10px;">LEVEL:</span>
+                    <button class="btn btn-outline active" id="btn-lvl-6" onclick="setDifficulty(6)">Easy</button>
+                    <button class="btn btn-outline" id="btn-lvl-8" onclick="setDifficulty(8)">Medium</button>
+                    <button class="btn btn-outline" id="btn-lvl-12" onclick="setDifficulty(12)">Hard</button>
+                </div>
+            </div>
+
+            <!-- Panel UI Status Game -->
+            <div class="game-info">
+                <div>
+                    <div class="stats-label" id="status-label">Total Moves</div>
+                    <p class="stats-value" id="status-value">0</p>
+                </div>
+                <div>
+                    <div class="stats-label">Matches Found</div>
+                    <p class="stats-value"><span id="matches-counter">0</span> / <span id="total-pairs">6</span></p>
+                </div>
+                <button class="btn" onclick="initGame()">Restart Game</button>
+            </div>
+
+            <!-- Papan Permainan & Overlay -->
+            <div class="board-container">
+                
+                <!-- Overlay Game Over -->
+                <div class="game-over-overlay" id="game-over-overlay">
+                    <h3 class="game-over-title">GAME OVER</h3>
+                    <p class="game-over-desc" id="game-over-desc">You ran out of time!</p>
+                    <button class="btn" onclick="initGame()">Try Again</button>
+                </div>
+
+                <!-- Grid Kartu -->
+                <div class="game-board grid-easy" id="game-board">
+                    <!-- Kartu di-generate oleh JS -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 MUHAMMAD HANIF. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <!-- LOGIKA JAVASCRIPT GAME -->
+    <script>
+        // Data Base - 12 Pasang Kalimat (Anda BISA menambahkannya hingga ratusan di sini dengan format yang sama)
+        const masterGrammarPairs = [
+            // --- INVERSIONS (Penekanan/Negatif) ---
+            { id: 'p1', text: "Hardly had I sat down..." }, { id: 'p1', text: "...when the phone rang." },
+            { id: 'p2', text: "No sooner had he left..." }, { id: 'p2', text: "...than the storm began." },
+            { id: 'p3', text: "Not only did they win..." }, { id: 'p3', text: "...but they also broke the record." },
+            { id: 'p4', text: "Little did they know..." }, { id: 'p4', text: "...what awaited them." },
+            { id: 'p5', text: "Only after the meeting..." }, { id: 'p5', text: "...did I understand the issue." },
+            { id: 'p6', text: "Under no circumstances..." }, { id: 'p6', text: "...should this door be opened." },
+            { id: 'p7', text: "Not until years later..." }, { id: 'p7', text: "...did the truth emerge." },
+            { id: 'p8', text: "Seldom have I seen..." }, { id: 'p8', text: "...such a breathtaking view." },
+            { id: 'p9', text: "Rarely does one encounter..." }, { id: 'p9', text: "...such genuine kindness." },
+            { id: 'p10', text: "On no account..." }, { id: 'p10', text: "...must you leave the premises." },
+            { id: 'p11', text: "Barely had the play started..." }, { id: 'p11', text: "...when the fire alarm rang." },
+            { id: 'p12', text: "Scarcely had she finished speaking..." }, { id: 'p12', text: "...when the audience erupted." },
+            { id: 'p13', text: "Nowhere else will you find..." }, { id: 'p13', text: "...such a diverse ecosystem." },
+            { id: 'p14', text: "Only by working together..." }, { id: 'p14', text: "...can we solve this crisis." },
+            { id: 'p15', text: "Only when the situation escalated..." }, { id: 'p15', text: "...did they take action." },
+            { id: 'p16', text: "Not a single word..." }, { id: 'p16', text: "...did he utter during the trial." },
+            { id: 'p17', text: "In no way..." }, { id: 'p17', text: "...does this excuse his behavior." },
+            { id: 'p18', text: "Only in this way..." }, { id: 'p18', text: "...can we ensure total compliance." },
+            { id: 'p19', text: "Such was her devastation..." }, { id: 'p19', text: "...that she couldn't speak." },
+            { id: 'p20', text: "So severe was the weather..." }, { id: 'p20', text: "...that flights were grounded." },
+
+            // --- ADVANCED CONDITIONALS (Inverted & Mixed) ---
+            { id: 'p21', text: "Were she to find out..." }, { id: 'p21', text: "...she would be furious." },
+            { id: 'p22', text: "Had I known earlier..." }, { id: 'p22', text: "...I would have prepared better." },
+            { id: 'p23', text: "Should you require assistance..." }, { id: 'p23', text: "...do not hesitate to call." },
+            { id: 'p24', text: "Had it not been for your help..." }, { id: 'p24', text: "...I would have failed." },
+            { id: 'p25', text: "Were it not for the funding..." }, { id: 'p25', text: "...the project would cease." },
+            { id: 'p26', text: "But for his prompt intervention..." }, { id: 'p26', text: "...the patient would have died." },
+            { id: 'p27', text: "Even if they had apologized..." }, { id: 'p27', text: "...I wouldn't have forgiven them." },
+            { id: 'p28', text: "If I were a more patient person..." }, { id: 'p28', text: "...I wouldn't have shouted yesterday." },
+            { id: 'p29', text: "Had he taken his studies seriously..." }, { id: 'p29', text: "...he would be a doctor now." },
+            { id: 'p30', text: "Assuming that the data is correct..." }, { id: 'p30', text: "...we can proceed with the launch." },
+            { id: 'p31', text: "Provided that you submit the form..." }, { id: 'p31', text: "...your application will be processed." },
+            { id: 'p32', text: "On condition that you stay quiet..." }, { id: 'p32', text: "...you may observe the surgery." },
+            { id: 'p33', text: "As long as there is sufficient demand..." }, { id: 'p33', text: "...production will continue." },
+            { id: 'p34', text: "Unless the management intervenes..." }, { id: 'p34', text: "...the strike will go ahead." },
+            { id: 'p35', text: "Whether he agrees or not..." }, { id: 'p35', text: "...we are moving forward." },
+            { id: 'p36', text: "Suppose you won the lottery..." }, { id: 'p36', text: "...what would be your first purchase?" },
+            { id: 'p37', text: "Imagine we had never met..." }, { id: 'p37', text: "...how different life would be." },
+            { id: 'p38', text: "Had she been wearing a seatbelt..." }, { id: 'p38', text: "...her injuries would be minor." },
+            { id: 'p39', text: "Were they to offer you the job..." }, { id: 'p39', text: "...would you accept it?" },
+            { id: 'p40', text: "Should the alarm sound..." }, { id: 'p40', text: "...evacuate the building immediately." },
+
+            // --- SUBJUNCTIVE MOOD ---
+            { id: 'p41', text: "It is imperative that..." }, { id: 'p41', text: "...the system be upgraded." },
+            { id: 'p42', text: "The doctor recommended that..." }, { id: 'p42', text: "...he stop smoking immediately." },
+            { id: 'p43', text: "It is crucial that..." }, { id: 'p43', text: "...she arrive on time." },
+            { id: 'p44', text: "I insist that..." }, { id: 'p44', text: "...the contract be signed today." },
+            { id: 'p45', text: "The committee proposed that..." }, { id: 'p45', text: "...the rule be abolished." },
+            { id: 'p46', text: "It is vital that..." }, { id: 'p46', text: "...everyone remain calm." },
+            { id: 'p47', text: "Management demands that..." }, { id: 'p47', text: "...all employees be present." },
+            { id: 'p48', text: "It is essential that..." }, { id: 'p48', text: "...the building be evacuated." },
+            { id: 'p49', text: "The law requires that..." }, { id: 'p49', text: "...taxes be paid annually." },
+            { id: 'p50', text: "I strongly suggest that..." }, { id: 'p50', text: "...he reconsider his decision." },
+
+            // --- CLEFT SENTENCES (Penekanan) ---
+            { id: 'p51', text: "It was not until midnight..." }, { id: 'p51', text: "...that the guests finally left." },
+            { id: 'p52', text: "What I find most remarkable..." }, { id: 'p52', text: "...is her sheer resilience." },
+            { id: 'p53', text: "It is the government that..." }, { id: 'p53', text: "...must take responsibility." },
+            { id: 'p54', text: "The reason why he resigned..." }, { id: 'p54', text: "...remains a closely guarded secret." },
+            { id: 'p55', text: "All I want right now..." }, { id: 'p55', text: "...is a good night's sleep." },
+            { id: 'p56', text: "It was his arrogant attitude..." }, { id: 'p56', text: "...that infuriated the board." },
+            { id: 'p57', text: "What happens next..." }, { id: 'p57', text: "...is entirely up to you." },
+            { id: 'p58', text: "It is only recently that..." }, { id: 'p58', text: "...the phenomenon was explained." },
+            { id: 'p59', text: "The person who deserves the credit..." }, { id: 'p59', text: "...is the lead researcher." },
+            { id: 'p60', text: "It was the lack of funding..." }, { id: 'p60', text: "...that ultimately doomed the project." },
+
+            // --- PARTICIPLE CLAUSES ---
+            { id: 'p61', text: "Having completed the project..." }, { id: 'p61', text: "...she took a well-deserved vacation." },
+            { id: 'p62', text: "Exhausted by the journey..." }, { id: 'p62', text: "...he fell asleep instantly." },
+            { id: 'p63', text: "Realizing the danger..." }, { id: 'p63', text: "...the captain altered the ship's course." },
+            { id: 'p64', text: "Not wanting to offend anyone..." }, { id: 'p64', text: "...she chose her words carefully." },
+            { id: 'p65', text: "Seen from a distance..." }, { id: 'p65', text: "...the painting looks completely different." },
+            { id: 'p66', text: "Deprived of oxygen..." }, { id: 'p66', text: "...the brain suffers irreversible damage." },
+            { id: 'p67', text: "Having been warned about the traffic..." }, { id: 'p67', text: "...we left an hour early." },
+            { id: 'p68', text: "Born into a wealthy family..." }, { id: 'p68', text: "...he never knew financial struggle." },
+            { id: 'p69', text: "Fearing for his life..." }, { id: 'p69', text: "...the witness requested police protection." },
+            { id: 'p70', text: "Overwhelmed by the response..." }, { id: 'p70', text: "...the artist shed tears of joy." },
+            { id: 'p71', text: "Discovered entirely by accident..." }, { id: 'p71', text: "...the cure revolutionized medicine." },
+            { id: 'p72', text: "Knowing how much it meant to her..." }, { id: 'p72', text: "...he bought the vintage necklace." },
+            { id: 'p73', text: "Not having studied for the exam..." }, { id: 'p73', text: "...he was unsurprised by the failing grade." },
+            { id: 'p74', text: "Struck by lightning..." }, { id: 'p74', text: "...the ancient oak tree finally collapsed." },
+            { id: 'p75', text: "Wrapped in a warm blanket..." }, { id: 'p75', text: "...she watched the snow fall." },
+
+            // --- CONCESSIVE & CONTRAST CLAUSES ---
+            { id: 'p76', text: "Much as I respect him..." }, { id: 'p76', text: "...I cannot agree with his methods." },
+            { id: 'p77', text: "Hard as he tried..." }, { id: 'p77', text: "...he couldn't loosen the rusty bolt." },
+            { id: 'p78', text: "However difficult the task may seem..." }, { id: 'p78', text: "...we must complete it." },
+            { id: 'p79', text: "Strange as it may sound..." }, { id: 'p79', text: "...I actually enjoy doing taxes." },
+            { id: 'p80', text: "Be that as it may..." }, { id: 'p80', text: "...the company still faces bankruptcy." },
+            { id: 'p81', text: "In spite of the overwhelming evidence..." }, { id: 'p81', text: "...the jury acquitted him." },
+            { id: 'p82', text: "Notwithstanding the harsh weather..." }, { id: 'p82', text: "...the marathon continued." },
+            { id: 'p83', text: "While I understand your frustration..." }, { id: 'p83', text: "...shouting won't help." },
+            { id: 'p84', text: "Albeit a bit expensive..." }, { id: 'p84', text: "...the software is incredibly efficient." },
+            { id: 'p85', text: "No matter how much you apologize..." }, { id: 'p85', text: "...the damage is already done." },
+            { id: 'p86', text: "For all his wealth..." }, { id: 'p86', text: "...he remains deeply unhappy." },
+            { id: 'p87', text: "Despite having practiced for months..." }, { id: 'p87', text: "...she still felt nervous." },
+            { id: 'p88', text: "Tired though she was..." }, { id: 'p88', text: "...she stayed up to finish the report." },
+            { id: 'p89', text: "Whatever the outcome..." }, { id: 'p89', text: "...we will accept it gracefully." },
+            { id: 'p90', text: "Even though the odds were against them..." }, { id: 'p90', text: "...they emerged victorious." },
+
+            // --- ADVANCED PASSIVES ---
+            { id: 'p91', text: "It is widely believed that..." }, { id: 'p91', text: "...the economy will recover next year." },
+            { id: 'p92', text: "The artifact is estimated to be..." }, { id: 'p92', text: "...over three thousand years old." },
+            { id: 'p93', text: "He is rumored to have been..." }, { id: 'p93', text: "...involved in the scandal." },
+            { id: 'p94', text: "The suspect was seen to enter..." }, { id: 'p94', text: "...the building at midnight." },
+            { id: 'p95', text: "It was agreed that..." }, { id: 'p95', text: "...the deadline would be extended." },
+            { id: 'p96', text: "The CEO is reported to be..." }, { id: 'p96', text: "...stepping down next month." },
+            { id: 'p97', text: "This monument is considered to represent..." }, { id: 'p97', text: "...the city's resilience." },
+            { id: 'p98', text: "The changes are expected to bring about..." }, { id: 'p98', text: "...significant improvements." },
+            { id: 'p99', text: "She was made to rewrite..." }, { id: 'p99', text: "...the entire essay from scratch." },
+            { id: 'p100', text: "It has been alleged that..." }, { id: 'p100', text: "...the funds were misappropriated." },
+
+            // --- FUTURE PERFECT & CONTINUOUS ---
+            { id: 'p101', text: "By the time we arrive..." }, { id: 'p101', text: "...the lecture will have finished." },
+            { id: 'p102', text: "Come next December..." }, { id: 'p102', text: "...I will have been working here for a decade." },
+            { id: 'p103', text: "By the end of the century..." }, { id: 'p103', text: "...global temperatures will have risen." },
+            { id: 'p104', text: "This time tomorrow..." }, { id: 'p104', text: "...I'll be flying over the Atlantic." },
+            { id: 'p105', text: "They will have completed the stadium..." }, { id: 'p105', text: "...well before the Olympics begin." },
+            { id: 'p106', text: "We will be implementing the new protocols..." }, { id: 'p106', text: "...starting next Monday." },
+            { id: 'p107', text: "By 2050, researchers hope they will have found..." }, { id: 'p107', text: "...a cure for the disease." },
+            { id: 'p108', text: "He will have been driving for twelve hours..." }, { id: 'p108', text: "...by the time he reaches the border." },
+            { id: 'p109', text: "Don't call at 8 PM because..." }, { id: 'p109', text: "...I will be having dinner with clients." },
+            { id: 'p110', text: "By the time the police arrived..." }, { id: 'p110', text: "...the thieves had long since vanished." },
+
+            // --- DOUBLE COMPARATIVES & CORRELATIVES ---
+            { id: 'p111', text: "The more you practice..." }, { id: 'p111', text: "...the more fluent you become." },
+            { id: 'p112', text: "The harder the struggle..." }, { id: 'p112', text: "...the more glorious the triumph." },
+            { id: 'p113', text: "Less known, but equally important..." }, { id: 'p113', text: "...is the role of diet in mental health." },
+            { id: 'p114', text: "Just as diet is crucial..." }, { id: 'p114', text: "...so too is regular exercise." },
+            { id: 'p115', text: "Not only is it economically unviable..." }, { id: 'p115', text: "...but it is also environmentally damaging." },
+            { id: 'p116', text: "The higher the altitude..." }, { id: 'p116', text: "...the lower the oxygen concentration." },
+            { id: 'p117', text: "Neither the board of directors..." }, { id: 'p117', text: "...nor the shareholders were satisfied." },
+            { id: 'p118', text: "Whether by design or by accident..." }, { id: 'p118', text: "...the result was spectacular." },
+            { id: 'p119', text: "Scarcely a day goes by..." }, { id: 'p119', text: "...without some new controversy arising." },
+            { id: 'p120', text: "The longer you delay the decision..." }, { id: 'p120', text: "...the harder it will be to implement." },
+
+            // --- NOUN CLAUSES & COMPLEX SUBJECTS ---
+            { id: 'p121', text: "What concerns me the most..." }, { id: 'p121', text: "...is the lack of transparency." },
+            { id: 'p122', text: "That the Earth is warming..." }, { id: 'p122', text: "...is now an undeniable scientific consensus." },
+            { id: 'p123', text: "How the thieves bypassed the security system..." }, { id: 'p123', text: "...remains a mystery." },
+            { id: 'p124', text: "Whoever wins the election..." }, { id: 'p124', text: "...will face immense economic challenges." },
+            { id: 'p125', text: "Where the missing funds ended up..." }, { id: 'p125', text: "...is currently under investigation." },
+            { id: 'p126', text: "Whatever decision you make..." }, { id: 'p126', text: "...I will support you wholeheartedly." },
+            { id: 'p127', text: "The fact that he lied under oath..." }, { id: 'p127', text: "...destroyed his credibility." },
+            { id: 'p128', text: "Whether we should invest in crypto..." }, { id: 'p128', text: "...is a highly debated topic." },
+            { id: 'p129', text: "Why they chose to ignore the warnings..." }, { id: 'p129', text: "...baffles investigators." },
+            { id: 'p130', text: "To claim that the policy is flawless..." }, { id: 'p130', text: "...is dangerously naive." },
+
+            // --- FRONTING & EMPHATIC WORD ORDER ---
+            { id: 'p131', text: "High up in the mountains..." }, { id: 'p131', text: "...stands an ancient monastery." },
+            { id: 'p132', text: "Down came the rain..." }, { id: 'p132', text: "...washing away all their hard work." },
+            { id: 'p133', text: "First to cross the finish line..." }, { id: 'p133', text: "...was the youngest competitor." },
+            { id: 'p134', text: "More important than the initial cost..." }, { id: 'p134', text: "...is the long-term maintenance." },
+            { id: 'p135', text: "Hidden beneath the floorboards..." }, { id: 'p135', text: "...were several boxes of gold coins." },
+            { id: 'p136', text: "Fast asleep in her crib..." }, { id: 'p136', text: "...lay the newborn baby." },
+            { id: 'p137', text: "So astonishing was her vocal range..." }, { id: 'p137', text: "...that the judges stood up." },
+            { id: 'p138', text: "Out rushed the students..." }, { id: 'p138', text: "...as soon as the bell rang." },
+            { id: 'p139', text: "Enclosed within the letter..." }, { id: 'p139', text: "...was a map to the treasure." },
+            { id: 'p140', text: "At the heart of the dispute..." }, { id: 'p140', text: "...lies a misunderstanding over territory." },
+
+            // --- ADVANCED MODALS & HYPOTHETICALS ---
+            { id: 'p141', text: "You might as well tell the truth..." }, { id: 'p141', text: "...because they will find out anyway." },
+            { id: 'p142', text: "He could well have forgotten..." }, { id: 'p142', text: "...about our scheduled meeting." },
+            { id: 'p143', text: "They needn't have gone to such trouble..." }, { id: 'p143', text: "...preparing a lavish feast." },
+            { id: 'p144', text: "I would sooner quit my job..." }, { id: 'p144', text: "...than compromise my principles." },
+            { id: 'p145', text: "It's high time..." }, { id: 'p145', text: "...the government addressed the housing crisis." },
+            { id: 'p146', text: "I'd rather you didn't smoke..." }, { id: 'p146', text: "...inside the house, if you don't mind." },
+            { id: 'p147', text: "You are to remain in your seats..." }, { id: 'p147', text: "...until the captain turns off the sign." },
+            { id: 'p148', text: "She may well be..." }, { id: 'p148', text: "...the most talented musician of her generation." },
+            { id: 'p149', text: "We would have preferred it..." }, { id: 'p149', text: "...if you had notified us in advance." },
+            { id: 'p150', text: "As far as I can ascertain..." }, { id: 'p150', text: "...the document is completely genuine." },
+            // --- ADVANCED RELATIVE CLAUSES ---
+            { id: 'p151', text: "The company, the CEO of which..." }, { id: 'p151', text: "...was recently indicted, faces bankruptcy." },
+            { id: 'p152', text: "He offered a solution, the brilliance of which..." }, { id: 'p152', text: "...was immediately recognized by the board." },
+            { id: 'p153', text: "There are several issues, none of which..." }, { id: 'p153', text: "...can be easily resolved." },
+            { id: 'p154', text: "She wrote three novels, the most successful of which..." }, { id: 'p154', text: "...won the Booker Prize." },
+            { id: 'p155', text: "We attended a seminar, during which time..." }, { id: 'p155', text: "...we learned about quantum computing." },
+            { id: 'p156', text: "The extent to which he went to conceal the truth..." }, { id: 'p156', text: "...was truly staggering." },
+            { id: 'p157', text: "The facility, in which the experiments were conducted..." }, { id: 'p157', text: "...was heavily guarded." },
+            { id: 'p158', text: "He is a leader for whom..." }, { id: 'p158', text: "...I have the utmost respect." },
+            { id: 'p159', text: "The circumstances under which the treaty was signed..." }, { id: 'p159', text: "...were highly controversial." },
+            { id: 'p160', text: "They reached a point beyond which..." }, { id: 'p160', text: "...negotiation was no longer possible." },
+            { id: 'p161', text: "The premise upon which the theory is based..." }, { id: 'p161', text: "...has been proven entirely false." },
+            { id: 'p162', text: "She made a critical error, as a result of which..." }, { id: 'p162', text: "...she lost her executive position." },
+            { id: 'p163', text: "Those were the principles to which..." }, { id: 'p163', text: "...he dedicated his entire life." },
+            { id: 'p164', text: "The speed at which the virus mutated..." }, { id: 'p164', text: "...alarmed the global scientific community." },
+            { id: 'p165', text: "He possesses a mathematical talent the likes of which..." }, { id: 'p165', text: "...has rarely been seen in this university." },
+
+            // --- COMPLEX PREPOSITIONAL & PHRASAL STRUCTURES ---
+            { id: 'p166', text: "With respect to your recent inquiry..." }, { id: 'p166', text: "...we have attached the requested documents." },
+            { id: 'p167', text: "In light of recent economic developments..." }, { id: 'p167', text: "...the fiscal policy will be heavily revised." },
+            { id: 'p168', text: "By dint of sheer hard work and perseverance..." }, { id: 'p168', text: "...she managed to pass the bar exam." },
+            { id: 'p169', text: "In the unlikely event of a catastrophic failure..." }, { id: 'p169', text: "...the backup systems will engage automatically." },
+            { id: 'p170', text: "On the verge of a nervous breakdown..." }, { id: 'p170', text: "...he finally took a leave of absence." },
+            { id: 'p171', text: "With the exception of a few minor spelling errors..." }, { id: 'p171', text: "...the dissertation is perfectly written." },
+            { id: 'p172', text: "By means of an intricate pulley system..." }, { id: 'p172', text: "...they hoisted the heavy archaeological equipment." },
+            { id: 'p173', text: "In accordance with strict company regulations..." }, { id: 'p173', text: "...all employees must wear visible ID badges." },
+            { id: 'p174', text: "For fear of waking the sleeping infant..." }, { id: 'p174', text: "...they conversed in hushed whispers." },
+            { id: 'p175', text: "At the behest of the prime minister..." }, { id: 'p175', text: "...an independent public inquiry was launched." },
+            { id: 'p176', text: "In stark contrast to his autocratic predecessor..." }, { id: 'p176', text: "...the new manager is highly approachable." },
+            { id: 'p177', text: "On the grounds of insufficient forensic evidence..." }, { id: 'p177', text: "...the case was abruptly dismissed by the judge." },
+            { id: 'p178', text: "For the sake of clarity and transparency..." }, { id: 'p178', text: "...let me reiterate the main contractual points." },
+            { id: 'p179', text: "In the wake of the devastating earthquake..." }, { id: 'p179', text: "...international humanitarian aid poured in." },
+            { id: 'p180', text: "By virtue of her extensive overseas experience..." }, { id: 'p180', text: "...she is the ideal candidate for the ambassador role." },
+
+            // --- MODALS OF DEDUCTION & SPECULATION ---
+            { id: 'p181', text: "He must have been completely exhausted..." }, { id: 'p181', text: "...to have slept through that deafening storm." },
+            { id: 'p182', text: "They can't have left the building already..." }, { id: 'p182', text: "...because their coats are still hanging here." },
+            { id: 'p183', text: "The ancient artifact could well have belonged..." }, { id: 'p183', text: "...to a prominent Roman emperor." },
+            { id: 'p184', text: "She might have been significantly delayed..." }, { id: 'p184', text: "...by the unexpected heavy traffic on the interstate." },
+            { id: 'p185', text: "You shouldn't have gone to such extreme lengths..." }, { id: 'p185', text: "...just to accommodate our dietary needs." },
+            { id: 'p186', text: "It may well be that the educational system..." }, { id: 'p186', text: "...is fundamentally flawed from the very start." },
+            { id: 'p187', text: "He couldn't possibly have known..." }, { id: 'p187', text: "...about the surprise corporate merger beforehand." },
+            { id: 'p188', text: "They must have been working relentlessly all night..." }, { id: 'p188', text: "...judging by the dark bags under their eyes." },
+            { id: 'p189', text: "The sharp decline in retail sales might be attributed..." }, { id: 'p189', text: "...to the recent shift in consumer buying trends." },
+            { id: 'p190', text: "We ought to have realized much sooner..." }, { id: 'p190', text: "...that the ambitious plan was doomed to fail." },
+            { id: 'p191', text: "The dinosaurs are widely believed to have been wiped out..." }, { id: 'p191', text: "...by a massive asteroid impact." },
+            { id: 'p192', text: "She would have been absolutely furious..." }, { id: 'p192', text: "...if she had seen the disastrous mess you made." },
+            { id: 'p193', text: "There is bound to be some fierce resistance..." }, { id: 'p193', text: "...when the controversial new policies are introduced." },
+            { id: 'p194', text: "He is highly unlikely to accept..." }, { id: 'p194', text: "...such an insultingly low financial offer." },
+            { id: 'p195', text: "It is reasonably safe to assume that..." }, { id: 'p195', text: "...the stock market will fluctuate this quarter." },
+
+            // --- ADVANCED COMPARISONS & DEGREE ---
+            { id: 'p196', text: "Nowhere near as complicated as it initially seems..." }, { id: 'p196', text: "...the software is actually quite user-friendly." },
+            { id: 'p197', text: "Nothing like as many people attended the conference..." }, { id: 'p197', text: "...as the organizers had initially anticipated." },
+            { id: 'p198', text: "By far the most compelling and logical argument..." }, { id: 'p198', text: "...was presented by the lead defense attorney." },
+            { id: 'p199', text: "It is substantially more difficult conceptually..." }, { id: 'p199', text: "...to master Mandarin than it is Spanish." },
+            { id: 'p200', text: "The current global financial crisis is vastly different..." }, { id: 'p200', text: "...from anything the industry has faced before." },
+            { id: 'p201', text: "He is every bit as talented and dedicated..." }, { id: 'p201', text: "...as his internationally famous older brother." },
+            { id: 'p202', text: "Not quite as successful as we had hoped..." }, { id: 'p202', text: "...the marketing campaign still generated some leads." },
+            { id: 'p203', text: "The structural damage was infinitely worse..." }, { id: 'p203', text: "...than the original engineering reports suggested." },
+            { id: 'p204', text: "It was easily the worst theatrical performance..." }, { id: 'p204', text: "...that I have ever had the misfortune to watch." },
+            { id: 'p205', text: "She is easily considered one of the most brilliant minds..." }, { id: 'p205', text: "...of her entire scientific generation." },
+            { id: 'p206', text: "The more I think about the risky proposal..." }, { id: 'p206', text: "...the less appealing the prospect becomes." },
+            { id: 'p207', text: "He has nowhere near enough practical experience..." }, { id: 'p207', text: "...to lead such a massive multinational team." },
+            { id: 'p208', text: "The revenue results were only marginally better..." }, { id: 'p208', text: "...than those recorded in the previous quarter." },
+            { id: 'p209', text: "It was as much a calculated political decision..." }, { id: 'p209', text: "...as it was a purely economic one." },
+            { id: 'p210', text: "Such is the immense magnitude of the climate problem..." }, { id: 'p210', text: "...that immediate global cooperation is required." },
+
+            // --- IDIOMATIC INVERSIONS & FRONTING ---
+            { id: 'p211', text: "Bitterly did he regret..." }, { id: 'p211', text: "...his hasty, uncalculated, and ill-advised words." },
+            { id: 'p212', text: "Well do I remember..." }, { id: 'p212', text: "...the very day we first met at the university." },
+            { id: 'p213', text: "Long have we awaited..." }, { id: 'p213', text: "...the arrival of this groundbreaking medical technology." },
+            { id: 'p214', text: "Gladly would I exchange places with him..." }, { id: 'p214', text: "...if it meant sparing her from such pain." },
+            { id: 'p215', text: "Many a time have I wondered silently..." }, { id: 'p215', text: "...what our lives might have been like." },
+            { id: 'p216', text: "Into the boardroom stormed the regional manager..." }, { id: 'p216', text: "...demanding an immediate and thorough explanation." },
+            { id: 'p217', text: "On the distant horizon loomed..." }, { id: 'p217', text: "...a dark, ominous, and terrifying storm cloud." },
+            { id: 'p218', text: "Such was her captivating eloquence..." }, { id: 'p218', text: "...that the entire crowded auditorium fell silent." },
+            { id: 'p219', text: "Try as he emphatically might..." }, { id: 'p219', text: "...he simply couldn't decipher the ancient cryptography." },
+            { id: 'p220', text: "Foolish though it may inevitably seem..." }, { id: 'p220', text: "...I still firmly believe in giving second chances." },
+            { id: 'p221', text: "Directly next to the modern bank stands..." }, { id: 'p221', text: "...the oldest operational bakery in the town." },
+            { id: 'p222', text: "In no way, shape, or form..." }, { id: 'p222', text: "...is this unethical corporate behavior acceptable." },
+            { id: 'p223', text: "Not for all the tea in China..." }, { id: 'p223', text: "...would I ever agree to such predatory terms." },
+            { id: 'p224', text: "Only by a stroke of sheer, unadulterated luck..." }, { id: 'p224', text: "...did they escape the rapidly burning building." },
+            { id: 'p225', text: "Under no illusion whatsoever should you be..." }, { id: 'p225', text: "...that this monumental task will be easy." },
+
+            // --- COMPLEX GERUNDS & INFINITIVES ---
+            { id: 'p226', text: "His failing to promptly report the hazardous incident..." }, { id: 'p226', text: "...led directly to his immediate dismissal." },
+            { id: 'p227', text: "There is absolutely no denying that..." }, { id: 'p227', text: "...the rate of climate change is rapidly accelerating." },
+            { id: 'p228', text: "I strongly and vehemently object to being treated..." }, { id: 'p228', text: "...like a disposable, second-class citizen." },
+            { id: 'p229', text: "She prides herself on having successfully built..." }, { id: 'p229', text: "...a multimillion-dollar tech company from scratch." },
+            { id: 'p230', text: "They narrowly avoided being caught red-handed..." }, { id: 'p230', text: "...by the newly installed security cameras." },
+            { id: 'p231', text: "He tearfully confessed to having embezzled..." }, { id: 'p231', text: "...hundreds of thousands of dollars from the charity." },
+            { id: 'p232', text: "It is practically no use trying to persuade her..." }, { id: 'p232', text: "...once she has stubbornly made up her mind." },
+            { id: 'p233', text: "To have achieved such unprecedented success at a young age..." }, { id: 'p233', text: "...is truly a remarkable feat." },
+            { id: 'p234', text: "The fugitive is widely believed to be hiding..." }, { id: 'p234', text: "...somewhere deep in the remote, rugged mountains." },
+            { id: 'p235', text: "I would much prefer to have been notified..." }, { id: 'p235', text: "...long before the executive decision was finalized." },
+            { id: 'p236', text: "She deeply resents being told what to do..." }, { id: 'p236', text: "...by supervisors with significantly less experience." },
+            { id: 'p237', text: "Having to commute for over three hours daily..." }, { id: 'p237', text: "...is both physically exhausting and mentally draining." },
+            { id: 'p238', text: "The ambitious team's succeeding depends entirely on..." }, { id: 'p238', text: "...their collective ability to cooperate under pressure." },
+            { id: 'p239', text: "I couldn't help wondering silently to myself..." }, { id: 'p239', text: "...if we had inadvertently taken the wrong path." },
+            { id: 'p240', text: "To put it mildly without causing panic..." }, { id: 'p240', text: "...the infrastructure project was a complete disaster." },
+
+            // --- NOUN PHRASES & APPOSITIVES ---
+            { id: 'p241', text: "A recognized pioneer in the field of robotics..." }, { id: 'p241', text: "...she currently holds over fifty international patents." },
+            { id: 'p242', text: "The discovery of penicillin, a major turning point in medicine,..." }, { id: 'p242', text: "...has saved countless millions of lives globally." },
+            { id: 'p243', text: "His stubborn refusal to compromise on key issues..." }, { id: 'p243', text: "...resulted in a lengthy and costly diplomatic stalemate." },
+            { id: 'p244', text: "The sudden realization that he had been betrayed..." }, { id: 'p244', text: "...hit him with the force of a ton of bricks." },
+            { id: 'p245', text: "A man of profound intellect and unwavering integrity..." }, { id: 'p245', text: "...he was universally revered by his academic peers." },
+            { id: 'p246', text: "The unprecedented sudden influx of foreign investment..." }, { id: 'p246', text: "...boosted the struggling local economy significantly." },
+            { id: 'p247', text: "Her notorious tendency to micromanage every minor detail..." }, { id: 'p247', text: "...alienated even her most loyal and hardworking staff." },
+            { id: 'p248', text: "An undisputed and timeless masterpiece of modern cinema..." }, { id: 'p248', text: "...the independent film won eight Academy Awards." },
+            { id: 'p249', text: "The ongoing philosophical debate over artificial intelligence..." }, { id: 'p249', text: "...raises profound and deeply unsettling ethical questions." },
+            { id: 'p250', text: "A magnificent testament to human engineering and ingenuity..." }, { id: 'p250', text: "...the suspension bridge spans the massive river gorge." },
+            { id: 'p251', text: "His sheer, unadulterated lack of basic empathy..." }, { id: 'p251', text: "...made him a ruthless and feared corporate negotiator." },
+            { id: 'p252', text: "The widespread societal assumption that wealth equals happiness..." }, { id: 'p252', text: "...is fundamentally and demonstrably flawed." },
+            { id: 'p253', text: "A notoriously difficult and complex language to master..." }, { id: 'p253', text: "...Russian requires years of dedicated daily study." },
+            { id: 'p254', text: "The legacy company's reluctance to adapt to new technologies..." }, { id: 'p254', text: "...caused its eventual and inevitable financial downfall." },
+            { id: 'p255', text: "A stark and sobering reminder of our fragile existence..." }, { id: 'p255', text: "...the global pandemic altered daily life permanently." },
+
+            // --- ADVANCED TIME & SEQUENCE CLAUSES ---
+            { id: 'p256', text: "Scarcely had the wet ink dried on the historic contract..." }, { id: 'p256', text: "...when the bitter legal disputes officially began." },
+            { id: 'p257', text: "The exact moment he stepped into the silent room..." }, { id: 'p257', text: "...he instinctively knew something was terribly wrong." },
+            { id: 'p258', text: "No sooner is the complex software system updated..." }, { id: 'p258', text: "...than malicious hackers find new, exploitable vulnerabilities." },
+            { id: 'p259', text: "Hardly a single week goes by nowadays..." }, { id: 'p259', text: "...without a new, paradigm-shifting technological breakthrough." },
+            { id: 'p260', text: "Ever since he permanently relocated to bustling Tokyo..." }, { id: 'p260', text: "...his overall perspective on life has drastically shifted." },
+            { id: 'p261', text: "Prior to joining the prestigious executive board..." }, { id: 'p261', text: "...she served as the regional director for Asia." },
+            { id: 'p262', text: "Subsequent to the exhaustive federal investigation..." }, { id: 'p262', text: "...new banking regulations were strictly and swiftly enforced." },
+            { id: 'p263', text: "Not until the referee's final whistle blew..." }, { id: 'p263', text: "...did the anxious fans finally begin to celebrate." },
+            { id: 'p264', text: "Once the preliminary laboratory tests are concluded..." }, { id: 'p264', text: "...comprehensive human trials will officially commence." },
+            { id: 'p265', text: "Pending final approval from the medical ethics committee..." }, { id: 'p265', text: "...the controversial research is temporarily halted." },
+            { id: 'p266', text: "Immediately on arriving at the chaotic scene of the crime..." }, { id: 'p266', text: "...the detectives cordoned off the entire surrounding area." },
+            { id: 'p267', text: "Long before the ubiquitous advent of the global internet..." }, { id: 'p267', text: "...information spread slowly through merchant trade routes." },
+            { id: 'p268', text: "Immediately upon verified receipt of the initial payment..." }, { id: 'p268', text: "...the bulk goods will be dispatched to the warehouse." },
+            { id: 'p269', text: "For as long as I can reasonably remember..." }, { id: 'p269', text: "...she has been deeply passionate about theoretical astronomy." },
+            { id: 'p270', text: "By the time the heavily armed reinforcements arrived..." }, { id: 'p270', text: "...the fierce battle had already been decisively won." },
+
+            // --- CONCESSION, CAUSE & EFFECT CLAUSES ---
+            { id: 'p271', text: "Owing to highly unforeseen and severe weather circumstances..." }, { id: 'p271', text: "...the massive outdoor charity concert has been canceled." },
+            { id: 'p272', text: "Given the unprecedented complexity of the geopolitical issue..." }, { id: 'p272', text: "...a quick and painless resolution is highly unlikely." },
+            { id: 'p273', text: "Much as we would genuinely like to help your organization..." }, { id: 'p273', text: "...our hands are firmly tied by strict legal constraints." },
+            { id: 'p274', text: "Seeing that we have definitively exhausted all viable options..." }, { id: 'p274', text: "...we must now accept defeat gracefully." },
+            { id: 'p275', text: "So utterly devastating was the academic critique..." }, { id: 'p275', text: "...that the author completely abandoned his manuscript." },
+            { id: 'p276', text: "Consequently, the fragile global supply chain broke down..." }, { id: 'p276', text: "...leading directly to widespread supermarket shortages." },
+            { id: 'p277', text: "Hence the absolute need for a comprehensive, multi-layered strategy..." }, { id: 'p277', text: "...to adequately combat sophisticated cyber threats." },
+            { id: 'p278', text: "In view of the rapidly deteriorating alpine weather conditions..." }, { id: 'p278', text: "...the dangerous summit attempt was aborted." },
+            { id: 'p279', text: "However well-intentioned his spontaneous remarks were..." }, { id: 'p279', text: "...they caused significant and unintended public offense." },
+            { id: 'p280', text: "Insofar as it directly affects general public safety..." }, { id: 'p280', text: "...the government has a fundamental duty to intervene." },
+            { id: 'p281', text: "Such is the overwhelming demand for affordable housing..." }, { id: 'p281', text: "...that suburban property prices have skyrocketed." },
+            { id: 'p282', text: "Accordingly, we have significantly adjusted our annual budget..." }, { id: 'p282', text: "...to accurately reflect the recent surge in inflation." },
+            { id: 'p283', text: "Regardless of whether you personally agree with the mandate..." }, { id: 'p283', text: "...the new federal law takes effect tomorrow." },
+            { id: 'p284', text: "For fear of triggering widespread economic panic..." }, { id: 'p284', text: "...the financial authorities withheld the dire information." },
+            { id: 'p285', text: "Lest we forget the ultimate sacrifices made by the soldiers..." }, { id: 'p285', text: "...a grand memorial was erected in the city square." },
+
+            // --- MIXED ADVANCED STRUCTURES & SUBJUNCTIVES ---
+            { id: 'p286', text: "To exactly what extent this bold policy will succeed..." }, { id: 'p286', text: "...remains entirely to be seen by economic analysts." },
+            { id: 'p287', text: "What with the rising inflation and increasingly high taxes..." }, { id: 'p287', text: "...it's becoming incredibly hard for families to make ends meet." },
+            { id: 'p288', text: "There being absolutely no further urgent business to discuss..." }, { id: 'p288', text: "...the board meeting was officially adjourned." },
+            { id: 'p289', text: "It isn't so much a distinct lack of raw talent..." }, { id: 'p289', text: "...as it is a profound lack of discipline and dedication." },
+            { id: 'p290', text: "Be he a powerful king or a lowly street beggar..." }, { id: 'p290', text: "...the rule of law applies equally and fairly to all." },
+            { id: 'p291', text: "Whosoever shall knowingly violate this international treaty..." }, { id: 'p291', text: "...shall face severe, crippling economic sanctions." },
+            { id: 'p292', text: "The steering committee comprises ten distinguished members..." }, { id: 'p292', text: "...each of whom is a recognized expert in their field." },
+            { id: 'p293', text: "As is so often the case with innovative tech startups..." }, { id: 'p293', text: "...initial revenue growth was painfully and agonizingly slow." },
+            { id: 'p294', text: "Except insofar as is strictly legally necessary..." }, { id: 'p294', text: "...your personal user data will not be retained by our servers." },
+            { id: 'p295', text: "We are completely at a loss as to exactly how..." }, { id: 'p295', text: "...the massive security breach occurred entirely undetected." },
+            { id: 'p296', text: "Not to mention the undeniably exorbitant financial cost..." }, { id: 'p296', text: "...the physical logistics of the plan are practically impossible." },
+            { id: 'p297', text: "Were it to unfortunately fall into the wrong hands..." }, { id: 'p297', text: "...the biological weapon would be globally catastrophic." },
+            { id: 'p298', text: "In the unlikely event that the primary data server fails..." }, { id: 'p298', text: "...the cloud backup will engage automatically within seconds." },
+            { id: 'p299', text: "Suffice it to say without going into painful details..." }, { id: 'p299', text: "...the client presentation did not go as smoothly as planned." },
+            { id: 'p300', text: "It absolutely goes without saying that..." }, { id: 'p300', text: "...your medical confidentiality will be strictly maintained." },
+            // --- ADVANCED PASSIVES & CAUSATIVES ---
+            { id: 'p301', text: "It is widely hypothesized that..." }, { id: 'p301', text: "...the quantum encryption cannot be broken." },
+            { id: 'p302', text: "The cryptographic algorithm was deemed..." }, { id: 'p302', text: "...to be impenetrable by modern standards." },
+            { id: 'p303', text: "He had his academic research published..." }, { id: 'p303', text: "...in a highly prestigious mathematical journal." },
+            { id: 'p304', text: "The mathematical proof is generally considered..." }, { id: 'p304', text: "...to be one of the greatest achievements of the century." },
+            { id: 'p305', text: "Patients are strongly advised to be monitored..." }, { id: 'p305', text: "...for any adverse psychological side effects." },
+            { id: 'p306', text: "The complex data structure was observed to be..." }, { id: 'p306', text: "...highly resistant to cyber manipulation." },
+            { id: 'p307', text: "The new post-quantum security measures are expected..." }, { id: 'p307', text: "...to be fully implemented by next fiscal year." },
+            { id: 'p308', text: "It has been conclusively demonstrated that..." }, { id: 'p308', text: "...nonlinear programming optimizes financial outcomes." },
+            { id: 'p309', text: "The variables were deliberately manipulated..." }, { id: 'p309', text: "...to test the absolute limits of the equation." },
+            { id: 'p310', text: "Such anomalies are incredibly rarely found..." }, { id: 'p310', text: "...in a naturally occurring biological ecosystem." },
+            { id: 'p311', text: "They got the faulty mainframe server replaced..." }, { id: 'p311', text: "...before the massive data breach could occur." },
+            { id: 'p312', text: "The prime suspect is thought to have fled..." }, { id: 'p312', text: "...using a heavily forged international passport." },
+            { id: 'p313', text: "It was unanimously agreed upon by the committee..." }, { id: 'p313', text: "...that the university curriculum needed an overhaul." },
+            { id: 'p314', text: "The revolutionary software is said to have been coded..." }, { id: 'p314', text: "...by a solitary undergraduate student." },
+            { id: 'p315', text: "Her groundbreaking thesis was heavily criticized..." }, { id: 'p315', text: "...for lacking sufficient empirical evidence." },
+            { id: 'p316', text: "The historical treaty was ultimately ratified..." }, { id: 'p316', text: "...despite fierce opposition from radical factions." },
+            { id: 'p317', text: "He was made to publicly retract his statements..." }, { id: 'p317', text: "...under the threat of severe legal action." },
+            { id: 'p318', text: "The underlying flaws in the theoretical model..." }, { id: 'p318', text: "...were eventually exposed by peer reviewers." },
+            { id: 'p319', text: "It remains to be definitively seen..." }, { id: 'p319', text: "...whether the economic stimulus package will work." },
+            { id: 'p320', text: "The ancient manuscript is currently being restored..." }, { id: 'p320', text: "...by a team of international linguistic experts." },
+
+            // --- INVERSIONS & FRONTING (Part 2) ---
+            { id: 'p321', text: "Not only does lattice-based cryptography offer security..." }, { id: 'p321', text: "...but it also withstands quantum computing attacks." },
+            { id: 'p322', text: "At no time during the exhaustive interrogation..." }, { id: 'p322', text: "...did the suspect confess to the crime." },
+            { id: 'p323', text: "Little did the skeptical investors realize..." }, { id: 'p323', text: "...that the tech startup would soon dominate the market." },
+            { id: 'p324', text: "Only by rigorously applying real analysis..." }, { id: 'p324', text: "...can we truly understand this complex function." },
+            { id: 'p325', text: "Under no circumstances are the encrypted files..." }, { id: 'p325', text: "...to be transferred over a public network." },
+            { id: 'p326', text: "Such is the profound complexity of the human brain..." }, { id: 'p326', text: "...that neurologists still struggle to map it." },
+            { id: 'p327', text: "Seldom has a scientific breakthrough generated..." }, { id: 'p327', text: "...so much ethical controversy and public debate." },
+            { id: 'p328', text: "Barely had the stock market opened for trading..." }, { id: 'p328', text: "...when the massive financial crash began." },
+            { id: 'p329', text: "Along the steep, treacherous mountain ridge..." }, { id: 'p329', text: "...marched the exhausted and freezing explorers." },
+            { id: 'p330', text: "In the very center of the bustling metropolis..." }, { id: 'p330', text: "...lies a tranquil and perfectly preserved garden." },
+            { id: 'p331', text: "Rarely do we witness a political phenomenon..." }, { id: 'p331', text: "...that completely transcends generational divides." },
+            { id: 'p332', text: "Scarcely had the legislative bill been passed..." }, { id: 'p332', text: "...when citizens took to the streets in protest." },
+            { id: 'p333', text: "On no account must the fragile laboratory samples..." }, { id: 'p333', text: "...be exposed to direct ultraviolet radiation." },
+            { id: 'p334', text: "Only when the global temperature rises significantly..." }, { id: 'p334', text: "...will the true extent of the damage be visible." },
+            { id: 'p335', text: "Not until the mathematical equation was solved..." }, { id: 'p335', text: "...did the physics experiment make logical sense." },
+            { id: 'p336', text: "So fiercely did the opposing debater argue..." }, { id: 'p336', text: "...that the audience was entirely swayed." },
+            { id: 'p337', text: "Out of the thick, impenetrable morning fog..." }, { id: 'p337', text: "...emerged the massive silhouette of the cargo ship." },
+            { id: 'p338', text: "Nowhere in the extensively documented historical archives..." }, { id: 'p338', text: "...is there any mention of this specific event." },
+            { id: 'p339', text: "Hardly had the renowned professor begun his lecture..." }, { id: 'p339', text: "...when the power completely failed." },
+            { id: 'p340', text: "Only through relentless, systematic trial and error..." }, { id: 'p340', text: "...was the chemical formula finally perfected." },
+
+            // --- COMPLEX CONDITIONALS & HYPOTHETICALS ---
+            { id: 'p341', text: "Were the central bank to suddenly raise interest rates..." }, { id: 'p341', text: "...the housing market would inevitably crash." },
+            { id: 'p342', text: "Had the structural engineers spotted the micro-fractures..." }, { id: 'p342', text: "...the tragic bridge collapse could have been averted." },
+            { id: 'p343', text: "Should the statistical data prove to be inaccurate..." }, { id: 'p343', text: "...the entire sociological study must be discarded." },
+            { id: 'p344', text: "But for the generous philanthropic donations..." }, { id: 'p344', text: "...the prestigious university would have closed." },
+            { id: 'p345', text: "Even if we were to transition entirely to renewable energy..." }, { id: 'p345', text: "...the existing environmental damage is irreversible." },
+            { id: 'p346', text: "Assuming the linear regression model holds true..." }, { id: 'p346', text: "...we can accurately predict consumer behavior." },
+            { id: 'p347', text: "Whether the abstract concept is morally right or wrong..." }, { id: 'p347', text: "...it remains entirely legal under current law." },
+            { id: 'p348', text: "If the government hadn't implemented strict tariffs..." }, { id: 'p348', text: "...domestic manufacturing would be non-existent today." },
+            { id: 'p349', text: "Given that the resources are extremely finite..." }, { id: 'p349', text: "...we must optimize our distribution networks." },
+            { id: 'p350', text: "Unless a drastic ideological paradigm shift occurs..." }, { id: 'p350', text: "...the societal inequalities will only widen." },
+            { id: 'p351', text: "Had she not possessed such a brilliant analytical mind..." }, { id: 'p351', text: "...she wouldn't be leading the data science team now." },
+            { id: 'p352', text: "Provided that all safety protocols are strictly observed..." }, { id: 'p352', text: "...the clinical trials may proceed to phase three." },
+            { id: 'p353', text: "Were it not for his exceptional talent in abstract algebra..." }, { id: 'p353', text: "...he would have struggled in the cryptography course." },
+            { id: 'p354', text: "On condition that the confidentiality agreement is signed..." }, { id: 'p354', text: "...the proprietary source code will be revealed." },
+            { id: 'p355', text: "Imagine the sheer technological leaps we could make..." }, { id: 'p355', text: "...if quantum computing became widely accessible." },
+            { id: 'p356', text: "Suppose the algorithm had generated a false positive..." }, { id: 'p356', text: "...the consequences for the patient would be dire." },
+            { id: 'p357', text: "If only they had listened to the ecological warnings..." }, { id: 'p357', text: "...the devastating deforestation could have been halted." },
+            { id: 'p358', text: "It's about time the international community recognized..." }, { id: 'p358', text: "...the urgent necessity of space debris management." },
+            { id: 'p359', text: "I would rather the negotiations took place in private..." }, { id: 'p359', text: "...than be subjected to intense media scrutiny." },
+            { id: 'p360', text: "Had the encryption key not been securely hashed..." }, { id: 'p360', text: "...the sensitive user data would have been leaked." },
+
+            // --- ADVANCED LINKERS & PREPOSITIONAL PHRASES ---
+            { id: 'p361', text: "Irrespective of his undeniably impressive credentials..." }, { id: 'p361', text: "...he fundamentally lacks the required leadership skills." },
+            { id: 'p362', text: "With regard to the recently proposed tax reforms..." }, { id: 'p362', text: "...the public consensus remains sharply divided." },
+            { id: 'p363', text: "By virtue of its highly strategic geographical location..." }, { id: 'p363', text: "...the port city became a dominant economic hub." },
+            { id: 'p364', text: "In light of the overwhelming statistical evidence..." }, { id: 'p364', text: "...the previous medical hypothesis has been debunked." },
+            { id: 'p365', text: "Contrary to popular mainstream belief..." }, { id: 'p365', text: "...introverts often make exceptionally effective leaders." },
+            { id: 'p366', text: "As opposed to simply memorizing dry historical facts..." }, { id: 'p366', text: "...students must learn to critically analyze events." },
+            { id: 'p367', text: "In the event of a catastrophic server failure..." }, { id: 'p367', text: "...all digital assets are backed up asynchronously." },
+            { id: 'p368', text: "Subsequent to the unexpected corporate takeover..." }, { id: 'p368', text: "...thousands of redundant jobs were callously eliminated." },
+            { id: 'p369', text: "By dint of relentless, uncompromising determination..." }, { id: 'p369', text: "...she shattered the long-standing glass ceiling." },
+            { id: 'p370', text: "For the purpose of ensuring total demographic anonymity..." }, { id: 'p370', text: "...all survey responses were completely encrypted." },
+            { id: 'p371', text: "With the notable exception of a few dissenting voices..." }, { id: 'p371', text: "...the legislative motion was passed unanimously." },
+            { id: 'p372', text: "In accordance with strict international aviation laws..." }, { id: 'p372', text: "...the grounded aircraft underwent rigorous inspection." },
+            { id: 'p373', text: "On the grounds of severe procedural irregularities..." }, { id: 'p373', text: "...the judge declared an immediate mistrial." },
+            { id: 'p374', text: "At the behest of the primary corporate stakeholders..." }, { id: 'p374', text: "...the ambitious expansion plan was temporarily shelved." },
+            { id: 'p375', text: "In lieu of a traditional written final examination..." }, { id: 'p375', text: "...students will submit a comprehensive research portfolio." },
+            { id: 'p376', text: "By means of an incredibly intricate network of tunnels..." }, { id: 'p376', text: "...the ancient civilization transported fresh water." },
+            { id: 'p377', text: "In stark contrast to the barren, desolate desert..." }, { id: 'p377', text: "...the oasis was teeming with vibrant life." },
+            { id: 'p378', text: "For fear of triggering a devastating diplomatic crisis..." }, { id: 'p378', text: "...the prime minister chose his words meticulously." },
+            { id: 'p379', text: "On behalf of the entire graduating cohort..." }, { id: 'p379', text: "...I would like to express our profound gratitude." },
+            { id: 'p380', text: "Apart from its obvious aesthetic and architectural appeal..." }, { id: 'p380', text: "...the building is entirely self-sufficient in energy." },
+
+            // --- COMPLEX NOUN CLAUSES ---
+            { id: 'p381', text: "The glaring fact that he intentionally falsified the data..." }, { id: 'p381', text: "...renders his entire academic thesis invalid." },
+            { id: 'p382', text: "How the ancient Egyptians constructed the pyramids..." }, { id: 'p382', text: "...remains a subject of intense historical debate." },
+            { id: 'p383', text: "What researchers found particularly astonishing..." }, { id: 'p383', text: "...was the bacteria's ability to consume plastic." },
+            { id: 'p384', text: "That the universe is continually and rapidly expanding..." }, { id: 'p384', text: "...is an accepted premise in modern astrophysics." },
+            { id: 'p385', text: "Whoever successfully solves this cryptographic puzzle..." }, { id: 'p385', text: "...will receive a substantial monetary reward." },
+            { id: 'p386', text: "Where the highly classified documents are currently hidden..." }, { id: 'p386', text: "...is a matter of national security." },
+            { id: 'p387', text: "Whether artificial intelligence will eventually replace human labor..." }, { id: 'p387', text: "...is a highly contentious sociological issue." },
+            { id: 'p388', text: "The assertion that wealth automatically guarantees happiness..." }, { id: 'p388', text: "...is deeply and fundamentally misguided." },
+            { id: 'p389', text: "Why the stock market plummeted so suddenly yesterday..." }, { id: 'p389', text: "...baffles even the most experienced financial analysts." },
+            { id: 'p390', text: "To suggest that climate change is a complete hoax..." }, { id: 'p390', text: "...is to ignore decades of rigorous empirical evidence." },
+            { id: 'p391', text: "What we desperately need right now in this crisis..." }, { id: 'p391', text: "...is decisive and uncompromising political leadership." },
+            { id: 'p392', text: "The widespread assumption that bilingualism delays cognitive development..." }, { id: 'p392', text: "...has been proven entirely false by neuroscientists." },
+            { id: 'p393', text: "Whichever political candidate wins the upcoming election..." }, { id: 'p393', text: "...will inherit a deeply fractured and divided nation." },
+            { id: 'p394', text: "That she managed to survive the harrowing ordeal..." }, { id: 'p394', text: "...is nothing short of a literal miracle." },
+            { id: 'p395', text: "How exactly the complex algorithms manipulate user feeds..." }, { id: 'p395', text: "...is a closely guarded corporate secret." },
+            { id: 'p396', text: "The deeply held belief that hard work inevitably leads to success..." }, { id: 'p396', text: "...is increasingly being challenged by modern economists." },
+            { id: 'p397', text: "Whatever arbitrary decision the executive board makes..." }, { id: 'p397', text: "...the employees will likely face severe repercussions." },
+            { id: 'p398', text: "The profound realization that they were utterly lost..." }, { id: 'p398', text: "...slowly dawned upon the exhausted hiking group." },
+            { id: 'p399', text: "Why the indigenous language became completely extinct..." }, { id: 'p399', text: "...is a tragedy studied extensively by anthropologists." },
+            { id: 'p400', text: "What deeply separates the brilliant from the merely competent..." }, { id: 'p400', text: "...is an unrelenting capacity for obsessive focus." },
+
+            // --- PARTICIPLE & ABSOLUTE CLAUSES ---
+            { id: 'p401', text: "Their financial funding having been completely withdrawn..." }, { id: 'p401', text: "...the research laboratory was forced to shut down." },
+            { id: 'p402', text: "Viewed from a strictly macroeconomic perspective..." }, { id: 'p402', text: "...the sudden tariff implementation is highly destructive." },
+            { id: 'p403', text: "Weather permitting, the spectacular astronomical event..." }, { id: 'p403', text: "...will be clearly visible to the naked eye." },
+            { id: 'p404', text: "Armed with an array of complex statistical models..." }, { id: 'p404', text: "...the actuaries predicted the insurance risks perfectly." },
+            { id: 'p405', text: "Not knowing how to defuse the escalating diplomatic tension..." }, { id: 'p405', text: "...the ambassador opted for complete silence." },
+            { id: 'p406', text: "All things considered, the controversial public infrastructure project..." }, { id: 'p406', text: "...was a resounding and undeniable success." },
+            { id: 'p407', text: "Plagued by constant and debilitating self-doubt..." }, { id: 'p407', text: "...the gifted artist systematically destroyed her own paintings." },
+            { id: 'p408', text: "Having extensively analyzed the complex Python script..." }, { id: 'p408', text: "...he easily identified the catastrophic memory leak." },
+            { id: 'p409', text: "Driven by an insatiable and obsessive thirst for knowledge..." }, { id: 'p409', text: "...he spent countless nights in the university library." },
+            { id: 'p410', text: "The fierce storm raging violently outside the cabin..." }, { id: 'p410', text: "...they huddled together near the crackling fireplace." },
+            { id: 'p411', text: "Compared to the incredibly intricate lattice structures..." }, { id: 'p411', text: "...traditional RSA encryption seems relatively primitive." },
+            { id: 'p412', text: "Utterly appalled by the horrific living conditions..." }, { id: 'p412', text: "...the journalist wrote a scathing investigative exposé." },
+            { id: 'p413', text: "Lacking the necessary empirical data to support his claim..." }, { id: 'p413', text: "...the scientist's theory was universally dismissed." },
+            { id: 'p414', text: "The final exams having concluded without any major incidents..." }, { id: 'p414', text: "...the students flooded the streets in celebration." },
+            { id: 'p415', text: "Based entirely on highly speculative anecdotal evidence..." }, { id: 'p415', text: "...the popular dietary trend is potentially dangerous." },
+            { id: 'p416', text: "Her reputation preceding her in the academic community..." }, { id: 'p416', text: "...she was instantly offered a tenured position." },
+            { id: 'p417', text: "Having been thoroughly briefed on the volatile situation..." }, { id: 'p417', text: "...the negotiator entered the room with cautious optimism." },
+            { id: 'p418', text: "Surrounded by a heavily armed security detail..." }, { id: 'p418', text: "...the whistleblower was escorted to the safe house." },
+            { id: 'p419', text: "Looking back on my tumultuous undergraduate years..." }, { id: 'p419', text: "...I realize how profoundly those experiences shaped me." },
+            { id: 'p420', text: "Time being of the absolute and critical essence..." }, { id: 'p420', text: "...we must bypass standard bureaucratic procedures." },
+
+            // --- CLEFT SENTENCES & EMPHASIS ---
+            { id: 'p421', text: "It is the insidious nature of the cyber virus..." }, { id: 'p421', text: "...that makes it so incredibly difficult to eradicate." },
+            { id: 'p422', text: "What makes the mathematical theorem so elegantly beautiful..." }, { id: 'p422', text: "...is its striking simplicity." },
+            { id: 'p423', text: "It was his profound lack of emotional intelligence..." }, { id: 'p423', text: "...that ultimately destroyed his political career." },
+            { id: 'p424', text: "The main reason why the specific species went extinct..." }, { id: 'p424', text: "...was rampant and unchecked habitat destruction." },
+            { id: 'p425', text: "It wasn't until the final quarter of the fiscal year..." }, { id: 'p425', text: "...that the company finally turned a profit." },
+            { id: 'p426', text: "All that is essentially required for this experiment..." }, { id: 'p426', text: "...is a vacuum chamber and a laser diode." },
+            { id: 'p427', text: "It is primarily in the realm of quantum mechanics..." }, { id: 'p427', text: "...that traditional physics completely breaks down." },
+            { id: 'p428', text: "What I genuinely fail to comprehend about his argument..." }, { id: 'p428', text: "...is his blatant disregard for historical context." },
+            { id: 'p429', text: "It was only by sheer, unrelenting persistence..." }, { id: 'p429', text: "...that she secured the highly coveted scholarship." },
+            { id: 'p430', text: "The one thing that absolutely terrifies the economists..." }, { id: 'p430', text: "...is the looming prospect of hyperinflation." },
+            { id: 'p431', text: "It was indeed the Romans who ingeniously introduced..." }, { id: 'p431', text: "...the concept of indoor plumbing to the region." },
+            { id: 'p432', text: "What actually transpired behind those closed doors..." }, { id: 'p432', text: "...we will probably never know for certain." },
+            { id: 'p433', text: "It is precisely because the algorithm is open-source..." }, { id: 'p433', text: "...that it has become so widely adopted globally." },
+            { id: 'p434', text: "The person to whom we owe our deepest gratitude..." }, { id: 'p434', text: "...is the anonymous and incredibly generous donor." },
+            { id: 'p435', text: "It is strictly their unwavering dedication to excellence..." }, { id: 'p435', text: "...that sets this university apart from the rest." },
+            { id: 'p436', text: "What triggered the sudden and catastrophic avalanche..." }, { id: 'p436', text: "...was a seemingly insignificant seismic tremor." },
+            { id: 'p437', text: "It was the stark realization of his own mortality..." }, { id: 'p437', text: "...that prompted him to radically change his lifestyle." },
+            { id: 'p438', text: "The place where the pivotal historical battle was fought..." }, { id: 'p438', text: "...is now ironically a peaceful shopping center." },
+            { id: 'p439', text: "It was out of a deep and profound sense of duty..." }, { id: 'p439', text: "...that he resigned from his lucrative corporate post." },
+            { id: 'p440', text: "What distinguishes the incredibly successful entrepreneurs..." }, { id: 'p440', text: "...is their incredible tolerance for high-risk failure." },
+
+            // --- ADVANCED RELATIVE CLAUSES (Part 2) ---
+            { id: 'p441', text: "The cryptographic protocol, the intricacies of which..." }, { id: 'p441', text: "...are known only to a select few, is unbreakable." },
+            { id: 'p442', text: "We encountered several formidable obstacles, the worst of which..." }, { id: 'p442', text: "...was a sudden loss of essential funding." },
+            { id: 'p443', text: "The theorem upon which this entire mathematical branch rests..." }, { id: 'p443', text: "...was formulated in the late eighteenth century." },
+            { id: 'p444', text: "He displayed a level of arrogant incompetence, as a result of which..." }, { id: 'p444', text: "...the entire department suffered greatly." },
+            { id: 'p445', text: "The ancient ruins, parts of which date back millennia..." }, { id: 'p445', text: "...are slowly being reclaimed by the dense jungle." },
+            { id: 'p446', text: "She is a highly demanding professor, to please whom..." }, { id: 'p446', text: "...requires an extraordinary amount of effort." },
+            { id: 'p447', text: "The specific parameters within which the AI operates..." }, { id: 'p447', text: "...must be rigorously defined and strictly monitored." },
+            { id: 'p448', text: "They proposed a radical solution, the potential ramifications of which..." }, { id: 'p448', text: "...were entirely ignored by the board." },
+            { id: 'p449', text: "The harsh climatic conditions under which the nomads survive..." }, { id: 'p449', text: "...are almost unimaginable to city dwellers." },
+            { id: 'p450', text: "He introduced a novel statistical method, by means of which..." }, { id: 'p450', text: "...the massive datasets could be analyzed rapidly." },
+            { id: 'p451', text: "The multinational corporation, the subsidiaries of which..." }, { id: 'p451', text: "...span the globe, exercises massive political power." },
+            { id: 'p452', text: "This is a fiercely contested domain, in the context of which..." }, { id: 'p452', text: "...any minor error is brutally magnified." },
+            { id: 'p453', text: "She possesses a rare linguistic fluency, thanks to which..." }, { id: 'p453', text: "...she easily navigates complex cultural nuances." },
+            { id: 'p454', text: "The ethical boundaries beyond which we must not cross..." }, { id: 'p454', text: "...are clearly outlined in the professional manifesto." },
+            { id: 'p455', text: "A severe economic depression, the likes of which..." }, { id: 'p455', text: "...has not been seen since the 1930s, is looming." },
+            { id: 'p456', text: "The fundamental criteria according to which we judge art..." }, { id: 'p456', text: "...are inherently subjective and culturally bound." },
+            { id: 'p457', text: "We compiled a comprehensive list of references, most of which..." }, { id: 'p457', text: "...are obscure and highly specialized academic journals." },
+            { id: 'p458', text: "The precise moment at which the chemical reaction occurs..." }, { id: 'p458', text: "...is extremely difficult to capture on camera." },
+            { id: 'p459', text: "The charismatic politician, the motives of whom..." }, { id: 'p459', text: "...are highly suspect, won by a landslide." },
+            { id: 'p460', text: "A new paradigm, the foundation of which is still shaky..." }, { id: 'p460', text: "...is attempting to disrupt the traditional industry." },
+
+            // --- ADVANCED CONCESSION & CONTRAST ---
+            { id: 'p461', text: "Much as the university administration denies it..." }, { id: 'p461', text: "...tuition fees are expected to rise exponentially." },
+            { id: 'p462', text: "Exhausted though the medical staff undoubtedly were..." }, { id: 'p462', text: "...they continued to treat the influx of patients." },
+            { id: 'p463', text: "However persuasive his eloquent rhetoric may be..." }, { id: 'p463', text: "...the underlying economic facts simply do not add up." },
+            { id: 'p464', text: "Flawed as the initial prototype undeniably was..." }, { id: 'p464', text: "...it paved the way for subsequent brilliant innovations." },
+            { id: 'p465', text: "Notwithstanding the overwhelmingly negative critical reviews..." }, { id: 'p465', text: "...the blockbuster movie broke global box office records." },
+            { id: 'p466', text: "For all its boasted technological advancements..." }, { id: 'p466', text: "...the new operating system is incredibly unstable." },
+            { id: 'p467', text: "Albeit a highly controversial and divisive figure..." }, { id: 'p467', text: "...he undeniably brought about necessary social reform." },
+            { id: 'p468', text: "No matter how meticulously you plan every detail..." }, { id: 'p468', text: "...unforeseen variables will inevitably arise." },
+            { id: 'p469', text: "In spite of the fact that he lacked formal qualifications..." }, { id: 'p469', text: "...he proved to be an exceptionally competent engineer." },
+            { id: 'p470', text: "While it is certainly true that automation displaces jobs..." }, { id: 'p470', text: "...it simultaneously creates entirely new tech industries." },
+            { id: 'p471', text: "Brilliant though the theoretical framework is on paper..." }, { id: 'p471', text: "...its practical application remains highly problematic." },
+            { id: 'p472', text: "Even assuming, for the sake of argument, that he is right..." }, { id: 'p472', text: "...his aggressive delivery completely alienates people." },
+            { id: 'p473', text: "Difficult as it may be to definitively accept..." }, { id: 'p473', text: "...we must prepare for the worst-case scenario." },
+            { id: 'p474', text: "Despite their fiercely proclaimed commitment to sustainability..." }, { id: 'p474', text: "...the corporation's carbon footprint continues to grow." },
+            { id: 'p475', text: "Regardless of the immense logistical challenges involved..." }, { id: 'p475', text: "...the humanitarian mission must proceed immediately." },
+            { id: 'p476', text: "As much as I abhor their aggressive marketing tactics..." }, { id: 'p476', text: "...I must admit their flagship product is superior." },
+            { id: 'p477', text: "Though arguably the greatest athlete of his generation..." }, { id: 'p477', text: "...his personal life was marred by constant scandal." },
+            { id: 'p478', text: "Be that as it may, the empirical data clearly shows..." }, { id: 'p478', text: "...a statistically significant downward trend." },
+            { id: 'p479', text: "However well-prepared the ambitious students thought they were..." }, { id: 'p479', text: "...the grueling olympiad proved to be overwhelmingly difficult." },
+            { id: 'p480', text: "Even if the ambitious policy is flawlessly executed..." }, { id: 'p480', text: "...tangible results won't be seen for at least a decade." },
+
+            // --- COMPLEX GERUNDS & INFINITIVES (Part 2) ---
+            { id: 'p481', text: "His persistent failing to acknowledge his own biases..." }, { id: 'p481', text: "...severely compromises his objectivity as a researcher." },
+            { id: 'p482', text: "I deeply resent being systematically overlooked..." }, { id: 'p482', text: "...for promotions I am clearly highly qualified for." },
+            { id: 'p483', text: "There is absolutely no point in endlessly agonizing..." }, { id: 'p483', text: "...over past decisions that cannot be undone." },
+            { id: 'p484', text: "She successfully avoided being completely dragged into..." }, { id: 'p484', text: "...the toxic and petty office politics." },
+            { id: 'p485', text: "To have completely mastered such a notoriously difficult language..." }, { id: 'p485', text: "...is a testament to her unrelenting dedication." },
+            { id: 'p486', text: "He strongly objected to the controversial proposal being..." }, { id: 'p486', text: "...rushed through the legislative process without debate." },
+            { id: 'p487', text: "The sudden prospect of having to relocate globally..." }, { id: 'p487', text: "...filled the young family with immense anxiety." },
+            { id: 'p488', text: "They eventually confessed to having deliberately manipulated..." }, { id: 'p488', text: "...the emission test results to pass the inspection." },
+            { id: 'p489', text: "It is incredibly frustrating to constantly be told..." }, { id: 'p489', text: "...that you lack the necessary requisite experience." },
+            { id: 'p490', text: "The sheer difficulty of reliably accurately predicting earthquakes..." }, { id: 'p490', text: "...makes proactive urban planning incredibly challenging." },
+            { id: 'p491', text: "He takes immense professional pride in having successfully navigated..." }, { id: 'p491', text: "...the company through its worst financial crisis." },
+            { id: 'p492', text: "Her unyielding insistence on exclusively using organic materials..." }, { id: 'p492', text: "...drastically increased the manufacturing overhead." },
+            { id: 'p493', text: "I simply cannot tolerate people casually disregarding..." }, { id: 'p493', text: "...the strict and necessary laboratory safety protocols." },
+            { id: 'p494', text: "To be completely honest with you, I consider his theory..." }, { id: 'p494', text: "...to be fundamentally flawed and intellectually lazy." },
+            { id: 'p495', text: "The primary disadvantage of heavily relying on automation..." }, { id: 'p495', text: "...is the inevitable massive displacement of the workforce." },
+            { id: 'p496', text: "He narrowly escaped being severely formally reprimanded..." }, { id: 'p496', text: "...thanks to an obscure legal loophole." },
+            { id: 'p497', text: "Their consistently refusing to actively engage in dialogue..." }, { id: 'p497', text: "...will only further exacerbate the ongoing conflict." },
+            { id: 'p498', text: "Having to meticulously manually format the extensive bibliography..." }, { id: 'p498', text: "...was the most tedious part of writing the thesis." },
+            { id: 'p499', text: "It's virtually impossible to completely prevent teenagers from..." }, { id: 'p499', text: "...experimenting with pushing societal boundaries." },
+            { id: 'p500', text: "To have been explicitly chosen from thousands of applicants..." }, { id: 'p500', text: "...is an incredible and undeniable honor." },
+            // --- ADVANCED INVERSIONS & FRONTING (Academic & Math Context) ---
+            { id: 'p501', text: "Hardly had the Python script finished executing..." }, { id: 'p501', text: "...when a critical memory allocation error appeared." },
+            { id: 'p502', text: "Not only does lattice-based cryptography resist quantum attacks..." }, { id: 'p502', text: "...but it is also computationally efficient." },
+            { id: 'p503', text: "Rarely do undergraduate students encounter..." }, { id: 'p503', text: "...such rigorously demanding proofs in real analysis." },
+            { id: 'p504', text: "Only by applying the finite volume element method..." }, { id: 'p504', text: "...can we approximate the solution to this differential equation." },
+            { id: 'p505', text: "Scarcely had the mathematical modeling contest begun..." }, { id: 'p505', text: "...when the team formulated their primary hypothesis." },
+            { id: 'p506', text: "On no account should the encrypted private keys..." }, { id: 'p506', text: "...be transmitted over an unsecured local network." },
+            { id: 'p507', text: "Seldom has a national science olympiad presented..." }, { id: 'p507', text: "...such an unconventional problem set." },
+            { id: 'p508', text: "Under no circumstances may the dataset be altered..." }, { id: 'p508', text: "...before the statistical regression is fully complete." },
+            { id: 'p509', text: "Only when the concept of open balls in Rn is grasped..." }, { id: 'p509', text: "...does metric space topology make intuitive sense." },
+            { id: 'p510', text: "Little did the educational content creators realize..." }, { id: 'p510', text: "...how profoundly their interactive videos would impact students." },
+            { id: 'p511', text: "Such was the sheer complexity of the post-quantum algorithm..." }, { id: 'p511', text: "...that it took weeks to optimize the code." },
+            { id: 'p512', text: "So elegant was the algebraic proof presented..." }, { id: 'p512', text: "...that the evaluating professors were left speechless." },
+            { id: 'p513', text: "Embedded deep within the complex neural network..." }, { id: 'p513', text: "...lies a hidden layer responsible for pattern recognition." },
+            { id: 'p514', text: "Not until the final lines of LaTeX were compiled..." }, { id: 'p514', text: "...did the scientific paper look truly professional." },
+            { id: 'p515', text: "In no way does this simplified linear model..." }, { id: 'p515', text: "...accurately reflect the chaotic nature of the market." },
+            { id: 'p516', text: "Barely had he submitted the academic manuscript..." }, { id: 'p516', text: "...when he spotted a glaring typographical error." },
+            { id: 'p517', text: "Nowhere in the extensive literature review..." }, { id: 'p517', text: "...is this specific cryptographic vulnerability addressed." },
+            { id: 'p518', text: "Only after meticulously debugging the R script..." }, { id: 'p518', text: "...did the data visualization render correctly." },
+            { id: 'p519', text: "Long have mathematicians sought a definitive answer..." }, { id: 'p519', text: "...to this notoriously elusive prime number conjecture." },
+            { id: 'p520', text: "Out of the rigorous and grueling bootcamp training..." }, { id: 'p520', text: "...emerged highly proficient and adaptable data analysts." },
+
+            // --- COMPLEX CONDITIONALS (Mixed & Hypothetical) ---
+            { id: 'p521', text: "Were the encryption standard to be suddenly compromised..." }, { id: 'p521', text: "...global financial communications would instantly collapse." },
+            { id: 'p522', text: "Had the community service program been funded earlier..." }, { id: 'p522', text: "...the rural village would have seen improvements months ago." },
+            { id: 'p523', text: "Should you encounter a cluster point in the sequence..." }, { id: 'p523', text: "...ensure you redefine the boundaries accordingly." },
+            { id: 'p524', text: "But for the invaluable mentorship he received..." }, { id: 'p524', text: "...he might not have secured the prestigious university award." },
+            { id: 'p525', text: "Even if quantum computers become commercially viable..." }, { id: 'p525', text: "...traditional symmetric cryptography still holds some relevance." },
+            { id: 'p526', text: "Had they utilized a more robust machine learning framework..." }, { id: 'p526', text: "...the predictive model would be significantly more accurate today." },
+            { id: 'p527', text: "Assuming that the permutation cipher is correctly implemented..." }, { id: 'p527', text: "...the output sequence should exactly match our theoretical matrix." },
+            { id: 'p528', text: "If he were not so passionately dedicated to teaching..." }, { id: 'p528', text: "...he wouldn't have spent his weekends drafting lesson plans." },
+            { id: 'p529', text: "Provided that the scholarship stipend arrives on schedule..." }, { id: 'p529', text: "...living expenses for the upcoming semester will be covered." },
+            { id: 'p530', text: "Unless the fundamental logic of the argument is sound..." }, { id: 'p530', text: "...the resulting conclusion will be inherently flawed." },
+            { id: 'p531', text: "Whether the university adopts the new academic policy or not..." }, { id: 'p531', text: "...students must continue to strive for excellence." },
+            { id: 'p532', text: "Suppose the optimization algorithm reaches a local minimum..." }, { id: 'p532', text: "...how would you force it to seek the global optimum?" },
+            { id: 'p533', text: "If it hadn't been for his profound grasp of abstract algebra..." }, { id: 'p533', text: "...the advanced cryptography exam would have been disastrous." },
+            { id: 'p534', text: "Were she to present her findings at the faculty symposium..." }, { id: 'p534', text: "...she would undoubtedly receive widespread acclaim." },
+            { id: 'p535', text: "Had the geometric visualization in TikZ been properly aligned..." }, { id: 'p535', text: "...the parallel lines would not have intersected on the diagram." },
+            { id: 'p536', text: "On condition that the data resilience strategy is viable..." }, { id: 'p536', text: "...the project will be pitched at the national selection." },
+            { id: 'p537', text: "Imagine we had relied solely on outdated cybersecurity measures..." }, { id: 'p537', text: "...our entire digital infrastructure would be severely compromised." },
+            { id: 'p538', text: "If he had pursued a purely theoretical research path..." }, { id: 'p538', text: "...he wouldn't be developing practical educational content today." },
+            { id: 'p539', text: "Should the matrix determinant equal exactly zero..." }, { id: 'p539', text: "...we can definitively conclude the system has no unique solution." },
+            { id: 'p540', text: "Had they not meticulously analyzed problems from 2000 to 2025..." }, { id: 'p540', text: "...they would have been wholly unprepared for the modeling contest." },
+
+            // --- PARTICIPLE CLAUSES (Cause, Time, Condition) ---
+            { id: 'p541', text: "Utilizing advanced data analytics in Python..." }, { id: 'p541', text: "...the researcher successfully predicted the demographic shift." },
+            { id: 'p542', text: "Fascinated by the intricate mechanics of lattice-based systems..." }, { id: 'p542', text: "...he dedicated his entire semester to studying cryptography." },
+            { id: 'p543', text: "Having secured a gold medal at the national olympiad..." }, { id: 'p543', text: "...he shifted his primary focus toward mentoring younger peers." },
+            { id: 'p544', text: "Recognized as an outstanding online educator..." }, { id: 'p544', text: "...she was invited to deliver the keynote address." },
+            { id: 'p545', text: "Drafted entirely in highly technical academic language..." }, { id: 'p545', text: "...the document was virtually incomprehensible to laymen." },
+            { id: 'p546', text: "Not wanting to overload the undergraduate students..." }, { id: 'p546', text: "...the lecturer simplified the notoriously difficult theorem." },
+            { id: 'p547', text: "Presented with an ambiguous mathematical conjecture..." }, { id: 'p547', text: "...the study group debated its validity for hours." },
+            { id: 'p548', text: "Having repeatedly debugged the complex JavaScript code..." }, { id: 'p548', text: "...the developer finally resolved the persistent slide error." },
+            { id: 'p549', text: "Driven by a genuine desire to empower rural communities..." }, { id: 'p549', text: "...the volunteers initiated a comprehensive financial literacy program." },
+            { id: 'p550', text: "Compiled using the latest version of LaTeX..." }, { id: 'p550', text: "...the final thesis looked remarkably polished and professional." },
+            { id: 'p551', text: "Knowing that passing the achievement-based selection was crucial..." }, { id: 'p551', text: "...she maintained a nearly perfect grade point average." },
+            { id: 'p552', text: "Frustrated by the hallucinated information provided by the AI..." }, { id: 'p552', text: "...the student manually cross-referenced the textbook chapters." },
+            { id: 'p553', text: "Travelling across the national rail network in executive class..." }, { id: 'p553', text: "...provided him with a quiet environment to study." },
+            { id: 'p554', text: "Awarded a monthly stipend for his exceptional academic merits..." }, { id: 'p554', text: "...he no longer needed to worry about basic living costs." },
+            { id: 'p555', text: "Immersed deeply in the world of competitive mathematics..." }, { id: 'p555', text: "...they often lost track of time during their training sessions." },
+            { id: 'p556', text: "Having verified his developer account and created repositories..." }, { id: 'p556', text: "...he was finally ready to deploy the application." },
+            { id: 'p557', text: "Tasked with drafting a compelling personal essay..." }, { id: 'p557', text: "...he chose to highlight his pure mathematical background." },
+            { id: 'p558', text: "Challenged by the notion that the set was not closed..." }, { id: 'p558', text: "...she rigorously re-examined the metric space definitions." },
+            { id: 'p559', text: "Inspired by the fast-paced nature of digital content creation..." }, { id: 'p559', text: "...he launched a successful educational platform." },
+            { id: 'p560', text: "Not having participated in the national entrance exam..." }, { id: 'p560', text: "...because he had already secured his university spot." },
+
+            // --- CLEFT SENTENCES & EMPHASIS ---
+            { id: 'p561', text: "It was his profound understanding of numerical methods..." }, { id: 'p561', text: "...that allowed him to bypass the computational bottleneck." },
+            { id: 'p562', text: "What distinguishes a truly great educator from a mediocre one..." }, { id: 'p562', text: "...is the sheer ability to make complex concepts accessible." },
+            { id: 'p563', text: "It is the insidious nature of cyber vulnerabilities..." }, { id: 'p563', text: "...that necessitates constant and proactive security patching." },
+            { id: 'p564', text: "The primary reason why the optimization model failed..." }, { id: 'p564', text: "...was the presence of an unexpected saddle point." },
+            { id: 'p565', text: "It was not until the transition strategy was fully implemented..." }, { id: 'p565', text: "...that the organization felt secure against modern threats." },
+            { id: 'p566', text: "All that the mentor required from the ambitious undergraduate..." }, { id: 'p566', text: "...was a clear, logically structured research proposal." },
+            { id: 'p567', text: "It is precisely in the realm of abstract algebra..." }, { id: 'p567', text: "...that many aspiring mathematicians find their true passion." },
+            { id: 'p568', text: "What I find most remarkable about his academic journey..." }, { id: 'p568', text: "...is his ability to balance studying with content creation." },
+            { id: 'p569', text: "It was the sudden and unexpected error in the distance parameters..." }, { id: 'p569', text: "...that ruined the coding theory calculation." },
+            { id: 'p570', text: "The one thing that absolutely must not be overlooked..." }, { id: 'p570', text: "...is the fundamental necessity of data privacy protection." },
+            { id: 'p571', text: "It was indeed the collaborative effort of the entire olympiad team..." }, { id: 'p571', text: "...that secured the overall championship trophy." },
+            { id: 'p572', text: "What happens when you apply a poorly defined linear regression..." }, { id: 'p572', text: "...is a completely skewed and unreliable prediction." },
+            { id: 'p573', text: "It is only recently that big data analytics methodology..." }, { id: 'p573', text: "...has been seamlessly integrated into the core curriculum." },
+            { id: 'p574', text: "The person to whom this brilliant scientific paper is dedicated..." }, { id: 'p574', text: "...is his highly esteemed introductory cryptography professor." },
+            { id: 'p575', text: "It was out of a genuine desire to improve digital literacy..." }, { id: 'p575', text: "...that the intensive mixed-method bootcamp was established." },
+            { id: 'p576', text: "What truly triggered the exponential growth of his online platform..." }, { id: 'p576', text: "...was a single, highly engaging interactive tutorial." },
+            { id: 'p577', text: "It is the undeniable robustness of the RSA algorithm..." }, { id: 'p577', text: "...that has kept it relevant for so many decades." },
+            { id: 'p578', text: "The specific village where the community service took place..." }, { id: 'p578', text: "...benefited immensely from the new financial awareness programs." },
+            { id: 'p579', text: "It was his unwavering dedication to mastering R programming..." }, { id: 'p579', text: "...that made him an indispensable asset to the research lab." },
+            { id: 'p580', text: "What makes the Nyström method so exceptionally useful..." }, { id: 'p580', text: "...is its efficiency in approximating integral equations." },
+
+            // --- CONCESSION, CAUSE & EFFECT (Advanced Linkers) ---
+            { id: 'p581', text: "Notwithstanding his undeniably heavy undergraduate workload..." }, { id: 'p581', text: "...he consistently delivered high-quality online teaching sessions." },
+            { id: 'p582', text: "In view of the rapidly evolving landscape of quantum computing..." }, { id: 'p582', text: "...NIST is urgently standardizing new cryptographic protocols." },
+            { id: 'p583', text: "Albeit a highly demanding and exhausting endeavor..." }, { id: 'p583', text: "...participating in the modeling contest was intellectually rewarding." },
+            { id: 'p584', text: "Owing to the overwhelming success of the educational campaign..." }, { id: 'p584', text: "...he was formally recognized as a prominent brand ambassador." },
+            { id: 'p585', text: "Difficult as the advanced real analysis textbook may be..." }, { id: 'p585', text: "...it is universally considered essential reading for mathematicians." },
+            { id: 'p586', text: "Hence the absolute necessity for rigorous peer review..." }, { id: 'p586', text: "...before any scientific article is published in a journal." },
+            { id: 'p587', text: "While it is true that theoretical mathematics is highly abstract..." }, { id: 'p587', text: "...its practical applications in cybersecurity are undeniable." },
+            { id: 'p588', text: "For fear of rendering the presentation overly academic..." }, { id: 'p588', text: "...he consciously adjusted his language to suit a broader audience." },
+            { id: 'p589', text: "Despite possessing an incredibly high grade point average..." }, { id: 'p589', text: "...he remained remarkably humble and continuously eager to learn." },
+            { id: 'p590', text: "Consequently, the flawed sequence transformation in the cipher..." }, { id: 'p590', text: "...resulted in a completely garbled and unreadable output." },
+            { id: 'p591', text: "Insofar as it pertains strictly to lattice-based structures..." }, { id: 'p591', text: "...this new theoretical framework is incredibly robust." },
+            { id: 'p592', text: "No matter how meticulously the Python code was written..." }, { id: 'p592', text: "...a minor syntax error caused the entire program to crash." },
+            { id: 'p593', text: "Such is the widespread popularity of digital subscription services..." }, { id: 'p593', text: "...that traditional media consumption has drastically plummeted." },
+            { id: 'p594', text: "Accordingly, the university administration has decided..." }, { id: 'p594', text: "...to officially commend the students for their national victories." },
+            { id: 'p595', text: "Regardless of whether you prefer descriptive or inferential statistics..." }, { id: 'p595', text: "...a solid grasp of probability theory is absolutely vital." },
+            { id: 'p596', text: "Even assuming the initial premise of the essay is correct..." }, { id: 'p596', text: "...the subsequent arguments lack sufficient empirical backing." },
+            { id: 'p597', text: "Much as I genuinely appreciate the detailed feedback..." }, { id: 'p597', text: "...I believe the original geometric visualization was accurate." },
+            { id: 'p598', text: "Seeing that we have definitively resolved the script errors..." }, { id: 'p598', text: "...we can now proceed to the final testing phase." },
+            { id: 'p599', text: "However prestigious the national olympiad undeniably is..." }, { id: 'p599', text: "...it should not overshadow one's core academic development." },
+            { id: 'p600', text: "For all his immense knowledge of computational algorithms..." }, { id: 'p600', text: "...he occasionally struggles with simple, everyday administrative tasks." },
+
+            // --- COMPLEX NOUN CLAUSES & APPOSITIVES ---
+            { id: 'p601', text: "The glaring fact that the AI confidently generated false information..." }, { id: 'p601', text: "...highlights the urgent need for critical fact-checking." },
+            { id: 'p602', text: "How exactly the encryption key was intercepted..." }, { id: 'p602', text: "...remains the central focus of the cybersecurity investigation." },
+            { id: 'p603', text: "A dedicated scholar and a passionate educational content creator..." }, { id: 'p603', text: "...he seamlessly bridges the gap between academia and the public." },
+            { id: 'p604', text: "That a set can be both open and closed simultaneously..." }, { id: 'p604', text: "...is a fundamental concept in certain topological spaces." },
+            { id: 'p605', text: "Whoever successfully implements this advanced optimization algorithm..." }, { id: 'p605', text: "...will significantly reduce the system's overall latency." },
+            { id: 'p606', text: "The widespread assumption that all undergraduates write like doctors..." }, { id: 'p606', text: "...is a misconception that often leads to overly dense prose." },
+            { id: 'p607', text: "Whether the university should invest more in quantum research..." }, { id: 'p607', text: "...is a topic fiercely debated among the faculty members." },
+            { id: 'p608', text: "An internationally recognized standard for data encryption..." }, { id: 'p608', text: "...AES has successfully protected sensitive information for years." },
+            { id: 'p609', text: "Why the permutation cipher failed to execute properly..." }, { id: 'p609', text: "...became immediately apparent upon reviewing the source code." },
+            { id: 'p610', text: "The assertion that only pure mathematics is intellectually rigorous..." }, { id: 'p610', text: "...blatantly ignores the immense complexity of applied sciences." },
+            { id: 'p611', text: "What we desperately require for this community service initiative..." }, { id: 'p611', text: "...is a sustainable, long-term financial management strategy." },
+            { id: 'p612', text: "The mathematical modeling competition, a grueling 96-hour marathon..." }, { id: 'p612', text: "...tests both analytical endurance and teamwork." },
+            { id: 'p613', text: "Whichever statistical methodology you ultimately choose to employ..." }, { id: 'p613', text: "...ensure your methodology is transparent and reproducible." },
+            { id: 'p614', text: "That he managed to balance his studies, teaching, and competitions..." }, { id: 'p614', text: "...speaks volumes about his extraordinary time management skills." },
+            { id: 'p615', text: "How the data resilience presentation will be received by the judges..." }, { id: 'p615', text: "...depends entirely on the clarity of the core message." },
+            { id: 'p616', text: "The profoundly unsettling realization that his code was irreparably flawed..." }, { id: 'p616', text: "...forced him to completely rethink his entire approach." },
+            { id: 'p617', text: "Whatever stylistic formatting choices you make in LaTeX..." }, { id: 'p617', text: "...consistency throughout the document is absolutely paramount." },
+            { id: 'p618', text: "The personal data protection officer, a newly appointed critical role..." }, { id: 'p618', text: "...ensures the organization complies with international privacy laws." },
+            { id: 'p619', text: "Why he chose to explicitly exclude his olympiad achievements from the essay..." }, { id: 'p619', text: "...was to maintain a strict focus on his academic background." },
+            { id: 'p620', text: "What separates a rudimentary analysis from a truly comprehensive one..." }, { id: 'p620', text: "...is the meticulous attention paid to edge cases." },
+
+            // --- ADVANCED RELATIVE CLAUSES (Part 3) ---
+            { id: 'p621', text: "The mathematical framework, the complexity of which is notorious..." }, { id: 'p621', text: "...forms the basis of modern abstract algebra." },
+            { id: 'p622', text: "They encountered numerous bugs in the script, the worst of which..." }, { id: 'p622', text: "...caused a catastrophic failure of the entire presentation." },
+            { id: 'p623', text: "The foundational theorems upon which this proof heavily relies..." }, { id: 'p623', text: "...were established by mathematicians centuries ago." },
+            { id: 'p624', text: "He demonstrated a remarkable pedagogical talent, as a result of which..." }, { id: 'p624', text: "...he was rapidly promoted to Star Master Teacher." },
+            { id: 'p625', text: "The academic journals, several volumes of which he read..." }, { id: 'p625', text: "...provided the necessary background for his thesis." },
+            { id: 'p626', text: "She is a highly respected mentor, to satisfy whom..." }, { id: 'p626', text: "...requires an exceptional level of analytical rigor." },
+            { id: 'p627', text: "The precise parameters within which the regression model operates..." }, { id: 'p627', text: "...must be explicitly stated in the methodology section." },
+            { id: 'p628', text: "They proposed a new cybersecurity protocol, the implications of which..." }, { id: 'p628', text: "...are currently being debated by industry experts." },
+            { id: 'p629', text: "The intense pressure under which the olympiad participants compete..." }, { id: 'p629', text: "...forges incredible mental resilience and focus." },
+            { id: 'p630', text: "He utilized a sophisticated Python library, by means of which..." }, { id: 'p630', text: "...the massive datasets were visualized flawlessly." },
+            { id: 'p631', text: "The educational technology company, the influence of which is vast..." }, { id: 'p631', text: "...has fundamentally changed how students prepare for exams." },
+            { id: 'p632', text: "This is a rapidly evolving scientific domain, in the context of which..." }, { id: 'p632', text: "...yesterday's breakthroughs quickly become obsolete." },
+            { id: 'p633', text: "He possesses a deep understanding of cryptography, thanks to which..." }, { id: 'p633', text: "...he easily grasps post-quantum algorithmic concepts." },
+            { id: 'p634', text: "The strict academic guidelines beyond which students must not stray..." }, { id: 'p634', text: "...are clearly outlined in the university syllabus." },
+            { id: 'p635', text: "An unprecedented technological shift, the likes of which..." }, { id: 'p635', text: "...we have never witnessed, is currently underway." },
+            { id: 'p636', text: "The rigorous criteria according to which the scientific papers are judged..." }, { id: 'p636', text: "...ensure only the highest quality research is published." },
+            { id: 'p637', text: "We analyzed dozens of past competition problems, most of which..." }, { id: 'p637', text: "...required out-of-the-box heuristic thinking." },
+            { id: 'p638', text: "The exact moment at which the algorithmic transition occurs..." }, { id: 'p638', text: "...is critical for maintaining uninterrupted system security." },
+            { id: 'p639', text: "The prominent professor, the rigorous standards of whom..." }, { id: 'p639', text: "...are legendary, commended the undergraduate's work." },
+            { id: 'p640', text: "A revolutionary computational approach, the basis of which..." }, { id: 'p640', text: "...is rooted in linear algebra, was introduced." },
+
+            // --- COMPLEX PREPOSITIONAL PHRASES (Part 2) ---
+            { id: 'p641', text: "With respect to the upcoming faculty-level selection process..." }, { id: 'p641', text: "...all presentation materials must be finalized by Friday." },
+            { id: 'p642', text: "In light of the recent advancements in machine learning..." }, { id: 'p642', text: "...the data analytics curriculum has been completely modernized." },
+            { id: 'p643', text: "By dint of sheer intellectual curiosity and perseverance..." }, { id: 'p643', text: "...she mastered the complexities of abstract mathematics." },
+            { id: 'p644', text: "In the unlikely event of a discrepancy in the calculations..." }, { id: 'p644', text: "...please consult the original source data immediately." },
+            { id: 'p645', text: "On the verge of uncovering a significant mathematical proof..." }, { id: 'p645', text: "...the research team worked late into the night." },
+            { id: 'p646', text: "With the exception of a few minor formatting errors in LaTeX..." }, { id: 'p646', text: "...the scientific article is ready for submission." },
+            { id: 'p647', text: "By means of an elegantly written script..." }, { id: 'p647', text: "...the repetitive administrative tasks were fully automated." },
+            { id: 'p648', text: "In accordance with the stringent guidelines set by LPDP..." }, { id: 'p648', text: "...scholarship recipients must maintain a high GPA." },
+            { id: 'p649', text: "For fear of corrupting the delicate operational database..." }, { id: 'p649', text: "...the system administrator locked all external access." },
+            { id: 'p650', text: "At the behest of his academic mentor..." }, { id: 'p650', text: "...he agreed to schedule a virtual meeting to discuss his progress." },
+            { id: 'p651', text: "In stark contrast to traditional pedagogical methods..." }, { id: 'p651', text: "...his online classes are highly interactive and engaging." },
+            { id: 'p652', text: "On the grounds of insufficient rigorous empirical backing..." }, { id: 'p652', text: "...the initial hypothesis was reluctantly rejected." },
+            { id: 'p653', text: "For the sake of absolute academic integrity..." }, { id: 'p653', text: "...all sources must be properly cited in the bibliography." },
+            { id: 'p654', text: "In the wake of the highly publicized data breach..." }, { id: 'p654', text: "...companies heavily invested in lattice-based cryptography." },
+            { id: 'p655', text: "By virtue of his extensive background in competitive logic..." }, { id: 'p655', text: "...he easily dissects complex philosophical arguments." },
+
+            // --- DOUBLE COMPARATIVES & CORRELATIVES (Part 2) ---
+            { id: 'p656', text: "The more complex the encryption algorithm becomes..." }, { id: 'p656', text: "...the more computational power is required to run it." },
+            { id: 'p657', text: "The harder you train for the national olympiad..." }, { id: 'p657', text: "...the more intuitive the problem-solving process feels." },
+            { id: 'p658', text: "Less publicized, but arguably equally important..." }, { id: 'p658', text: "...is the role of soft skills in a scientific career." },
+            { id: 'p659', text: "Just as theoretical knowledge is undeniably crucial..." }, { id: 'p659', text: "...so too is the ability to apply it practically." },
+            { id: 'p660', text: "Not only is the proposed mathematical model highly accurate..." }, { id: 'p660', text: "...but it is also remarkably elegant in its simplicity." },
+            { id: 'p661', text: "The higher the number of variables introduced..." }, { id: 'p661', text: "...the exponentially greater the margin for error becomes." },
+            { id: 'p662', text: "Neither the principal investigators..." }, { id: 'p662', text: "...nor the graduate assistants could replicate the anomaly." },
+            { id: 'p663', text: "Whether motivated by sheer curiosity or academic ambition..." }, { id: 'p663', text: "...his dedication to his studies is truly inspiring." },
+            { id: 'p664', text: "Scarcely a day passes in the rapidly evolving tech sector..." }, { id: 'p664', text: "...without a new software update being officially released." },
+            { id: 'p665', text: "The longer the organization delays implementing security protocols..." }, { id: 'p665', text: "...the more vulnerable they become to external threats." },
+
+            // --- ADVANCED PASSIVES & REPORTING VERBS (Part 2) ---
+            { id: 'p666', text: "It is widely anticipated by leading economists that..." }, { id: 'p666', text: "...the transition to digital currencies is inevitable." },
+            { id: 'p667', text: "The innovative pedagogical approach is estimated to be..." }, { id: 'p667', text: "...twice as effective as traditional rote memorization." },
+            { id: 'p668', text: "The prominent academic is rumored to have been..." }, { id: 'p668', text: "...shortlisted for the prestigious international award." },
+            { id: 'p669', text: "The sophisticated malware was observed to passively intercept..." }, { id: 'p669', text: "...thousands of encrypted packets per second." },
+            { id: 'p670', text: "It was unanimously resolved by the university senate that..." }, { id: 'p670', text: "...all undergraduate theses must undergo plagiarism checks." },
+            { id: 'p671', text: "The newly appointed CEO is reported to be strictly enforcing..." }, { id: 'p671', text: "...a highly controversial restructuring policy." },
+            { id: 'p672', text: "This foundational mathematical concept is considered to represent..." }, { id: 'p672', text: "...the absolute bedrock of modern computational theory." },
+            { id: 'p673', text: "The sweeping educational reforms are expected to bring about..." }, { id: 'p673', text: "...a profound shift in national literacy rates." },
+            { id: 'p674', text: "The developer was made to meticulously rewrite the code..." }, { id: 'p674', text: "...after a severe logic flaw was discovered." },
+            { id: 'p675', text: "It has been repeatedly alleged by several whistleblowers that..." }, { id: 'p675', text: "...the corporation knowingly ignored the safety warnings." },
+
+            // --- COMPLEX GERUNDS & INFINITIVES (Part 3) ---
+            { id: 'p676', text: "His abruptly refusing to participate in the collaborative research..." }, { id: 'p676', text: "...strained his relationship with the faculty." },
+            { id: 'p677', text: "I deeply appreciate being actively consulted..." }, { id: 'p677', text: "...before any major strategic decisions are finalized." },
+            { id: 'p678', text: "There is practically no use in continuously debating..." }, { id: 'p678', text: "...a scientific fact that has been empirically proven." },
+            { id: 'p679', text: "She masterfully avoided being drawn into..." }, { id: 'p679', text: "...the heated and unproductive ideological argument." },
+            { id: 'p680', text: "To have successfully organized such a massive national event..." }, { id: 'p680', text: "...demonstrates exceptional logistical capabilities." },
+            { id: 'p681', text: "He vehemently objected to the critical data being..." }, { id: 'p681', text: "...omitted from the final presentation." },
+            { id: 'p682', text: "The daunting prospect of having to defend his thesis publicly..." }, { id: 'p682', text: "...kept him awake for several consecutive nights." },
+            { id: 'p683', text: "The corporation eventually admitted to having systematically underpaid..." }, { id: 'p683', text: "...hundreds of its contracted overseas workers." },
+            { id: 'p684', text: "It is thoroughly demotivating to perpetually be told..." }, { id: 'p684', text: "...that your ambitious goals are fundamentally unrealistic." },
+            { id: 'p685', text: "The sheer necessity of flawlessly maintaining the server architecture..." }, { id: 'p685', text: "...requires a dedicated team of IT professionals." },
+            { id: 'p686', text: "She takes enormous pride in having independently developed..." }, { id: 'p686', text: "...an application that millions of people use daily." },
+            { id: 'p687', text: "His rigid insistence on adhering exclusively to outdated methods..." }, { id: 'p687', text: "...severely hindered the team's overall productivity." },
+            { id: 'p688', text: "I simply cannot fathom anyone willfully ignoring..." }, { id: 'p688', text: "...the glaringly obvious environmental consequences." },
+            { id: 'p689', text: "To speak quite candidly regarding the current situation..." }, { id: 'p689', text: "...the proposed solution is completely inadequate." },
+            { id: 'p690', text: "The inherent danger of prematurely deploying the AI..." }, { id: 'p690', text: "...is the unpredictable nature of its learned biases." },
+
+            // --- MIXED STRUCTURES & SUBJUNCTIVES (Part 2) ---
+            { id: 'p691', text: "To what exact degree this educational intervention is effective..." }, { id: 'p691', text: "...will be meticulously analyzed in the upcoming study." },
+            { id: 'p692', text: "What with the stringent deadlines and heavy coursework..." }, { id: 'p692', text: "...maintaining a healthy work-life balance is arduous." },
+            { id: 'p693', text: "The required funding having been fully secured..." }, { id: 'p693', text: "...the ambitious development project can finally commence." },
+            { id: 'p694', text: "It isn't so much a lack of adequate theoretical knowledge..." }, { id: 'p694', text: "...as it is a failure to execute the practical application." },
+            { id: 'p695', text: "Be it a complex algorithm or a simple heuristic..." }, { id: 'p695', text: "...the logic must be absolutely flawless." },
+            { id: 'p696', text: "Whosoever deliberately violates the established code of conduct..." }, { id: 'p696', text: "...shall be subjected to immediate disciplinary action." },
+            { id: 'p697', text: "The advisory board consists of several industry veterans..." }, { id: 'p697', text: "...each of whom possesses invaluable practical experience." },
+            { id: 'p698', text: "As is virtually always the case with pioneering research..." }, { id: 'p698', text: "...the initial experiments yielded highly unpredictable results." },
+            { id: 'p699', text: "Except insofar as authorized by the lead investigator..." }, { id: 'p699', text: "...no laboratory equipment may be removed from the premises." },
+            { id: 'p700', text: "We are genuinely baffled as to precisely why..." }, { id: 'p700', text: "...the seemingly straightforward calculation produced an error." },
+
+            // --- ADVANCED MODALS & HYPOTHETICALS (Part 2) ---
+            { id: 'p701', text: "You might just as well accept the generous offer now..." }, { id: 'p701', text: "...because a better opportunity is highly unlikely to arise." },
+            { id: 'p702', text: "The project manager could well have underestimated..." }, { id: 'p702', text: "...the sheer magnitude of the logistical challenges." },
+            { id: 'p703', text: "They needn't have worried so excessively about the audit..." }, { id: 'p703', text: "...as their financial records were immaculately maintained." },
+            { id: 'p704', text: "I would infinitely rather endure a temporary hardship..." }, { id: 'p704', text: "...than sacrifice my long-term professional integrity." },
+            { id: 'p705', text: "It's high time that the global scientific community..." }, { id: 'p705', text: "...established a unified protocol for AI ethics." },
+            { id: 'p706', text: "I'd much prefer it if you didn't publicly disclose..." }, { id: 'p706', text: "...the highly sensitive details of our preliminary research." },
+            { id: 'p707', text: "All personnel are to strictly adhere to the guidelines..." }, { id: 'p707', text: "...until the state of emergency is officially lifted." },
+            { id: 'p708', text: "Given her unprecedented track record, she may well be..." }, { id: 'p708', text: "...the most qualified candidate we have ever interviewed." },
+            { id: 'p709', text: "We would have found it considerably more helpful..." }, { id: 'p709', text: "...had you provided the raw data alongside the summary." },
+            { id: 'p710', text: "As far as the forensic experts can definitively ascertain..." }, { id: 'p710', text: "...the digital footprint was intentionally erased." },
+
+            // --- FUTURE PERFECT & CONTINUOUS (Part 2) ---
+            { id: 'p711', text: "By the time the academic semester officially concludes..." }, { id: 'p711', text: "...she will have published two peer-reviewed articles." },
+            { id: 'p712', text: "Come the dawn of the next technological decade..." }, { id: 'p712', text: "...we will have been relying on quantum mechanics heavily." },
+            { id: 'p713', text: "By the middle of the twenty-first century..." }, { id: 'p713', text: "...artificial intelligence will have profoundly transformed society." },
+            { id: 'p714', text: "This exact time next week..." }, { id: 'p714', text: "...I'll be presenting my dissertation to the doctoral committee." },
+            { id: 'p715', text: "They will have fully completed the infrastructure overhaul..." }, { id: 'p715', text: "...long before the international delegates arrive." },
+            { id: 'p716', text: "The engineering team will be conducting rigorous stress tests..." }, { id: 'p716', text: "...continuously throughout the upcoming holiday weekend." },
+            { id: 'p717', text: "By 2030, environmentalists desperately hope we will have mitigated..." }, { id: 'p717', text: "...the most catastrophic effects of global warming." },
+            { id: 'p718', text: "He will have been studying advanced calculus for five years..." }, { id: 'p718', text: "...by the time he finally earns his master's degree." },
+            { id: 'p719', text: "Please refrain from interrupting the server during the update, as..." }, { id: 'p719', text: "...it will be compiling millions of lines of code." },
+            { id: 'p720', text: "By the time the severe vulnerability was officially patched..." }, { id: 'p720', text: "...the hackers had already extracted the database." },
+
+            // --- IDIOMATIC INVERSIONS & FRONTING (Part 2) ---
+            { id: 'p721', text: "Bitterly did the inexperienced investors regret..." }, { id: 'p721', text: "...ignoring the blatant warning signs of the market bubble." },
+            { id: 'p722', text: "Well do the seasoned professors remember..." }, { id: 'p722', text: "...the days before the internet revolutionized academic research." },
+            { id: 'p723', text: "Long have environmental activists fervently campaigned..." }, { id: 'p723', text: "...for stricter regulations on industrial carbon emissions." },
+            { id: 'p724', text: "Gladly would the overwhelmed manager delegate the task..." }, { id: 'p724', text: "...if he possessed a sufficiently trained and reliable team." },
+            { id: 'p725', text: "Many a brilliant mathematical hypothesis has been discarded..." }, { id: 'p725', text: "...simply due to a lack of empirical verifiability." },
+            { id: 'p726', text: "Into the crowded press conference strode the CEO..." }, { id: 'p726', text: "...prepared to address the escalating corporate scandal." },
+            { id: 'p727', text: "On the distant periphery of the known observable universe..." }, { id: 'p727', text: "...lie mysteries that defy our current laws of physics." },
+            { id: 'p728', text: "Such was the captivating charisma of the public speaker..." }, { id: 'p728', text: "...that the audience remained entirely spellbound for hours." },
+            { id: 'p729', text: "Try as the defense attorney persistently might..." }, { id: 'p729', text: "...he could not poke a single hole in the witness's testimony." },
+            { id: 'p730', text: "Inconceivable though the audacious plan may initially appear..." }, { id: 'p730', text: "...it is actually grounded in solid logistical realities." },
+
+            // --- COMPLEX NOUN PHRASES & APPOSITIVES (Part 2) ---
+            { id: 'p731', text: "A widely acknowledged expert in post-quantum cryptography..." }, { id: 'p731', text: "...he frequently consults for top-tier cybersecurity firms." },
+            { id: 'p732', text: "The invention of the transistor, a monumental leap in electronics,..." }, { id: 'p732', text: "...ushered in the era of modern digital computing." },
+            { id: 'p733', text: "Her steadfast refusal to accept the prevailing scientific dogma..." }, { id: 'p733', text: "...eventually led to a groundbreaking paradigm shift." },
+            { id: 'p734', text: "The terrifying realization that the AI had become self-aware..." }, { id: 'p734', text: "...is a common trope in dystopian science fiction." },
+            { id: 'p735', text: "A scholar of immense dedication and intellectual rigor..." }, { id: 'p735', text: "...she meticulously cross-referenced every single historical source." },
+            { id: 'p736', text: "The sudden and catastrophic failure of the power grid..." }, { id: 'p736', text: "...plunged the entire metropolitan area into absolute darkness." },
+            { id: 'p737', text: "His unfortunate tendency to overcomplicate simple procedures..." }, { id: 'p737', text: "...often resulted in unnecessary and costly project delays." },
+            { id: 'p738', text: "An undeniable triumph of modern structural engineering..." }, { id: 'p738', text: "...the skyscraper boasts unparalleled earthquake resistance." },
+            { id: 'p739', text: "The fiercely debated ethical implications of genetic editing..." }, { id: 'p739', text: "...continue to divide the international medical community." },
+            { id: 'p740', text: "A grim and devastating reminder of the destructive power of nature..." }, { id: 'p740', text: "...the tsunami decimated the coastal communities." },
+
+            // --- ADVANCED TIME & SEQUENCE CLAUSES (Part 2) ---
+            { id: 'p741', text: "Scarcely had the controversial legislation been enacted..." }, { id: 'p741', text: "...when multiple lawsuits were filed to overturn it." },
+            { id: 'p742', text: "The very moment the intricate algorithm successfully compiled..." }, { id: 'p742', text: "...a wave of immense relief washed over the developer." },
+            { id: 'p743', text: "No sooner is a novel cybersecurity defense mechanism deployed..." }, { id: 'p743', text: "...than hackers engineer a sophisticated method to bypass it." },
+            { id: 'p744', text: "Hardly a single academic conference passes these days..." }, { id: 'p744', text: "...without a heated debate regarding artificial intelligence." },
+            { id: 'p745', text: "Ever since the rigorous new quality control measures were introduced..." }, { id: 'p745', text: "...the overall defect rate has plummeted dramatically." },
+            { id: 'p746', text: "Prior to adopting the agile project management methodology..." }, { id: 'p746', text: "...the development team consistently missed critical deadlines." },
+            { id: 'p747', text: "Subsequent to the publication of the groundbreaking findings..." }, { id: 'p747', text: "...the lead researcher was inundated with interview requests." },
+            { id: 'p748', text: "Not until the completely independently verified results were published..." }, { id: 'p748', text: "...did the scientific community accept the bold claim." },
+            { id: 'p749', text: "Once the complex logistical parameters are firmly established..." }, { id: 'p749', text: "...the supply chain optimization can officially begin." },
+            { id: 'p750', text: "Pending a thorough and unbiased internal review..." }, { id: 'p750', text: "...the executive officer has been placed on administrative leave." },
+            // --- ADVANCED PASSIVES & IMPERSONAL CONSTRUCTIONS ---
+            { id: 'p751', text: "It is theoretically postulated that..." }, { id: 'p751', text: "...the cryptographic hash is completely collision-resistant." },
+            { id: 'p752', text: "The new heuristic algorithm is estimated..." }, { id: 'p752', text: "...to reduce computational time by at least half." },
+            { id: 'p753', text: "The controversial research paper is said to have been..." }, { id: 'p753', text: "...rejected by three major peer-reviewed journals." },
+            { id: 'p754', text: "The encrypted transmission was detected to be..." }, { id: 'p754', text: "...originating from an unknown, decentralized proxy server." },
+            { id: 'p755', text: "It was universally acknowledged by the panel that..." }, { id: 'p755', text: "...the mathematical proof was brilliantly executed." },
+            { id: 'p756', text: "The university's cyber infrastructure is expected to be..." }, { id: 'p756', text: "...fully modernized by the end of the decade." },
+            { id: 'p757', text: "He was subjected to a grueling technical interview..." }, { id: 'p757', text: "...before being offered the lead data scientist role." },
+            { id: 'p758', text: "It has been conclusively established that..." }, { id: 'p758', text: "...the cyberattack exploited a zero-day vulnerability." },
+            { id: 'p759', text: "The statistical variables were deliberately constrained..." }, { id: 'p759', text: "...to eliminate any potential confounding factors." },
+            { id: 'p760', text: "Such advanced topological concepts are rarely taught..." }, { id: 'p760', text: "...outside of specialized graduate-level mathematics courses." },
+            { id: 'p761', text: "They got the compromised database completely restored..." }, { id: 'p761', text: "...without losing any of the critical user information." },
+            { id: 'p762', text: "The fraudulent transactions are thought to have bypassed..." }, { id: 'p762', text: "...the automated anomaly detection systems." },
+            { id: 'p763', text: "It was firmly resolved by the ethics committee that..." }, { id: 'p763', text: "...the AI model exhibited unacceptable inherent biases." },
+            { id: 'p764', text: "The pioneering software is reputed to have been developed..." }, { id: 'p764', text: "...in a remarkably short and intense coding sprint." },
+            { id: 'p765', text: "Her innovative approach to teaching cryptography was praised..." }, { id: 'p765', text: "...for demystifying extremely complex subject matter." },
+            { id: 'p766', text: "The international cybersecurity treaty was finally ratified..." }, { id: 'p766', text: "...after months of tense multilateral negotiations." },
+            { id: 'p767', text: "The system administrator was made to urgently revoke..." }, { id: 'p767', text: "...all unauthorized access credentials immediately." },
+            { id: 'p768', text: "The structural weaknesses in the economic model..." }, { id: 'p768', text: "...were glaringly exposed during the market crash." },
+            { id: 'p769', text: "It remains to be rigorously and empirically verified..." }, { id: 'p769', text: "...whether the new cryptographic standard is truly secure." },
+            { id: 'p770', text: "The fragile historical manuscripts are currently being digitized..." }, { id: 'p770', text: "...to preserve their contents for future generations." },
+
+            // --- INVERSIONS & NEGATIVE ADVERBIALS ---
+            { id: 'p771', text: "Not only does the Nyström method provide accuracy..." }, { id: 'p771', text: "...but it also scales remarkably well with large datasets." },
+            { id: 'p772', text: "At no point during the intensive olympiad training..." }, { id: 'p772', text: "...did the mentor allow the students to lose focus." },
+            { id: 'p773', text: "Little did the novice programmers anticipate..." }, { id: 'p773', text: "...the immense difficulty of managing memory leaks." },
+            { id: 'p774', text: "Only by employing advanced calculus techniques..." }, { id: 'p774', text: "...could the team solve the optimization problem." },
+            { id: 'p775', text: "Under no circumstances should the root password..." }, { id: 'p775', text: "...be shared across the departmental communication channels." },
+            { id: 'p776', text: "Such is the profound impact of artificial intelligence..." }, { id: 'p776', text: "...that it is reshaping the entire global economy." },
+            { id: 'p777', text: "Seldom has a purely theoretical discipline garnered..." }, { id: 'p777', text: "...such immediate and widespread practical application." },
+            { id: 'p778', text: "Barely had the final exam results been published..." }, { id: 'p778', text: "...when the top students began receiving job offers." },
+            { id: 'p779', text: "Deep within the intricate lines of the source code..." }, { id: 'p779', text: "...lay a backdoor intentionally left by the developer." },
+            { id: 'p780', text: "At the very forefront of modern digital security..." }, { id: 'p780', text: "...stands the development of quantum-resistant algorithms." },
+            { id: 'p781', text: "Rarely do we see an undergraduate thesis display..." }, { id: 'p781', text: "...such a high level of independent original thought." },
+            { id: 'p782', text: "Scarcely had the keynote speaker taken the stage..." }, { id: 'p782', text: "...when the audience erupted in enthusiastic applause." },
+            { id: 'p783', text: "On no account must the integrity of the collected data..." }, { id: 'p783', text: "...be compromised during the aggregation process." },
+            { id: 'p784', text: "Only when the underlying network infrastructure is upgraded..." }, { id: 'p784', text: "...will the latency issues be permanently resolved." },
+            { id: 'p785', text: "Not until the mathematical conjecture was rigorously proven..." }, { id: 'p785', text: "...did the scientific community fully embrace it." },
+            { id: 'p786', text: "So compelling was the logic behind his argument..." }, { id: 'p786', text: "...that even his fiercest critics were silenced." },
+            { id: 'p787', text: "Out of the chaotic and unregulated early internet..." }, { id: 'p787', text: "...emerged the highly structured tech monopolies of today." },
+            { id: 'p788', text: "Nowhere in the official documentation provided..." }, { id: 'p788', text: "...was there any mention of this specific API limitation." },
+            { id: 'p789', text: "Hardly had the complex simulation begun running..." }, { id: 'p789', text: "...when the server experienced a catastrophic overload." },
+            { id: 'p790', text: "Only through relentless iteration and continuous feedback..." }, { id: 'p790', text: "...can a truly intuitive user interface be designed." },
+
+            // --- ADVANCED CONDITIONALS & HYPOTHETICALS ---
+            { id: 'p791', text: "Were the global supply chain to be severely disrupted again..." }, { id: 'p791', text: "...the economic fallout would be unprecedented." },
+            { id: 'p792', text: "Had the researchers acknowledged the statistical outliers..." }, { id: 'p792', text: "...their predictive model would have been far more robust." },
+            { id: 'p793', text: "Should the cryptographic keys be accidentally compromised..." }, { id: 'p793', text: "...the entire communication network must be rebooted." },
+            { id: 'p794', text: "But for the unwavering support of his academic advisor..." }, { id: 'p794', text: "...he might have abandoned his rigorous research project." },
+            { id: 'p795', text: "Even if deep learning models become incredibly sophisticated..." }, { id: 'p795', text: "...human intuition will remain irreplaceable in certain fields." },
+            { id: 'p796', text: "Had they adopted a more agile development methodology..." }, { id: 'p796', text: "...the software product would have launched months earlier." },
+            { id: 'p797', text: "Assuming that the theoretical constraints are strictly observed..." }, { id: 'p797', text: "...the mathematical optimization should proceed smoothly." },
+            { id: 'p798', text: "If he were not so deeply passionate about applied mathematics..." }, { id: 'p798', text: "...he wouldn't excel so effortlessly in cryptography." },
+            { id: 'p799', text: "Provided that the server bandwidth remains consistently stable..." }, { id: 'p799', text: "...the live educational broadcast will run without lag." },
+            { id: 'p800', text: "Unless the foundational premises of the theory are verified..." }, { id: 'p800', text: "...any subsequent conclusions will be logically invalid." },
+            { id: 'p801', text: "Whether the corporation chooses to openly disclose the breach or not..." }, { id: 'p801', text: "...regulatory authorities will inevitably investigate." },
+            { id: 'p802', text: "Suppose the iterative process falls into an infinite loop..." }, { id: 'p802', text: "...how would the system automatically terminate the execution?" },
+            { id: 'p803', text: "If it hadn't been for his profound expertise in R programming..." }, { id: 'p803', text: "...the massive dataset would have taken weeks to process." },
+            { id: 'p804', text: "Were she to apply her analytical skills to finance..." }, { id: 'p804', text: "...she would undoubtedly become a highly successful actuary." },
+            { id: 'p805', text: "Had the syntax error in the script been caught earlier..." }, { id: 'p805', text: "...the frustrating hours of debugging could have been avoided." },
+            { id: 'p806', text: "On condition that the student maintains a flawless academic record..." }, { id: 'p806', text: "...the faculty will gladly provide a glowing recommendation." },
+            { id: 'p807', text: "Imagine we had failed to implement basic encryption protocols..." }, { id: 'p807', text: "...our sensitive digital communications would be entirely exposed." },
+            { id: 'p808', text: "If he had chosen to strictly pursue an industry career..." }, { id: 'p808', text: "...he wouldn't have discovered his profound love for teaching." },
+            { id: 'p809', text: "Should the eigenvalues of the matrix be completely distinct..." }, { id: 'p809', text: "...the matrix is guaranteed to be diagonalizable." },
+            { id: 'p810', text: "Had they not practiced previous olympiad problems extensively..." }, { id: 'p810', text: "...the time pressure would have undoubtedly overwhelmed them." },
+
+            // --- PARTICIPLE CLAUSES (Advanced Usage) ---
+            { id: 'p811', text: "Leveraging sophisticated machine learning algorithms..." }, { id: 'p811', text: "...the platform automatically tailors the curriculum to each user." },
+            { id: 'p812', text: "Intrigued by the complex geometry of topological spaces..." }, { id: 'p812', text: "...he spent his summer reading advanced mathematical literature." },
+            { id: 'p813', text: "Having thoroughly dismantled the opposing team's argument..." }, { id: 'p813', text: "...the debater confidently concluded his closing statement." },
+            { id: 'p814', text: "Renowned for his crystal-clear pedagogical approach..." }, { id: 'p814', text: "...the professor's online lectures amassed millions of views." },
+            { id: 'p815', text: "Written in an exceedingly dense and archaic academic style..." }, { id: 'p815', text: "...the historical text required extensive translation." },
+            { id: 'p816', text: "Not wishing to alienate the less technically inclined audience..." }, { id: 'p816', text: "...the speaker skillfully avoided using excessive jargon." },
+            { id: 'p817', text: "Confronted with an apparently unsolvable algorithmic puzzle..." }, { id: 'p817', text: "...the programmers decided to completely rewrite the logic." },
+            { id: 'p818', text: "Having meticulously formatted the equations using LaTeX..." }, { id: 'p818', text: "...the physics paper was ready for submission to the journal." },
+            { id: 'p819', text: "Motivated by the urgent need for sustainable energy solutions..." }, { id: 'p819', text: "...the researchers developed a highly efficient solar cell." },
+            { id: 'p820', text: "Evaluated against incredibly strict international standards..." }, { id: 'p820', text: "...the new medical device was deemed perfectly safe." },
+            { id: 'p821', text: "Realizing that purely theoretical knowledge was insufficient..." }, { id: 'p821', text: "...she actively sought out practical internships in the industry." },
+            { id: 'p822', text: "Exasperated by the constant bureaucratic red tape..." }, { id: 'p822', text: "...the startup founder threatened to relocate the headquarters." },
+            { id: 'p823', text: "Commuting across the city during peak rush hour..." }, { id: 'p823', text: "...she utilized the time to listen to educational podcasts." },
+            { id: 'p824', text: "Granted unparalleled access to the classified archives..." }, { id: 'p824', text: "...the historian uncovered a completely different narrative." },
+            { id: 'p825', text: "Fascinated by the intersection of mathematics and art..." }, { id: 'p825', text: "...he began generating fractal images using Python." },
+            { id: 'p826', text: "Having successfully passed the rigorous faculty screening..." }, { id: 'p826', text: "...he was chosen to represent the university at the national level." },
+            { id: 'p827', text: "Instructed to craft a highly compelling personal narrative..." }, { id: 'p827', text: "...the applicant focused on his unique journey in mathematics." },
+            { id: 'p828', text: "Perplexed by the unexpected results of the simulation..." }, { id: 'p828', text: "...the engineering team recalibrated their initial assumptions." },
+            { id: 'p829', text: "Driven by the fast-paced evolution of digital media..." }, { id: 'p829', text: "...he constantly adapted his content creation strategies." },
+            { id: 'p830', text: "Not having properly documented the original source code..." }, { id: 'p830', text: "...the new developer struggled to understand its architecture." },
+
+            // --- CLEFT SENTENCES & EMPHASIS ---
+            { id: 'p831', text: "It is his profound capacity for lateral thinking..." }, { id: 'p831', text: "...that enables him to solve such unconventional problems." },
+            { id: 'p832', text: "What truly differentiates this specific cryptographic method..." }, { id: 'p832', text: "...is its inherent resistance to brute-force decryption." },
+            { id: 'p833', text: "It is the pervasive nature of digital misinformation..." }, { id: 'p833', text: "...that makes critical media literacy so utterly essential." },
+            { id: 'p834', text: "The primary reason the linear progression stalled..." }, { id: 'p834', text: "...was the introduction of a highly unpredictable variable." },
+            { id: 'p835', text: "It was not until the automated testing protocol was initiated..." }, { id: 'p835', text: "...that the fatal flaw in the system was exposed." },
+            { id: 'p836', text: "All that the skeptical investors genuinely needed to see..." }, { id: 'p836', text: "...was a functional prototype and a clear business model." },
+            { id: 'p837', text: "It is precisely within the demanding environment of the olympiad..." }, { id: 'p837', text: "...that true intellectual resilience is forged." },
+            { id: 'p838', text: "What I find most admirable about his professional trajectory..." }, { id: 'p838', text: "...is his unwavering commitment to educational equity." },
+            { id: 'p839', text: "It was the subtle misalignment of the geometric nodes..." }, { id: 'p839', text: "...that caused the visualization to render incorrectly." },
+            { id: 'p840', text: "The one principle that absolutely cannot be compromised..." }, { id: 'p840', text: "...is the ethical obligation to protect user privacy." },
+            { id: 'p841', text: "It was undeniably the synergistic effort of the entire lab..." }, { id: 'p841', text: "...that resulted in the groundbreaking publication." },
+            { id: 'p842', text: "What occurs when you feed biased data into an algorithm..." }, { id: 'p842', text: "...is the inevitable amplification of existing prejudices." },
+            { id: 'p843', text: "It is only within the last decade that machine learning..." }, { id: 'p843', text: "...has transcended academia to become a commercial reality." },
+            { id: 'p844', text: "The esteemed academic to whom he attributes his success..." }, { id: 'p844', text: "...is his relentlessly demanding thesis supervisor." },
+            { id: 'p845', text: "It was driven by a deep-seated desire to innovate..." }, { id: 'p845', text: "...that the tech startup disrupted the entire industry." },
+            { id: 'p846', text: "What genuinely sparked his profound interest in coding..." }, { id: 'p846', text: "...was a simple, elegant script that automated a tedious task." },
+            { id: 'p847', text: "It is the undeniable mathematical certainty of the proof..." }, { id: 'p847', text: "...that renders further debate completely obsolete." },
+            { id: 'p848', text: "The specific demographic the marketing campaign targeted..." }, { id: 'p848', text: "...responded overwhelmingly positively to the initiative." },
+            { id: 'p849', text: "It was his exceptional proficiency in statistical modeling..." }, { id: 'p849', text: "...that secured him the highly competitive research grant." },
+            { id: 'p850', text: "What makes the blockchain architecture so revolutionary..." }, { id: 'p850', text: "...is its decentralized and immutable ledger system." },
+
+            // --- ADVANCED RELATIVE CLAUSES ---
+            { id: 'p851', text: "The theoretical physicist, the brilliance of whom is undisputed..." }, { id: 'p851', text: "...recently published a controversial new paper." },
+            { id: 'p852', text: "We encountered several syntax errors, the most obscure of which..." }, { id: 'p852', text: "...took three full days to successfully debug." },
+            { id: 'p853', text: "The foundational axioms upon which this geometry is built..." }, { id: 'p853', text: "...differ radically from traditional Euclidean concepts." },
+            { id: 'p854', text: "He displayed a chronic lack of punctuality, as a result of which..." }, { id: 'p854', text: "...he was formally dismissed from the prestigious program." },
+            { id: 'p855', text: "The ancient philosophical texts, fragments of which survive..." }, { id: 'p855', text: "...offer profound insights into early human civilization." },
+            { id: 'p856', text: "She is a highly demanding editor, to satisfy whom..." }, { id: 'p856', text: "...requires multiple rounds of meticulous revision." },
+            { id: 'p857', text: "The specific boundary conditions within which the equation holds true..." }, { id: 'p857', text: "...must be explicitly declared in the introduction." },
+            { id: 'p858', text: "They proposed a radical restructuring, the long-term effects of which..." }, { id: 'p858', text: "...are still largely unknown to the board of directors." },
+            { id: 'p859', text: "The immense pressure under which emergency responders operate..." }, { id: 'p859', text: "...requires specialized psychological resilience training." },
+            { id: 'p860', text: "He utilized a proprietary software tool, by means of which..." }, { id: 'p860', text: "...the encrypted communications were easily deciphered." },
+            { id: 'p861', text: "The multinational conglomerate, the subsidiaries of which are everywhere..." }, { id: 'p861', text: "...essentially functions as a sovereign economic entity." },
+            { id: 'p862', text: "This is a rapidly shifting market, in the context of which..." }, { id: 'p862', text: "...adaptability is far more important than rigid planning." },
+            { id: 'p863', text: "She possesses an innate understanding of human psychology, thanks to which..." }, { id: 'p863', text: "...she excels in complex high-stakes negotiations." },
+            { id: 'p864', text: "The strict legal boundaries beyond which the company must not operate..." }, { id: 'p864', text: "...are closely monitored by federal compliance officers." },
+            { id: 'p865', text: "A global health crisis, the likes of which we have rarely seen..." }, { id: 'p865', text: "...forced humanity to fundamentally alter its behavior." },
+            { id: 'p866', text: "The rigorous methodology according to which the data was collected..." }, { id: 'p866', text: "...ensures the absolute validity of the final conclusions." },
+            { id: 'p867', text: "We reviewed dozens of academic papers, the vast majority of which..." }, { id: 'p867', text: "...supported the initial climate change hypothesis." },
+            { id: 'p868', text: "The precise temperature at which the chemical compound ignites..." }, { id: 'p868', text: "...was unfortunately miscalculated by the laboratory assistant." },
+            { id: 'p869', text: "The enigmatic artist, the true identity of whom remains unknown..." }, { id: 'p869', text: "...recently auctioned a painting for millions of dollars." },
+            { id: 'p870', text: "A disruptive technological innovation, the core premise of which..." }, { id: 'p870', text: "...challenges traditional banking, is gaining massive traction." },
+
+            // --- CONCESSION, CAUSE & EFFECT (Advanced Linkers) ---
+            { id: 'p871', text: "Notwithstanding the overwhelmingly pessimistic economic forecasts..." }, { id: 'p871', text: "...the tech startup miraculously managed to secure funding." },
+            { id: 'p872', text: "In view of the escalating geopolitical tensions in the region..." }, { id: 'p872', text: "...the multinational corporation suspended its operations." },
+            { id: 'p873', text: "Albeit a highly theoretical and esoteric subject matter..." }, { id: 'p873', text: "...quantum mechanics has profound practical applications." },
+            { id: 'p874', text: "Owing to the unprecedented surge in online digital traffic..." }, { id: 'p874', text: "...the main server infrastructure temporarily collapsed." },
+            { id: 'p875', text: "Difficult as it may be to objectively accept the harsh criticism..." }, { id: 'p875', text: "...it is essential for meaningful professional growth." },
+            { id: 'p876', text: "Hence the absolute need for a comprehensive contingency plan..." }, { id: 'p876', text: "...should the primary logistical network fail." },
+            { id: 'p877', text: "While it is undeniably true that social media connects people..." }, { id: 'p877', text: "...it simultaneously fosters profound feelings of isolation." },
+            { id: 'p878', text: "For fear of compromising the double-blind clinical trial..." }, { id: 'p878', text: "...the researchers remained completely isolated from the patients." },
+            { id: 'p879', text: "Despite possessing significantly fewer financial resources..." }, { id: 'p879', text: "...the independent laboratory produced superior research results." },
+            { id: 'p880', text: "Consequently, the blatant disregard for standard safety protocols..." }, { id: 'p880', text: "...resulted in a catastrophic and costly industrial accident." },
+            { id: 'p881', text: "Insofar as it directly pertains to constitutional law..." }, { id: 'p881', text: "...the Supreme Court's ruling is completely irrevocable." },
+            { id: 'p882', text: "No matter how flawlessly the architectural blueprint was drafted..." }, { id: 'p882', text: "...the execution was marred by substandard materials." },
+            { id: 'p883', text: "Such is the alarming rate of urban deforestation..." }, { id: 'p883', text: "...that local wildlife populations have plummeted drastically." },
+            { id: 'p884', text: "Accordingly, the curriculum has been extensively revised..." }, { id: 'p884', text: "...to better reflect the demands of the modern workforce." },
+            { id: 'p885', text: "Regardless of whether the initial investment yields a profit..." }, { id: 'p885', text: "...the strategic partnership is essential for long-term growth." },
+            { id: 'p886', text: "Even assuming that the competitor's product is cheaper..." }, { id: 'p886', text: "...our superior build quality justifies the premium price." },
+            { id: 'p887', text: "Much as the government desperately wishes to avoid a recession..." }, { id: 'p887', text: "...the global macroeconomic indicators suggest otherwise." },
+            { id: 'p888', text: "Seeing that we have exhausted all conventional medical treatments..." }, { id: 'p888', text: "...we must now explore experimental therapeutic options." },
+            { id: 'p889', text: "However globally recognized and prestigious the university may be..." }, { id: 'p889', text: "...its administrative bureaucracy is notoriously inefficient." },
+            { id: 'p890', text: "For all his widely touted expertise in international diplomacy..." }, { id: 'p890', text: "...he failed to prevent the sudden escalation of the conflict." },
+
+            // --- COMPLEX PREPOSITIONAL PHRASES ---
+            { id: 'p891', text: "With respect to the ongoing allegations of corporate fraud..." }, { id: 'p891', text: "...the CEO emphatically declined to provide a comment." },
+            { id: 'p892', text: "In light of the profoundly disturbing new forensic evidence..." }, { id: 'p892', text: "...the criminal investigation has been officially reopened." },
+            { id: 'p893', text: "By dint of relentless, unwavering dedication to his craft..." }, { id: 'p893', text: "...he became the youngest principal dancer in the company." },
+            { id: 'p894', text: "In the unlikely event of a sudden loss of cabin pressure..." }, { id: 'p894', text: "...oxygen masks will automatically deploy from the ceiling." },
+            { id: 'p895', text: "On the verge of securing a historic, multinational peace treaty..." }, { id: 'p895', text: "...the diplomatic talks abruptly completely broke down." },
+            { id: 'p896', text: "With the notable exception of the highly volatile energy sector..." }, { id: 'p896', text: "...the stock market experienced steady and reliable growth." },
+            { id: 'p897', text: "By means of an incredibly sophisticated phishing campaign..." }, { id: 'p897', text: "...the hackers successfully infiltrated the government network." },
+            { id: 'p898', text: "In accordance with newly implemented environmental regulations..." }, { id: 'p898', text: "...all factories must reduce their emissions by thirty percent." },
+            { id: 'p899', text: "For fear of sparking a widespread and devastating financial panic..." }, { id: 'p899', text: "...the central bank subtly intervened in the currency markets." },
+            { id: 'p900', text: "At the specific behest of the grieving local community..." }, { id: 'p900', text: "...the city council erected a permanent memorial statue." },
+            { id: 'p901', text: "In stark contrast to his usually calm and composed demeanor..." }, { id: 'p901', text: "...he reacted to the news with explosive anger." },
+            { id: 'p902', text: "On the grounds of severe and undeniable conflicts of interest..." }, { id: 'p902', text: "...the lead prosecutor was formally removed from the case." },
+            { id: 'p903', text: "For the sake of preserving long-term diplomatic relations..." }, { id: 'p903', text: "...the prime minister offered a formal, public apology." },
+            { id: 'p904', text: "In the wake of the highly controversial and divisive election..." }, { id: 'p904', text: "...the country experienced weeks of civil unrest." },
+            { id: 'p905', text: "By virtue of its incredibly diverse and multicultural population..." }, { id: 'p905', text: "...the city boasts a rich, vibrant culinary scene." },
+
+            // --- DOUBLE COMPARATIVES & CORRELATIVES ---
+            { id: 'p906', text: "The more the central bank artificially prints fiat money..." }, { id: 'p906', text: "...the higher the inevitable rate of inflation will be." },
+            { id: 'p907', text: "The earlier we decisively intervene in the ecological crisis..." }, { id: 'p907', text: "...the less severe the long-term environmental consequences." },
+            { id: 'p908', text: "Less immediately obvious, but equally detrimental to health..." }, { id: 'p908', text: "...is the chronic impact of prolonged psychological stress." },
+            { id: 'p909', text: "Just as physical infrastructure requires constant maintenance..." }, { id: 'p909', text: "...so too does the digital architecture of our systems." },
+            { id: 'p910', text: "Not only does the new legislation blatantly violate civil liberties..." }, { id: 'p910', text: "...but it is also fundamentally unenforceable in practice." },
+            { id: 'p911', text: "The broader the scope of the ambitious sociological study..." }, { id: 'p911', text: "...the more difficult it becomes to isolate specific variables." },
+            { id: 'p912', text: "Neither the sweeping austerity measures..." }, { id: 'p912', text: "...nor the increased taxation solved the national debt crisis." },
+            { id: 'p913', text: "Whether driven by authentic altruism or calculated public relations..." }, { id: 'p913', text: "...the corporation's charity work is undeniably beneficial." },
+            { id: 'p914', text: "Scarcely a financial quarter goes by in this volatile market..." }, { id: 'p914', text: "...without a major corporate merger or acquisition." },
+            { id: 'p915', text: "The longer the politicians blindly ignore the housing crisis..." }, { id: 'p915', text: "...the more explosive the eventual societal backlash will be." },
+
+            // --- COMPLEX NOUN CLAUSES & APPOSITIVES ---
+            { id: 'p916', text: "The disturbing realization that our online data is constantly mined..." }, { id: 'p916', text: "...has led to a surge in privacy-focused applications." },
+            { id: 'p917', text: "How the ancient navigators accurately traversed the vast oceans..." }, { id: 'p917', text: "...without modern instruments continues to amaze historians." },
+            { id: 'p918', text: "A fierce advocate for educational reform and digital equity..." }, { id: 'p918', text: "...she dedicated her career to bridging the technological divide." },
+            { id: 'p919', text: "That human activity is the primary driver of climate change..." }, { id: 'p919', text: "...is no longer a matter of serious scientific debate." },
+            { id: 'p920', text: "Whoever maliciously leaked the confidential corporate documents..." }, { id: 'p920', text: "...will face severe civil and criminal prosecution." },
+            { id: 'p921', text: "The dangerous misconception that antibiotics can cure viral infections..." }, { id: 'p921', text: "...contributes heavily to global antimicrobial resistance." },
+            { id: 'p922', text: "Whether the bold transition to a four-day workweek is viable..." }, { id: 'p922', text: "...is currently being tested by several progressive companies." },
+            { id: 'p923', text: "An absolute masterclass in narrative structure and pacing..." }, { id: 'p923', text: "...the novel instantly became a modern literary classic." },
+            { id: 'p924', text: "Why the seemingly stable geological formation suddenly collapsed..." }, { id: 'p924', text: "...is the subject of an ongoing topographical survey." },
+            { id: 'p925', text: "The naive assertion that technology will automatically solve all problems..." }, { id: 'p925', text: "...ignores the complex sociological realities of human behavior." },
+            { id: 'p926', text: "What society urgently needs in this era of deep polarization..." }, { id: 'p926', text: "...is a renewed commitment to respectful and open discourse." },
+            { id: 'p927', text: "The complex algorithm, a proprietary blend of heuristics and logic..." }, { id: 'p927', text: "...dictates exactly what content appears on your social feed." },
+            { id: 'p928', text: "Whichever strategic direction the newly appointed board chooses..." }, { id: 'p928', text: "...it will profoundly impact the company's long-term survival." },
+            { id: 'p929', text: "That they managed to construct the cathedral with such precision..." }, { id: 'p929', text: "...using only medieval tools is an architectural marvel." },
+            { id: 'p930', text: "How exactly the intricate metabolic pathways interact..." }, { id: 'p930', text: "...is mapped out in exhaustive detail in the medical journal." },
+
+            // --- COMPLEX GERUNDS & INFINITIVES ---
+            { id: 'p931', text: "His consistently failing to delegate effectively..." }, { id: 'p931', text: "...resulted in severe burnout for both him and his team." },
+            { id: 'p932', text: "I deeply resent being unfairly held responsible..." }, { id: 'p932', text: "...for systemic failures that were completely beyond my control." },
+            { id: 'p933', text: "There is absolutely no merit in stubbornly clinging..." }, { id: 'p933', text: "...to outdated business models in a rapidly changing economy." },
+            { id: 'p934', text: "She adeptly avoided being manipulated into..." }, { id: 'p934', text: "...signing a contract that clearly lacked mutual benefit." },
+            { id: 'p935', text: "To have successfully eradicated a globally prevalent disease..." }, { id: 'p935', text: "...stands as humanity's greatest public health achievement." },
+            { id: 'p936', text: "He strongly objected to the environmental regulations being..." }, { id: 'p936', text: "...quietly rolled back without any public consultation." },
+            { id: 'p937', text: "The terrifying prospect of having to speak live on national television..." }, { id: 'p937', text: "...caused the inexperienced politician to stumble." },
+            { id: 'p938', text: "The government finally admitted to having significantly underestimated..." }, { id: 'p938', text: "...the true logistical complexity of the vaccine rollout." },
+            { id: 'p939', text: "It is thoroughly counterproductive to constantly be micromanaged..." }, { id: 'p939', text: "...by superiors who lack fundamental technical expertise." },
+            { id: 'p940', text: "The absolute necessity of rigorously encrypting all patient data..." }, { id: 'p940', text: "...is mandated by stringent international healthcare laws." },
+
+            // --- MIXED STRUCTURES & SUBJUNCTIVES ---
+            { id: 'p941', text: "To what exact extent the central bank will intervene..." }, { id: 'p941', text: "...remains highly speculative among top financial analysts." },
+            { id: 'p942', text: "What with the constant supply chain disruptions and labor shortages..." }, { id: 'p942', text: "...manufacturing output has fallen to a ten-year low." },
+            { id: 'p943', text: "The requisite legal permits having been finally obtained..." }, { id: 'p943', text: "...the construction of the renewable energy plant can begin." },
+            { id: 'p944', text: "It isn't so much a distinct lack of actionable data..." }, { id: 'p944', text: "...as it is a profound inability to interpret it correctly." },
+            { id: 'p945', text: "Be the economic climate highly favorable or aggressively hostile..." }, { id: 'p945', text: "...a fundamentally sound business strategy will survive." },
+            { id: 'p946', text: "Whosoever knowingly falsifies their academic credentials..." }, { id: 'p946', text: "...shall be subjected to immediate and permanent expulsion." },
+            { id: 'p947', text: "The investigative panel comprises independent journalists..." }, { id: 'p947', text: "...each of whom has a reputation for unimpeachable integrity." },
+            { id: 'p948', text: "As is so frequently the case with ambitious infrastructure projects..." }, { id: 'p948', text: "...the final cost vastly exceeded the initial budgetary estimates." },
+            { id: 'p949', text: "Except insofar as permitted by the strict terms of service..." }, { id: 'p949', text: "...third-party applications cannot access the user database." },
+            { id: 'p950', text: "We are genuinely perplexed as to precisely how..." }, { id: 'p950', text: "...the deeply buried archaeological ruins remained undiscovered." },
+
+            // --- ADVANCED MODALS & HYPOTHETICALS ---
+            { id: 'p951', text: "You might just as well admit your mistake now..." }, { id: 'p951', text: "...because the digital forensics team will inevitably find out." },
+            { id: 'p952', text: "The esteemed scientist could well have discovered..." }, { id: 'p952', text: "...the elusive particle, had his funding not been cut." },
+            { id: 'p953', text: "They needn't have implemented such draconian security measures..." }, { id: 'p953', text: "...as the threat level was actually remarkably low." },
+            { id: 'p954', text: "I would infinitely rather pursue a challenging but meaningful career..." }, { id: 'p954', text: "...than settle for a lucrative but ultimately unfulfilling job." },
+            { id: 'p955', text: "It's high time that multinational corporations..." }, { id: 'p955', text: "...were held strictly accountable for their environmental impact." },
+            { id: 'p956', text: "I'd much prefer it if you didn't unilaterally alter..." }, { id: 'p956', text: "...the parameters of the experiment without consulting the team." },
+            { id: 'p957', text: "All visitors are to remain strictly within the designated zones..." }, { id: 'p957', text: "...until the hazard containment protocol is complete." },
+            { id: 'p958', text: "Given his extensive linguistic background, he may well be..." }, { id: 'p958', text: "...the only person capable of deciphering the ancient manuscript." },
+            { id: 'p959', text: "We would have found the presentation considerably more persuasive..." }, { id: 'p959', text: "...had you relied less on emotional appeals and more on data." },
+            { id: 'p960', text: "As far as the international legal tribunal can definitively ascertain..." }, { id: 'p960', text: "...the military actions blatantly violated the Geneva Convention." },
+
+            // --- FUTURE PERFECT & CONTINUOUS ---
+            { id: 'p961', text: "By the time the sweeping legislative reforms actually take effect..." }, { id: 'p961', text: "...the economic landscape will have altered significantly." },
+            { id: 'p962', text: "Come the eventual launch of the James Webb Space Telescope..." }, { id: 'p962', text: "...astronomers will have been anticipating its data for decades." },
+            { id: 'p963', text: "By the middle of the upcoming century, rising sea levels..." }, { id: 'p963', text: "...will have completely submerged several island nations." },
+            { id: 'p964', text: "This exact time next month, the lead engineers..." }, { id: 'p964', text: "...will be conducting the final orbital insertion maneuvers." },
+            { id: 'p965', text: "They will have fully eradicated the invasive species from the ecosystem..." }, { id: 'p965', text: "...long before the native flora begins to fully recover." },
+            { id: 'p966', text: "The autonomous rovers will be continuously collecting geological samples..." }, { id: 'p966', text: "...throughout the harsh and unforgiving Martian winter." },
+            { id: 'p967', text: "By 2040, urban planners desperately hope they will have solved..." }, { id: 'p967', text: "...the paralyzing traffic congestion in major metropolitan areas." },
+            { id: 'p968', text: "He will have been painstakingly translating the epic poem for seven years..." }, { id: 'p968', text: "...by the time the definitive edition is finally published." },
+            { id: 'p969', text: "Please refrain from accessing the main financial database tomorrow, as..." }, { id: 'p969', text: "...it will be undergoing a massive architectural migration." },
+            { id: 'p970', text: "By the time the severe diplomatic sanctions were officially imposed..." }, { id: 'p970', text: "...the rogue state had already secured alternative trade routes." },
+
+            // --- IDIOMATIC INVERSIONS & FRONTING ---
+            { id: 'p971', text: "Bitterly did the prominent architect regret..." }, { id: 'p971', text: "...compromising the structural integrity for aesthetic appeal." },
+            { id: 'p972', text: "Well do the veteran software engineers remember..." }, { id: 'p972', text: "...the chaotic days before version control systems existed." },
+            { id: 'p973', text: "Long have sociologists fervently debated..." }, { id: 'p973', text: "...the profound impact of social media on adolescent psychology." },
+            { id: 'p974', text: "Gladly would the overwhelmed healthcare system welcome..." }, { id: 'p974', text: "...a sudden influx of adequately trained medical professionals." },
+            { id: 'p975', text: "Many a brilliant entrepreneurial startup has failed..." }, { id: 'p975', text: "...simply due to a catastrophic lack of initial cash flow." },
+            { id: 'p976', text: "Into the deeply hostile negotiation room strode the diplomat..." }, { id: 'p976', text: "...armed only with a meticulously drafted peace proposal." },
+            { id: 'p977', text: "On the distant, unexplored frontiers of deep space..." }, { id: 'p977', text: "...lie celestial phenomena that challenge our understanding." },
+            { id: 'p978', text: "Such was the captivating mastery of the classical pianist..." }, { id: 'p978', text: "...that the massive concert hall remained utterly silent." },
+            { id: 'p979', text: "Try as the brilliant cryptanalysts persistently might..." }, { id: 'p979', text: "...they simply could not decipher the intercepted transmission." },
+            { id: 'p980', text: "Inconceivable though the audacious scientific theory may initially appear..." }, { id: 'p980', text: "...it is perfectly aligned with all observable quantum phenomena." },
+
+            // --- ADVANCED NOUN PHRASES & APPOSITIVES ---
+            { id: 'p981', text: "A globally recognized authority on macroeconomic policy..." }, { id: 'p981', text: "...she was recently appointed to head the central bank." },
+            { id: 'p982', text: "The discovery of the double helix, a defining moment in biology,..." }, { id: 'p982', text: "...fundamentally revolutionized our understanding of genetics." },
+            { id: 'p983', text: "His unwavering refusal to yield to intense political pressure..." }, { id: 'p983', text: "...earned him the profound respect of his constituents." },
+            { id: 'p984', text: "The chilling realization that the polar ice caps are melting..." }, { id: 'p984', text: "...has finally catalyzed urgent international climate action." },
+            { id: 'p985', text: "A leader of profound empathy and strategic vision..." }, { id: 'p985', text: "...she navigated the country through its darkest economic crisis." },
+            { id: 'p986', text: "The sudden and catastrophic breach of the main levee..." }, { id: 'p986', text: "...submerged the historic downtown area in mere hours." },
+            { id: 'p987', text: "His unfortunate propensity to publicly alienate his key allies..." }, { id: 'p987', text: "...ultimately doomed his ambitious presidential campaign." },
+            { id: 'p988', text: "An undeniable triumph of modern sustainable architecture..." }, { id: 'p988', text: "...the new library generates more energy than it consumes." },
+            { id: 'p989', text: "The fiercely debated sociological implications of universal basic income..." }, { id: 'p989', text: "...continue to dominate academic and political discourse." },
+            { id: 'p990', text: "A grim and devastating reminder of our total reliance on technology..." }, { id: 'p990', text: "...the global internet outage brought commerce to a halt." },
+
+            // --- ADVANCED TIME, SEQUENCE, & FINAL CLAUSES ---
+            { id: 'p991', text: "Scarcely had the highly controversial corporate merger been finalized..." }, { id: 'p991', text: "...when antitrust regulators launched a massive investigation." },
+            { id: 'p992', text: "The very moment the intricate protein structure was successfully mapped..." }, { id: 'p992', text: "...a new era of targeted medical therapeutics began." },
+            { id: 'p993', text: "No sooner is a highly sophisticated financial regulation implemented..." }, { id: 'p993', text: "...than investment bankers engineer a complex loophole." },
+            { id: 'p994', text: "Hardly a single international summit passes these days..." }, { id: 'p994', text: "...without a heated and urgent debate regarding carbon taxes." },
+            { id: 'p995', text: "Ever since the rigorous new data protection laws were introduced..." }, { id: 'p995', text: "...the frequency of telemarketing calls has plummeted drastically." },
+            { id: 'p996', text: "Prior to adopting the strictly evidence-based pedagogical methodology..." }, { id: 'p996', text: "...the school district consistently underperformed on national tests." },
+            { id: 'p997', text: "Subsequent to the publication of the groundbreaking cosmological findings..." }, { id: 'p997', text: "...the entire textbook on astrophysics had to be rewritten." },
+            { id: 'p998', text: "Not until the completely independently verified clinical trial results were published..." }, { id: 'p998', text: "...did the medical community accept the efficacy of the drug." },
+            { id: 'p999', text: "Once the complex geopolitical parameters are firmly established and respected..." }, { id: 'p999', text: "...the delicate multilateral trade negotiations can officially begin." },
+            { id: 'p1000', text: "Pending a thorough, transparent, and completely unbiased internal review..." }, { id: 'p1000', text: "...the chief financial officer has been placed on administrative leave." }
+        ];
+
+        // State Variabel
+        const gameBoard = document.getElementById('game-board');
+        const overlay = document.getElementById('game-over-overlay');
+        const overlayDesc = document.getElementById('game-over-desc');
+        const statusLabel = document.getElementById('status-label');
+        const statusValue = document.getElementById('status-value');
+        const matchesCounter = document.getElementById('matches-counter');
+        const totalPairsEl = document.getElementById('total-pairs');
+
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+        let matches = 0;
+        let moves = 0;
+        let misses = 0;
+        
+        let currentMode = 'zen'; // zen, time, survive
+        let currentPairs = 6; // 6 (Easy), 8 (Medium), 12 (Hard)
+        
+        let timerInterval;
+        let timeLeft = 0;
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('[id^="btn-mode-"]').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-mode-${mode}`).classList.add('active');
+            initGame();
+        }
+
+        function setDifficulty(pairs) {
+            currentPairs = pairs;
+            document.querySelectorAll('[id^="btn-lvl-"]').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-lvl-${pairs}`).classList.add('active');
+            
+            gameBoard.className = 'game-board';
+            if(pairs === 6) gameBoard.classList.add('grid-easy');
+            if(pairs === 8) gameBoard.classList.add('grid-medium');
+            if(pairs === 12) gameBoard.classList.add('grid-hard');
+            
+            initGame();
+        }
+
+        function showGameOver(message) {
+            clearInterval(timerInterval);
+            lockBoard = true;
+            overlayDesc.innerText = message;
+            overlay.style.display = 'flex';
+        }
+
+        function initGame() {
+            clearInterval(timerInterval);
+            overlay.style.display = 'none'; // Sembunyikan overlay setiap restart
+            gameBoard.innerHTML = '';
+            
+            matches = 0;
+            moves = 0;
+            misses = 0;
+            hasFlippedCard = false;
+            lockBoard = false;
+            firstCard = null;
+            secondCard = null;
+            
+            statusValue.classList.remove('danger');
+            matchesCounter.innerText = matches;
+            totalPairsEl.innerText = currentPairs;
+
+            // Setup UI Mode
+            if (currentMode === 'zen') {
+                statusLabel.innerText = "TOTAL MOVES";
+                statusValue.innerText = moves;
+            } else if (currentMode === 'time') {
+                statusLabel.innerText = "TIME LEFT";
+                timeLeft = currentPairs * 10; // 60s, 80s, 120s
+                statusValue.innerText = `${timeLeft}s`;
+                startTimer();
+            } else if (currentMode === 'survive') {
+                statusLabel.innerText = "MISSES ALLOWED";
+                statusValue.innerText = 5 - misses;
+            }
+
+            // --- LOGIKA RANDOMIZER SUPER ACAK ---
+            // 1. Dapatkan semua ID Pasangan yang tersedia
+            const allUniqueIds = [...new Set(masterGrammarPairs.map(item => item.id))];
+            
+            // 2. Acak kumpulan ID tersebut
+            const shuffledIds = allUniqueIds.sort(() => Math.random() - 0.5);
+            
+            // 3. Ambil sejumlah ID sesuai tingkat kesulitan (6, 8, atau 12)
+            const selectedIds = shuffledIds.slice(0, currentPairs);
+            
+            // 4. Saring array master hanya untuk ID yang terpilih
+            let playingCards = masterGrammarPairs.filter(item => selectedIds.includes(item.id));
+            
+            // 5. Acak urutan kartu-kartu yang sudah disaring agar posisinya random
+            playingCards = playingCards.sort(() => Math.random() - 0.5);
+
+            // Buat elemen ke layar
+            playingCards.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('memory-card');
+                card.dataset.id = item.id;
+
+                card.innerHTML = `
+                    <div class="front-face">?</div>
+                    <div class="back-face">${item.text}</div>
+                `;
+                
+                card.addEventListener('click', flipCard);
+                gameBoard.appendChild(card);
+            });
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                statusValue.innerText = `${timeLeft}s`;
+                if(timeLeft <= 10) statusValue.classList.add('danger');
+                
+                if (timeLeft <= 0) {
+                    showGameOver("Time's Up! You ran out of time.");
+                }
+            }, 1000);
+        }
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flip');
+
+            if (!hasFlippedCard) {
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            moves++;
+            if(currentMode === 'zen') statusValue.innerText = moves;
+            
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.id === secondCard.dataset.id;
+            
+            if (isMatch) {
+                disableCards();
+            } else {
+                handleMiss();
+                unflipCards();
+            }
+        }
+
+        function handleMiss() {
+            if (currentMode === 'survive') {
+                misses++;
+                let lives = 5 - misses;
+                statusValue.innerText = lives;
+                if(lives <= 2) statusValue.classList.add('danger');
+                
+                if (misses >= 5) {
+                    setTimeout(() => showGameOver("Too many mistakes made!"), 500);
+                }
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            
+            firstCard.classList.add('matched');
+            secondCard.classList.add('matched');
+
+            matches++;
+            matchesCounter.innerText = matches;
+
+            if (matches === currentPairs) {
+                clearInterval(timerInterval);
+                setTimeout(() => {
+                    if(currentMode === 'zen') alert(`Brilliant! Cleared in ${moves} moves.`);
+                    else if(currentMode === 'time') alert(`Amazing! You beat the clock with ${timeLeft}s remaining.`);
+                    else if(currentMode === 'survive') alert(`Flawless! You survived with ${5 - misses} lives left.`);
+                }, 500);
+            }
+
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+            setTimeout(() => {
+                firstCard.classList.remove('flip');
+                secondCard.classList.remove('flip');
+                resetBoard();
+            }, 1000); 
+        }
+
+        function resetBoard() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+
+        // Initialize ketika render selesai
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
