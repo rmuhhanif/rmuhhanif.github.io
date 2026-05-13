@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhammad Hanif | Make 24</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================================================
+           1. BASE STYLES & VARIABLES
+           ========================================================================== */
+        :root {
+            --bg: #ffffff;
+            --text: #111111;
+            --text-light: #666666;
+            --border: #eeeeee;
+            --accent: #000000;
+            --success: #10b981;
+            --danger: #ef4444;
+            --card-bg: #f9f9f9;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        nav {
+            padding: 1.2rem 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo a { text-decoration: none; color: var(--text); font-weight: 800; letter-spacing: -1px; font-size: 1.1rem; }
+        
+        .nav-links { display: flex; gap: 2.5rem; }
+        .nav-links a { text-decoration: none; color: var(--text); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; }
+        .nav-links a.active { color: var(--text); position: relative; opacity: 1 !important; }
+        .nav-links a.active::after { content: ""; position: absolute; bottom: -5px; left: 0; width: 100%; height: 2px; background-color: var(--text); }
+        .nav-links a:not(.active) { opacity: 0.4; }
+        .nav-links a:hover { opacity: 1; }
+
+        .container { padding: 9rem 8% 0; max-width: 1000px; margin: 0 auto; min-height: 100vh;}
+        .container > *:last-child { margin-bottom: 0 !important; padding-bottom: 2rem; }
+
+        h1 { font-size: clamp(3rem, 8vw, 5rem); font-weight: 800; letter-spacing: -3px; line-height: 1.1; margin-bottom: 1.5rem; }
+        h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-light); margin-bottom: 1rem; }
+
+        .btn {
+            display: inline-block; padding: 0.8rem 1.8rem; background: var(--accent); color: white;
+            text-decoration: none; font-size: 0.8rem; font-weight: 700; border-radius: 30px; 
+            border: none; cursor: pointer; transition: all 0.2s ease; font-family: inherit;
+        }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn:disabled { background: var(--border); color: var(--text-light); cursor: not-allowed; }
+        
+        .btn-outline { background: transparent; color: var(--text); border: 2px solid var(--border); }
+        .btn-outline:hover:not(:disabled) { border-color: var(--accent); }
+
+        footer { padding: 2rem 8%; border-top: 1px solid var(--border); text-align: center; margin-top: 5rem; background-color: var(--bg); }
+        footer p { font-size: 0.7rem; color: var(--text-light); letter-spacing: 1px; }
+
+        /* ==========================================================================
+           2. 24 GAME UI
+           ========================================================================== */
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 2rem 2.5rem;
+            border-radius: 30px; 
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .stat-group { display: flex; flex-direction: column; }
+        .stat-label { font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; color: var(--text-light); text-transform: uppercase; margin-bottom: 0.3rem;}
+        .stat-value { font-size: 1.8rem; font-weight: 800; }
+
+        .play-area {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.02);
+        }
+
+        /* Expression Display */
+        .expression-box {
+            width: 100%;
+            min-height: 80px;
+            background: var(--card-bg);
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            word-wrap: break-word;
+            transition: all 0.3s ease;
+        }
+
+        .expression-box.error { border-color: var(--danger); color: var(--danger); }
+        .expression-box.success { border-color: var(--success); color: var(--success); background: #ecfdf5; }
+
+        /* Number Cards */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .num-card {
+            aspect-ratio: 1;
+            background: #fff;
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            user-select: none;
+        }
+
+        .num-card:hover:not(.used) {
+            transform: translateY(-5px);
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .num-card.used {
+            opacity: 0.2;
+            pointer-events: none;
+            border-style: dashed;
+        }
+
+        /* Operators & Controls */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+        }
+
+        .op-btn {
+            background: #f1f1f1;
+            border: none;
+            padding: 1rem 0;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            color: var(--text);
+        }
+
+        .op-btn:hover { background: #e0e0e0; transform: scale(1.05); }
+        .op-btn:active { transform: scale(0.95); }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .actions .btn { flex: 1; text-align: center; font-size: 0.9rem; padding: 1.2rem;}
+
+        .feedback {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            min-height: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding-top: 7rem; }
+            h1 { font-size: 2.5rem; }
+            .game-header { flex-direction: column; text-align: center; }
+            .play-area { padding: 1.5rem; }
+            .cards-container { gap: 0.5rem; }
+            .num-card { font-size: 2rem; border-radius: 15px;}
+            .controls-grid { grid-template-columns: repeat(3, 1fr); }
+            .actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo"><a href="index.html">MUHAMMAD HANIF</a></div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="experience.html">Experience</a>
+            <a href="achievements.html">Awards</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="blog.html" class="active">Archives</a> 
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="game-wrapper">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <h2>Combinatorial Math</h2>
+            </div>
+            
+            <h1>
+                Make <span style="color: var(--text-light);">24.</span>
+            </h1>
+
+            <p style="font-size: 1.15rem; color: var(--text-light); max-width: 800px; margin-bottom: 3rem;">
+                Gunakan keempat angka di bawah ini <strong>tepat satu kali</strong>. Susun ekspresi matematika menggunakan operator penjumlahan, pengurangan, perkalian, pembagian, dan tanda kurung untuk menghasilkan nilai akhir 24.
+            </p>
+
+            <div class="game-header">
+                <div class="stat-group">
+                    <span class="stat-label">Level Solved</span>
+                    <span class="stat-value" id="score-display">0</span>
+                </div>
+                <button class="btn btn-outline" onclick="loadNewHand()">Skip Level</button>
+            </div>
+
+            <div class="play-area">
+                
+                <div class="expression-box" id="expression-display">
+                    <!-- Make 24! -->
+                </div>
+
+                <div class="cards-container" id="cards-container">
+                    <div class="num-card" id="card-0" onclick="useCard(0)">?</div>
+                    <div class="num-card" id="card-1" onclick="useCard(1)">?</div>
+                    <div class="num-card" id="card-2" onclick="useCard(2)">?</div>
+                    <div class="num-card" id="card-3" onclick="useCard(3)">?</div>
+                </div>
+
+                <div class="controls-grid">
+                    <button class="op-btn" onclick="addOp('+')">+</button>
+                    <button class="op-btn" onclick="addOp('-')">−</button>
+                    <button class="op-btn" onclick="addOp('*')">×</button>
+                    <button class="op-btn" onclick="addOp('/')">÷</button>
+                    <button class="op-btn" onclick="addOp('(')">(</button>
+                    <button class="op-btn" onclick="addOp(')')">)</button>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-outline" onclick="undo()">Undo</button>
+                    <button class="btn btn-outline" onclick="clearAll()">Clear All</button>
+                    <button class="btn" style="background-color: var(--accent)" onclick="submitAnswer()">Submit Equation</button>
+                </div>
+
+                <div class="feedback" id="feedback-msg"></div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <footer style="padding: 5rem 8%; border-top: 1px solid var(--border); text-align: center; margin-top: 5rem;">
+        <p style="font-size: 0.8rem; color: var(--text-light); letter-spacing: 1px;">© 2026 MUHAMMAD HANIF. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        // Kumpulan Set Angka yang dipastikan memiliki solusi "24"
+        const solvableHands = [
+            [1, 1, 4, 6], [1, 2, 3, 4], [1, 2, 4, 6], [1, 3, 4, 6],
+            [1, 4, 5, 6], [1, 5, 5, 5], [2, 2, 3, 8], [2, 2, 4, 6],
+            [2, 3, 4, 6], [2, 4, 6, 8], [2, 3, 5, 12], [2, 8, 8, 8],
+            [3, 3, 7, 7], [3, 3, 8, 8], [3, 4, 6, 8], [3, 5, 7, 13],
+            [4, 4, 4, 4], [4, 6, 6, 6], [5, 5, 5, 1], [5, 6, 6, 9],
+            [6, 6, 6, 6], [8, 8, 3, 3], [12, 12, 1, 1], [10, 10, 4, 4], 
+            [1,1,1,8], [1,1,1,12], [1,1,1,13],
+            [1,1,2,6], [1,1,2,7], [1,1,2,8], [1,1,2,9], [1,1,2,10], [1,1,2,11], [1,1,2,12], [1,1,2,13],
+            [1,1,3,4], [1,1,3,5], [1,1,3,6], [1,1,3,7], [1,1,3,8], [1,1,3,9], [1,1,3,10], [1,1,3,11], [1,1,3,12], [1,1,3,13],
+            [1,1,4,5], [1,1,4,7], [1,1,4,8], [1,1,4,9], [1,1,4,10], [1,1,4,12], [1,1,4,13],
+            [1,1,5,5], [1,1,5,6], [1,1,5,7], [1,1,5,8],
+            [1,1,6,6], [1,1,6,8],
+            [1,1,7,7], [1,1,8,8],
+            [1,1,9,13], [1,1,10,12], [1,1,11,11], [1,1,13,13],
+            [1,2,2,6], [1,2,2,7], [1,2,2,8], [1,2,2,9], [1,2,2,10], [1,2,2,11], [1,2,2,12], [1,2,2,13],
+            [1,2,3,3], [1,2,3,5], [1,2,3,6], [1,2,3,7], [1,2,3,8], [1,2,3,9], [1,2,3,10], [1,2,3,11], [1,2,3,12], [1,2,3,13],
+            [1,2,4,4], [1,2,4,5], [1,2,4,7], [1,2,4,8], [1,2,4,9], [1,2,4,10], [1,2,4,11], [1,2,4,12], [1,2,4,13],
+            [1,2,5,5], [1,2,5,6], [1,2,5,7], [1,2,5,8], [1,2,5,9], [1,2,5,10], [1,2,5,11], [1,2,5,12], [1,2,5,13],
+            [1,2,6,6], [1,2,6,7], [1,2,6,8], [1,2,6,9], [1,2,6,10], [1,2,6,11], [1,2,6,12], [1,2,6,13],
+            [1,2,7,7], [1,2,7,8], [1,2,7,9], [1,2,7,10], [1,2,7,11], [1,2,7,12], [1,2,7,13],
+            [1,2,8,8], [1,2,8,9], [1,2,8,10], [1,2,8,11], [1,2,8,12], [1,2,8,13],
+            [1,2,9,9], [1,2,9,10], [1,2,9,11], [1,2,9,12], [1,2,9,13],
+            [1,2,10,10], [1,2,10,11], [1,2,10,12], [1,2,10,13],
+            [1,2,11,11], [1,2,11,12], [1,2,11,13],
+            [1,2,12,12], [1,2,12,13],
+            [1,2,13,13],
+            [1,3,3,3], [1,3,3,4], [1,3,3,5], [1,3,3,6], [1,3,3,7], [1,3,3,8], [1,3,3,9], [1,3,3,10], [1,3,3,11], [1,3,3,12], [1,3,3,13],
+            [1,3,4,4], [1,3,4,5], [1,3,4,7], [1,3,4,8], [1,3,4,9], [1,3,4,10], [1,3,4,11], [1,3,4,12], [1,3,4,13],
+            [1,3,5,5], [1,3,5,6], [1,3,5,7], [1,3,5,8], [1,3,5,9], [1,3,5,10], [1,3,5,11], [1,3,5,12], [1,3,5,13],
+            [1,3,6,6], [1,3,6,7], [1,3,6,8], [1,3,6,9], [1,3,6,10], [1,3,6,11], [1,3,6,12], [1,3,6,13],
+            [1,3,7,7], [1,3,7,8], [1,3,7,9], [1,3,7,10], [1,3,7,11], [1,3,7,12], [1,3,7,13],
+            [1,3,8,8], [1,3,8,9], [1,3,8,10], [1,3,8,11], [1,3,8,12], [1,3,8,13],
+            [1,3,9,9], [1,3,9,10], [1,3,9,11], [1,3,9,12], [1,3,9,13],
+            [1,3,10,10], [1,3,10,11], [1,3,10,12], [1,3,10,13],
+            [1,3,11,11], [1,3,11,12], [1,3,11,13],
+            [1,3,12,12], [1,3,12,13],
+            [1,3,13,13],
+            [1,4,4,4], [1,4,4,5], [1,4,4,6], [1,4,4,7], [1,4,4,8], [1,4,4,9], [1,4,4,10], [1,4,4,11], [1,4,4,12], [1,4,4,13],
+            [1,4,5,5], [1,4,5,7], [1,4,5,8], [1,4,5,9], [1,4,5,10], [1,4,5,11], [1,4,5,12], [1,4,5,13],
+            [1,4,6,6], [1,4,6,7], [1,4,6,8], [1,4,6,9], [1,4,6,10], [1,4,6,11], [1,4,6,12], [1,4,6,13],
+            [1,4,7,7], [1,4,7,8], [1,4,7,9], [1,4,7,10], [1,4,7,11], [1,4,7,12], [1,4,7,13],
+            [1,4,8,8], [1,4,8,9], [1,4,8,10], [1,4,8,11], [1,4,8,12], [1,4,8,13],
+            [1,4,9,9], [1,4,9,10], [1,4,9,11], [1,4,9,12], [1,4,9,13],
+            [1,4,10,10], [1,4,10,11], [1,4,10,12], [1,4,10,13],
+            [1,4,11,11], [1,4,11,12], [1,4,11,13],
+            [1,4,12,12], [1,4,12,13],
+            [1,4,13,13],
+            [1,5,5,5], [1,5,5,6], [1,5,5,7], [1,5,5,8], [1,5,5,9], [1,5,5,10], [1,5,5,11], [1,5,5,12], [1,5,5,13],
+            [1,5,6,6], [1,5,6,7], [1,5,6,8], [1,5,6,9], [1,5,6,10], [1,5,6,11], [1,5,6,12], [1,5,6,13],
+            [1,5,7,7], [1,5,7,8], [1,5,7,9], [1,5,7,10], [1,5,7,11], [1,5,7,12], [1,5,7,13],
+            [1,5,8,8], [1,5,8,9], [1,5,8,10], [1,5,8,11], [1,5,8,12], [1,5,8,13],
+            [1,5,9,9], [1,5,9,10], [1,5,9,11], [1,5,9,12], [1,5,9,13],
+            [1,5,10,10], [1,5,10,11], [1,5,10,12], [1,5,10,13],
+            [1,5,11,11], [1,5,11,12], [1,5,11,13],
+            [1,5,12,12], [1,5,12,13],
+            [1,5,13,13],
+            [1,6,6,6], [1,6,6,7], [1,6,6,8], [1,6,6,9], [1,6,6,10], [1,6,6,11], [1,6,6,12], [1,6,6,13],
+            [1,6,7,7], [1,6,7,8], [1,6,7,9], [1,6,7,10], [1,6,7,11], [1,6,7,12], [1,6,7,13],
+            [1,6,8,8], [1,6,8,9], [1,6,8,10], [1,6,8,11], [1,6,8,12], [1,6,8,13],
+            [1,6,9,9], [1,6,9,10], [1,6,9,11], [1,6,9,12], [1,6,9,13],
+            [1,6,10,10], [1,6,10,11], [1,6,10,12], [1,6,10,13],
+            [1,6,11,11], [1,6,11,12], [1,6,11,13],
+            [1,6,12,12], [1,6,12,13],
+            [1,6,13,13],
+            [1,7,7,7], [1,7,7,8], [1,7,7,9], [1,7,7,10], [1,7,7,11], [1,7,7,12], [1,7,7,13],
+            [1,7,8,8], [1,7,8,9], [1,7,8,10], [1,7,8,11], [1,7,8,12], [1,7,8,13],
+            [1,7,9,9], [1,7,9,10], [1,7,9,11], [1,7,9,12], [1,7,9,13],
+            [1,7,10,10], [1,7,10,11], [1,7,10,12], [1,7,10,13],
+            [1,7,11,11], [1,7,11,12], [1,7,11,13],
+            [1,7,12,12], [1,7,12,13],
+            [1,7,13,13],
+            [1,8,8,8], [1,8,8,9], [1,8,8,10], [1,8,8,11], [1,8,8,12], [1,8,8,13],
+            [1,8,9,9], [1,8,9,10], [1,8,9,11], [1,8,9,12], [1,8,9,13],
+            [1,8,10,10], [1,8,10,11], [1,8,10,12], [1,8,10,13],
+            [1,8,11,11], [1,8,11,12], [1,8,11,13],
+            [1,8,12,12], [1,8,12,13],
+            [1,8,13,13],
+            [1,9,9,9], [1,9,9,10], [1,9,9,11], [1,9,9,12], [1,9,9,13],
+            [1,9,10,10], [1,9,10,11], [1,9,10,12], [1,9,10,13],
+            [1,9,11,11], [1,9,11,12], [1,9,11,13],
+            [1,9,12,12], [1,9,12,13],
+            [1,9,13,13],
+            [1,10,10,10], [1,10,10,11], [1,10,10,12], [1,10,10,13],
+            [1,10,11,11], [1,10,11,12], [1,10,11,13],
+            [1,10,12,12], [1,10,12,13],
+            [1,10,13,13],
+            [1,11,11,11], [1,11,11,12], [1,11,11,13],
+            [1,11,12,12], [1,11,12,13],
+            [1,11,13,13],
+            [1,12,12,12], [1,12,12,13],
+            [1,12,13,13],
+            [1,13,13,13],
+            [2,2,2,3], [2,2,2,4], [2,2,2,5], [2,2,2,6], [2,2,2,7], [2,2,2,8], [2,2,2,9], [2,2,2,10], [2,2,2,11], [2,2,2,12], [2,2,2,13],
+            [2,2,3,3], [2,2,3,4], [2,2,3,5], [2,2,3,6], [2,2,3,7], [2,2,3,8], [2,2,3,9], [2,2,3,10], [2,2,3,11], [2,2,3,12], [2,2,3,13],
+            [2,2,4,4], [2,2,4,5], [2,2,4,6], [2,2,4,7], [2,2,4,8], [2,2,4,9], [2,2,4,10], [2,2,4,11], [2,2,4,12], [2,2,4,13],
+            [2,2,5,5], [2,2,5,6], [2,2,5,7], [2,2,5,8], [2,2,5,9], [2,2,5,10], [2,2,5,11], [2,2,5,12], [2,2,5,13],
+            [2,2,6,6], [2,2,6,7], [2,2,6,8], [2,2,6,9], [2,2,6,10], [2,2,6,11], [2,2,6,12], [2,2,6,13],
+            [2,2,7,7], [2,2,7,8], [2,2,7,9], [2,2,7,10], [2,2,7,11], [2,2,7,12], [2,2,7,13],
+            [2,2,8,8], [2,2,8,9], [2,2,8,10], [2,2,8,11], [2,2,8,12], [2,2,8,13],
+            [2,2,9,9], [2,2,9,10], [2,2,9,11], [2,2,9,12], [2,2,9,13],
+            [2,2,10,10], [2,2,10,11], [2,2,10,12], [2,2,10,13],
+            [2,2,11,11], [2,2,11,12], [2,2,11,13],
+            [2,2,12,12], [2,2,12,13],
+            [2,2,13,13],
+            [2,3,3,3], [2,3,3,4], [2,3,3,5], [2,3,3,6], [2,3,3,7], [2,3,3,8], [2,3,3,9], [2,3,3,10], [2,3,3,11], [2,3,3,12], [2,3,3,13],
+            [2,3,4,4], [2,3,4,5], [2,3,4,7], [2,3,4,8], [2,3,4,9], [2,3,4,10], [2,3,4,11], [2,3,4,12], [2,3,4,13],
+            [2,3,5,5], [2,3,5,6], [2,3,5,7], [2,3,5,8], [2,3,5,9], [2,3,5,10], [2,3,5,11], [2,3,5,12], [2,3,5,13],
+            [2,3,6,6], [2,3,6,7], [2,3,6,8], [2,3,6,9], [2,3,6,10], [2,3,6,11], [2,3,6,12], [2,3,6,13],
+            [2,3,7,7], [2,3,7,8], [2,3,7,9], [2,3,7,10], [2,3,7,11], [2,3,7,12], [2,3,7,13],
+            [2,3,8,8], [2,3,8,9], [2,3,8,10], [2,3,8,11], [2,3,8,12], [2,3,8,13],
+            [2,3,9,9], [2,3,9,10], [2,3,9,11], [2,3,9,12], [2,3,9,13],
+            [2,3,10,10], [2,3,10,11], [2,3,10,12], [2,3,10,13],
+            [2,3,11,11], [2,3,11,12], [2,3,11,13],
+            [2,3,12,12], [2,3,12,13],
+            [2,3,13,13],
+            [2,4,4,4], [2,4,4,5], [2,4,4,6], [2,4,4,7], [2,4,4,8], [2,4,4,9], [2,4,4,10], [2,4,4,11], [2,4,4,12], [2,4,4,13],
+            [2,4,5,5], [2,4,5,6], [2,4,5,7], [2,4,5,8], [2,4,5,9], [2,4,5,10], [2,4,5,11], [2,4,5,12], [2,4,5,13],
+            [2,4,6,6], [2,4,6,7], [2,4,6,9], [2,4,6,10], [2,4,6,11], [2,4,6,12], [2,4,6,13],
+            [2,4,7,7], [2,4,7,8], [2,4,7,9], [2,4,7,10], [2,4,7,11], [2,4,7,12], [2,4,7,13],
+            [2,4,8,8], [2,4,8,9], [2,4,8,10], [2,4,8,11], [2,4,8,12], [2,4,8,13],
+            [2,4,9,9], [2,4,9,10], [2,4,9,11], [2,4,9,12], [2,4,9,13],
+            [2,4,10,10], [2,4,10,11], [2,4,10,12], [2,4,10,13],
+            [2,4,11,11], [2,4,11,12], [2,4,11,13],
+            [2,4,12,12], [2,4,12,13],
+            [2,4,13,13],
+            [2,5,5,5], [2,5,5,6], [2,5,5,7], [2,5,5,8], [2,5,5,9], [2,5,5,10], [2,5,5,11], [2,5,5,12], [2,5,5,13],
+            [2,5,6,6], [2,5,6,7], [2,5,6,8], [2,5,6,9], [2,5,6,10], [2,5,6,11], [2,5,6,12], [2,5,6,13],
+            [2,5,7,7], [2,5,7,8], [2,5,7,9], [2,5,7,10], [2,5,7,11], [2,5,7,12], [2,5,7,13],
+            [2,5,8,8], [2,5,8,9], [2,5,8,10], [2,5,8,11], [2,5,8,12], [2,5,8,13],
+            [2,5,9,9], [2,5,9,10], [2,5,9,11], [2,5,9,12], [2,5,9,13],
+            [2,5,10,10], [2,5,10,11], [2,5,10,12], [2,5,10,13],
+            [2,5,11,11], [2,5,11,12], [2,5,11,13],
+            [2,5,12,12], [2,5,12,13],
+            [2,5,13,13],
+            [2,6,6,6], [2,6,6,7], [2,6,6,8], [2,6,6,9], [2,6,6,10], [2,6,6,11], [2,6,6,12], [2,6,6,13],
+            [2,6,7,7], [2,6,7,8], [2,6,7,9], [2,6,7,10], [2,6,7,11], [2,6,7,12], [2,6,7,13],
+            [2,6,8,8], [2,6,8,9], [2,6,8,10], [2,6,8,11], [2,6,8,12], [2,6,8,13],
+            [2,6,9,9], [2,6,9,10], [2,6,9,11], [2,6,9,12], [2,6,9,13],
+            [2,6,10,10], [2,6,10,11], [2,6,10,12], [2,6,10,13],
+            [2,6,11,11], [2,6,11,12], [2,6,11,13],
+            [2,6,12,12], [2,6,12,13],
+            [2,6,13,13],
+            [2,7,7,7], [2,7,7,8], [2,7,7,9], [2,7,7,10], [2,7,7,11], [2,7,7,12], [2,7,7,13],
+            [2,7,8,8], [2,7,8,9], [2,7,8,10], [2,7,8,11], [2,7,8,12], [2,7,8,13],
+            [2,7,9,9], [2,7,9,10], [2,7,9,11], [2,7,9,12], [2,7,9,13],
+            [2,7,10,10], [2,7,10,11], [2,7,10,12], [2,7,10,13],
+            [2,7,11,11], [2,7,11,12], [2,7,11,13],
+            [2,7,12,12], [2,7,12,13],
+            [2,7,13,13]
+        ];
+
+        let currentHand = [];
+        let cardUsed = [false, false, false, false];
+        let expressionTokens = []; // Format: { type: 'num', val: 5, cardIdx: 1 } atau { type: 'op', val: '+' }
+        let score = 0;
+
+        const exprDisplay = document.getElementById('expression-display');
+        const feedbackMsg = document.getElementById('feedback-msg');
+        const scoreDisplay = document.getElementById('score-display');
+
+        function loadNewHand() {
+            // Pilih acak dari database
+            const randIndex = Math.floor(Math.random() * solvableHands.length);
+            currentHand = [...solvableHands[randIndex]];
+            
+            // Acak urutan kartu di layar
+            currentHand.sort(() => Math.random() - 0.5);
+
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`card-${i}`).innerText = currentHand[i];
+            }
+
+            clearAll();
+            feedbackMsg.innerText = "";
+            exprDisplay.classList.remove('error', 'success');
+        }
+
+        function renderExpression() {
+            // 1. Update status kartu UI DULU
+            for (let i = 0; i < 4; i++) {
+                const cardEl = document.getElementById(`card-${i}`);
+                if (cardUsed[i]) {
+                    cardEl.classList.add('used');
+                } else {
+                    cardEl.classList.remove('used');
+                }
+            }
+
+            // 2. Baru cek apakah token kosong untuk merender teks default
+            if (expressionTokens.length === 0) {
+                exprDisplay.innerHTML = '<span style="color: #ccc; font-weight: 600; font-size:1.5rem">Formulanya nanti muncul di sini...</span>';
+                exprDisplay.classList.remove('error', 'success'); // Sekalian reset styling
+                return;
+            }
+
+            // 3. Render HTML untuk token yang ada
+            let html = "";
+            expressionTokens.forEach(token => {
+                if (token.type === 'num') {
+                    html += `<span style="color: var(--accent); padding: 0 5px;">${token.val}</span>`;
+                } else {
+                    let symbol = token.val;
+                    if (symbol === '*') symbol = '×';
+                    if (symbol === '/') symbol = '÷';
+                    if (symbol === '-') symbol = '−';
+                    html += `<span style="color: var(--text-light); padding: 0 5px;">${symbol}</span>`;
+                }
+            });
+            exprDisplay.innerHTML = html;
+            
+            exprDisplay.classList.remove('error', 'success');
+            feedbackMsg.innerText = "";
+        }
+
+        function useCard(idx) {
+            if (cardUsed[idx]) return;
+            
+            // Cek token terakhir, kalau angka juga, jangan dibolehin
+            if (expressionTokens.length > 0 && expressionTokens[expressionTokens.length - 1].type === 'num') {
+                showFeedback("Masukin operator dulu sebelum angka berikutnya!", "error");
+                return;
+            }
+            
+            cardUsed[idx] = true;
+            expressionTokens.push({ type: 'num', val: currentHand[idx], cardIdx: idx });
+            renderExpression();
+        }
+
+        function addOp(op) {
+            // Cegah operator numpuk (kecuali kurung)
+            if (expressionTokens.length > 0) {
+                let lastToken = expressionTokens[expressionTokens.length - 1];
+                if (lastToken.type === 'op' && lastToken.val !== ')' && op !== '(') {
+                    showFeedback("Operator nggak boleh berurutan!", "error");
+                    return;
+                }
+            }
+            
+            expressionTokens.push({ type: 'op', val: op });
+            renderExpression();
+        }
+
+        function undo() {
+            if (expressionTokens.length === 0) return;
+            const popped = expressionTokens.pop();
+            if (popped.type === 'num') {
+                cardUsed[popped.cardIdx] = false;
+            }
+            renderExpression();
+        }
+
+        function clearAll() {
+            expressionTokens = [];
+            cardUsed = [false, false, false, false];
+            renderExpression();
+        }
+
+        function submitAnswer() {
+            // 1. Cek apakah semua angka digunakan
+            const allUsed = cardUsed.every(v => v === true);
+            if (!allUsed) {
+                showFeedback("Harus menggunakan semua 4 angka!", "error");
+                return;
+            }
+
+            // 2. Buat string untuk di-evaluasi
+            let evalStr = "";
+            expressionTokens.forEach(t => {
+                evalStr += t.val;
+            });
+
+            // 3. Evaluasi secara aman
+            try {
+                // Menggunakan Function constructor sebagai pengganti eval yg lebih bersih
+                const result = new Function('"use strict"; return (' + evalStr + ')')();
+                
+                // Menghindari masalah floating point pada JS (misal 8 / (1/3) = 23.99999)
+                if (Math.abs(result - 24) < 0.0001) {
+                    showFeedback("Brilian! Kalkulasi tepat.", "success");
+                    score++;
+                    scoreDisplay.innerText = score;
+                    
+                    // Jeda sebentar lalu lanjut level
+                    setTimeout(() => {
+                        loadNewHand();
+                    }, 2000);
+                } else {
+                    // Kalau berhasil dievaluasi tapi hasilnya bukan 24
+                    // Pastikan membulatkan hasil agar tidak panjang jika desimal
+                    let displayRes = Number.isInteger(result) ? result : result.toFixed(2);
+                    showFeedback(`Salah! Hasil dari persamaanmu adalah ${displayRes}.`, "error");
+                }
+            } catch (e) {
+                showFeedback("Persamaan tidak valid! Periksa kembali struktur atau tanda kurungnya.", "error");
+            }
+        }
+
+        function showFeedback(msg, type) {
+            feedbackMsg.innerText = msg;
+            if (type === 'error') {
+                feedbackMsg.style.color = "var(--danger)";
+                exprDisplay.classList.add('error');
+            } else if (type === 'success') {
+                feedbackMsg.style.color = "var(--success)";
+                exprDisplay.classList.add('success');
+            }
+        }
+
+        // Initialize First Hand
+        document.addEventListener('DOMContentLoaded', loadNewHand);
+
+    </script>
+</body>
+</html>
