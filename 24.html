@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Muhammad Hanif | Make 24</title>
+    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* ==========================================================================
-           1. BASE STYLES & VARIABLES
-           ========================================================================== */
         :root {
             --bg: #ffffff;
             --text: #111111;
@@ -200,6 +198,22 @@
         }
 
         @media (max-width: 768px) {
+            /* --- TAMBAHKAN KODE NAV INI --- */
+            nav { 
+                padding: 0.8rem 5%; 
+                flex-direction: column; 
+                gap: 0.5rem; 
+            }
+            .nav-links { 
+                gap: 0.6rem; 
+                flex-wrap: wrap; 
+                justify-content: center; 
+            }
+            .nav-links a { 
+                font-size: 0.6rem; 
+            }
+            
+            /* --- KODE GAME YANG SUDAH ADA SEBELUMNYA --- */
             .container { padding-top: 7rem; }
             h1 { font-size: 2.5rem; }
             .game-header { flex-direction: column; text-align: center; }
