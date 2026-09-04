@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Spinwheel - Truth or Dare</title>
+    <style>
+        :root {
+            --pink-light: #ffb6c1;
+            --pink-dark: #ff69b4;
+            --gold: #ffd700;
+            --blue-sky: #87ceeb;
+            --red-romantic: #ff4500;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at center, #fff0f5 0%, #ffc0cb 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #333;
+        }
+
+        /* Festive Background Elements */
+        .festive-bg {
+            position: absolute;
+            font-size: 2rem;
+            z-index: 0;
+            opacity: 0.6;
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        .header-title {
+            z-index: 10;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 0 15px;
+        }
+
+        .header-title h1 {
+            color: var(--pink-dark);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .header-title p {
+            color: #555;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
+
+        /* Wheel Container */
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            z-index: 10;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .wheel-container {
+                width: 400px;
+                height: 400px;
+            }
+        }
+
+        /* The Pointer */
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid var(--red-romantic);
+            z-index: 20;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
+        }
+
+        /* The Wheel */
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--pink-light) 0deg 60deg,
+                var(--gold) 60deg 120deg,
+                var(--pink-dark) 120deg 180deg,
+                var(--blue-sky) 180deg 240deg,
+                var(--pink-light) 240deg 300deg,
+                var(--gold) 300deg 360deg
+            );
+            border: 8px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1); /* Smooth deceleration */
+            position: relative;
+        }
+
+        /* Inner circle for aesthetics */
+        .wheel::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Spin Button */
+        .spin-btn {
+            background: linear-gradient(135deg, var(--pink-dark), var(--red-romantic));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            z-index: 10;
+        }
+        .spin-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 105, 180, 0.6);
+        }
+        .spin-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Result Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            position: relative;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 4px solid var(--gold);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--pink-dark);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .category-label {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: white;
+            font-size: 0.9rem;
+        }
+        .cat-truth { background-color: var(--blue-sky); }
+        .cat-trivia { background-color: var(--gold); color: #333; }
+        .cat-dare { background-color: var(--red-romantic); }
+
+        .question-text {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .close-btn {
+            background: var(--pink-dark);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .close-btn:hover {
+            background: var(--red-romantic);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="festive-bg" style="top: 10%; left: 10%;">🎂</div>
+    <div class="festive-bg" style="top: 20%; right: 15%; animation-delay: 1s;">💖</div>
+    <div class="festive-bg" style="bottom: 15%; left: 20%; animation-delay: 2s;">🎉</div>
+    <div class="festive-bg" style="bottom: 25%; right: 10%; animation-delay: 1.5s;">✨</div>
+    <div class="festive-bg" style="top: 50%; left: 5%; animation-delay: 0.5s;">💌</div>
+    <div class="festive-bg" style="top: 40%; right: 5%; animation-delay: 2.5s;">🎁</div>
+
+    <div class="header-title">
+        <h1>Selamat Ulang Tahun, Sayang!</h1>
+        <p>Putar rodanya dan bersiaplah untuk keseruannya!</p>
+    </div>
+
+    <div class="wheel-container">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
+    </div>
+
+    <button class="spin-btn" id="spinBtn" onclick="spinWheel()">Putar!</button>
+
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-title">Ulang Tahun Ini, Kamu Harus...</div>
+            <div id="categoryLabel" class="category-label"></div>
+            <div id="questionText" class="question-text"></div>
+            <button class="close-btn" onclick="closeModal()">Lanjut Main</button>
+        </div>
+    </div>
+
+    <script>
+        // Array of exactly 100 items (40 Truth, 30 Trivia, 30 Dare)
+        const items = [
+            // --- 40 TRUTH (Jujur) ---
+            { type: "Truth", text: "Apa kesan pertamamu waktu kita pertama kali ketemu?" },
+            { type: "Truth", text: "Kapan momen di mana kamu sadar kalau kamu beneran jatuh cinta sama aku?" },
+            { type: "Truth", text: "Apa kado paling aneh (atau lucu) yang pernah aku kasih ke kamu?" },
+            { type: "Truth", text: "Hal kecil apa yang sering aku lakukan, yang bikin kamu diam-diam senyum sendiri?" },
+            { type: "Truth", text: "Pernah nggak kamu pura-pura ngerti pas aku lagi ceritain hal teknis kayak tugas edX atau soal kuliah?" },
+            { type: "Truth", text: "Apa memori favorit kamu tentang kita di tahun pertama jadian?" },
+            { type: "Truth", text: "Sebutkan satu kebiasaanku yang awalnya bikin kamu aneh tapi sekarang malah kamu suka!" },
+            { type: "Truth", text: "Jujur, seberapa sering kamu ngecek lokasi/update kabarku pas aku lagi perjalanan naik kereta Sancaka sendirian?" },
+            { type: "Truth", text: "Apa satu rahasia kecil yang selama ini belum pernah kamu ceritain ke aku?" },
+            { type: "Truth", text: "Di antara semua baju yang aku punya, mana yang paling kamu suka kalau aku yang pakai?" },
+            { type: "Truth", text: "Apa hal yang paling bikin kamu kangen kalau kita lagi LDR atau nggak ketemu berhari-hari?" },
+            { type: "Truth", text: "Menurut kamu, apa kemiripan kita berdua yang paling ketara?" },
+            { type: "Truth", text: "Pernah nggak kamu diam-diam ketawa ngelihat muka capekku habis lari keliling pakai Strava?" },
+            { type: "Truth", text: "Apa panggilan sayang dariku yang paling bikin hati kamu meleleh?" },
+            { type: "Truth", text: "Momen apa yang bikin kamu merasa paling bangga jadi pacarku?" },
+            { type: "Truth", text: "Apa satu hal yang ingin kamu capai bareng aku di masa depan?" },
+            { type: "Truth", text: "Pernahkah kamu cemburu sama hal sepele tapi kamu gengsi buat bilang?" },
+            { type: "Truth", text: "Kapan terakhir kali kamu mimpiin aku, dan mimpinya tentang apa?" },
+            { type: "Truth", text: "Apa makanan yang dulu kamu nggak suka, tapi gara-gara aku kamu jadi ikutan suka?" },
+            { type: "Truth", text: "Sebutkan satu lirik lagu yang paling ngingetin kamu sama hubungan kita." },
+            { type: "Truth", text: "Apa hal paling konyol yang pernah kita lakukan berdua?" },
+            { type: "Truth", text: "Dari semua tempat kencan yang pernah kita datengin, mana yang menurutmu paling berkesan?" },
+            { type: "Truth", text: "Kalau kita dikasih tiket liburan gratis ke mana saja berdua selama sebulan, kamu mau kita ke mana?" },
+            { type: "Truth", text: "Apa hal pertama yang kamu perhatikan setiap kali kita janjian ketemuan?" },
+            { type: "Truth", text: "Pernahkah kamu sengaja bikin aku ngambek sedikit cuma buat lihat reaksi lucuku?" },
+            { type: "Truth", text: "Apa kualitas terbesarku yang menurutmu membuatku jadi pasangan yang baik?" },
+            { type: "Truth", text: "Menurutmu, siapa dari kita yang lebih sering ngucapin 'maaf' duluan kalau lagi berdebat?" },
+            { type: "Truth", text: "Kalau hidup kita ini dijadikan film, genre apa yang cocok dan siapa aktor/aktris yang meranin kita?" },
+            { type: "Truth", text: "Sebutkan satu kebohonganku yang paling ketara yang pernah kamu sadari tapi kamu biarin aja." },
+            { type: "Truth", text: "Apa hal yang paling sering bikin kamu overthinking tentang hubungan kita (tapi akhirnya nggak terbukti)?" },
+            { type: "Truth", text: "Bagian wajah/tubuhku mana yang jadi favorit mutlak kamu?" },
+            { type: "Truth", text: "Apa hal paling romantis yang menurutmu pernah aku lakuin secara spontan?" },
+            { type: "Truth", text: "Kalau kamu bisa merubah satu hari di masa lalu kita buat diulang lagi, hari apa itu?" },
+            { type: "Truth", text: "Jujur, apa yang ada di pikiranmu pas pertama kali aku kenalin ke teman-teman dekatku?" },
+            { type: "Truth", text: "Sebutkan satu barang dariku yang pernah kamu pinjam dan sebenarnya nggak niat buat balikin!" },
+            { type: "Truth", text: "Apa pesan teks dari aku yang sampai sekarang masih sering kamu baca ulang?" },
+            { type: "Truth", text: "Apa hal baru yang kamu pelajari tentang dirimu sendiri sejak pacaran sama aku?" },
+            { type: "Truth", text: "Kapan kamu merasa aku terlihat paling seksi/menarik?" },
+            { type: "Truth", text: "Kalau hari ini hari terakhir bumi ada, kamu mau kita ngabisin waktu dengan cara apa?" },
+            { type: "Truth", text: "Jujur, seberapa bersyukur kamu punya aku di hidupmu? (Harus jawab pakai argumen detail!)" },
+
+            // --- 30 TRIVIA (Kuis Seberapa Kenal) ---
+            { type: "Trivia", text: "Tanggal berapa, bulan apa, dan tahun berapa tepatnya aku lahir? (Gak boleh salah!)" },
+            { type: "Trivia", text: "Sebutkan nama lengkapku tanpa ada ejaan yang salah!" },
+            { type: "Trivia", text: "Kalau kita lagi di Sleman, di mana tempat langgananku buat beli kebutuhan sehari-hari atau belanja?" },
+            { type: "Trivia", text: "Apa menu yang paling sering aku pesan kalau kita mampir makan di Warmindo Kedai Mutiara 1?" },
+            { type: "Trivia", text: "Selain makan di Warmindo, aku juga suka banget makan ayam geprek di daerah Sleman, apa nama tempatnya?" },
+            { type: "Trivia", text: "Produk skincare dari brand NPURE apa yang selalu aku pakai/pernah aku beli buat perawatanku?" },
+            { type: "Trivia", text: "Sebutkan dua nama game di Steam (selain Minecraft) yang ada di akunku dan pernah aku mainin!" },
+            { type: "Trivia", text: "Di bulan apa tahun 2024 kemarin aku akhirnya beli HP iPhone 15 Pro baru?" },
+            { type: "Trivia", text: "Sepatu kasual/lifestyle merk apa yang aku pesan di akhir bulan Agustus kemarin?" },
+            { type: "Trivia", text: "Apa nama aplikasi andalanku yang selalu aku buka buat pesen tiket kereta Sancaka?" },
+            { type: "Trivia", text: "Kalau aku lagi ngurusin booking pesawat, hotel, atau urusan asuransi perjalanan, biasanya aku pakai aplikasi apa?" },
+            { type: "Trivia", text: "Berapa banyak 'Weekly Diamond Pass' Mobile Legends yang pernah aku beli? Coba tebak angkanya!" },
+            { type: "Trivia", text: "Waktu aku ngambil kursus online 'Big Data Analytics', aku belajarnya lewat platform apa?" },
+            { type: "Trivia", text: "Apa rasa es krim yang paling nggak bisa aku tolak?" },
+            { type: "Trivia", text: "Berapa ukuran sepatuku? (Coba lihat kakiku sekarang!)" },
+            { type: "Trivia", text: "Apa hal yang paling bikin aku takut atau parno? (Phobia atau ketakutan terbesar)" },
+            { type: "Trivia", text: "Lebih pilih mana: Aku mending telat makan atau kurang tidur?" },
+            { type: "Trivia", text: "Sebutkan satu nama dosen atau guru yang paling sering aku ceritain ke kamu." },
+            { type: "Trivia", text: "Apa posisi tidur favoritku? (Miring kiri, miring kanan, telentang, tengkurap?)" },
+            { type: "Trivia", text: "Berapa nomor plat kendaraan yang biasanya aku pakai?" },
+            { type: "Trivia", text: "Apa hal yang paling sering bikin aku ngomel-ngomel sendiri pas lagi bawa motor/mobil?" },
+            { type: "Trivia", text: "Kalau kita lagi nongkrong di cafe, minuman apa yang jadi pesanan 'aman' atau default-ku?" },
+            { type: "Trivia", text: "Apa nama hewan peliharaan pertamaku atau hewan kesukaanku?" },
+            { type: "Trivia", text: "Di dompetku sekarang, tebak ada berapa lembar uang tunai?" },
+            { type: "Trivia", text: "Sebutkan 3 barang yang WAJIB aku bawa kalau lagi keluar rumah (selain HP dan dompet)!" },
+            { type: "Trivia", text: "Apa zodiakku dan sebutkan satu sifat zodiak tersebut yang 'aku banget'?" },
+            { type: "Trivia", text: "Siapa artis atau penyanyi yang jadi celebrity crush-ku selain kamu?" },
+            { type: "Trivia", text: "Kalau aku lagi bad mood, apa satu hal paling instan yang bisa bikin mood-ku membaik?" },
+            { type: "Trivia", text: "Apa nama aplikasi e-wallet (selain Livin/GoPay/Blu) yang juga sering aku pakai buat bayar-bayar?" },
+            { type: "Trivia", text: "Coba tebak, waktu di sekolah dulu, pelajaran apa yang paling aku benci setengah mati?" },
+
+            // --- 30 DARE (Tantangan) ---
+            { type: "Dare", text: "Beri aku 10 ciuman di pipi dalam waktu 10 detik. Mulai dari sekarang!" },
+            { type: "Dare", text: "Pegang tanganku, tatap mataku, dan gombalin aku pakai kalimat paling maut yang bisa kamu pikirkan saat ini." },
+            { type: "Dare", text: "Tirukan ekspresi atau gaya bicaraku kalau aku lagi ngambek sama kamu." },
+            { type: "Dare", text: "Bikin satu puisi singkat (3 baris aja) tentang kenapa kamu sayang aku, lalu bacakan dengan gaya dramatis." },
+            { type: "Dare", text: "Upload foto aib/lucuku (yang ada di galeri kamu) ke WhatsApp Story kamu selama 1 jam!" },
+            { type: "Dare", text: "Pijat pundak dan leherku selama 2 menit sambil ceritain hal lucu." },
+            { type: "Dare", text: "Nyanyikan lagu 'Happy Birthday' buat aku tapi pakai suara anak kecil yang imut." },
+            { type: "Dare", text: "Cium keningku dan ucapkan 'Aku sayang kamu' dalam 3 bahasa yang berbeda." },
+            { type: "Dare", text: "Biarkan aku cek history pencarian YouTube atau browser kamu yang paling atas sekarang!" },
+            { type: "Dare", text: "Telepon salah satu teman dekatmu sekarang, dan bilang ke mereka kalau aku adalah pacar terbaik di dunia, tanpa konteks." },
+            { type: "Dare", text: "Gendong aku (piggyback ride) dan keliling satu ruangan ini sambil ketawa." },
+            { type: "Dare", text: "Buat video selfie kita berdua sekarang dengan ekspresi paling jelek yang kamu bisa." },
+            { type: "Dare", text: "Kasih aku pelukan dari belakang selama 1 menit penuh sambil bisikin doa ulang tahun buatku." },
+            { type: "Dare", text: "Tatap mataku tanpa berkedip dan tanpa ketawa selama 1 menit. Yang kalah harus cium tangan yang menang!" },
+            { type: "Dare", text: "Ganti nama kontakku di HP kamu dengan sebutan yang paling alay selama seminggu penuh." },
+            { type: "Dare", text: "Berdiri dan lakukan tarian TikTok yang lagi viral (atau asal joget) selama 30 detik." },
+            { type: "Dare", text: "Tutup mata kamu, dan coba tebak parfum apa yang lagi aku pakai hari ini dengan mencium aroma leherku." },
+            { type: "Dare", text: "Suapin aku makanan/minuman yang ada di dekat kita dengan gaya pesawat terbang ('Ngeeeeng...')." },
+            { type: "Dare", text: "Ceritakan satu dongeng pengantar tidur karanganmu sendiri di mana aku jadi putri/pangeran dan kamu jadi naganya." },
+            { type: "Dare", text: "Biarkan aku menggelitik perut atau pinggangmu selama 15 detik! Dilarang berontak!" },
+            { type: "Dare", text: "Bikin janji kelingking denganku untuk satu hal manis yang akan kamu lakuin buat aku minggu depan." },
+            { type: "Dare", text: "Ubah wallpaper lockscreen HP kamu pakai foto kita berdua yang menurutmu paling lucu, tahan sampai besok." },
+            { type: "Dare", text: "Tirukan gaya hewan favoritku selama 15 detik lengkap dengan suaranya." },
+            { type: "Dare", text: "Biarkan aku menggambar hati kecil di pipi atau tanganmu pakai lipstik/pena." },
+            { type: "Dare", text: "Sebutkan alfabet dari A sampai Z, tapi untuk setiap huruf kamu harus menyebutkan satu kata sifat tentang aku (A: Anggun, B: Baik...)" },
+            { type: "Dare", text: "Ajak aku berdansa berdua tanpa musik selama 1 menit di tengah ruangan ini." },
+            { type: "Dare", text: "Beri aku kecupan di hidung lalu bisikkan rahasia kecil ke telingaku." },
+            { type: "Dare", text: "Tuliskan 'I Love You' menggunakan tangan kirimu (jika kamu non-kidal) atau tangan kananmu (jika kidal) di atas secarik kertas." },
+            { type: "Dare", text: "Re-ka ulang (re-enact) gaya pertengkaran kita yang paling absurd tapi pakai bahasa formal bak bangsawan." },
+            { type: "Dare", text: "Berikan senyum tergoda (flirting smile) andalanmu ke arahku selama 10 detik tanpa terputus." }
+        ];
+
+        let isSpinning = false;
+        let currentRotation = 0;
+
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+
+            const btn = document.getElementById('spinBtn');
+            const wheel = document.getElementById('wheel');
+            btn.disabled = true;
+
+            // Generate a random additional rotation between 5 and 10 full circles
+            const spins = Math.floor(Math.random() * 5) + 5; 
+            const randomDegrees = Math.floor(Math.random() * 360);
+            const totalRotation = currentRotation + (spins * 360) + randomDegrees;
+
+            currentRotation = totalRotation;
+            
+            // Apply CSS transformation for spin
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+
+            // Wait for the CSS transition to finish (4000ms)
+            setTimeout(() => {
+                showResult();
+                isSpinning = false;
+                btn.disabled = false;
+            }, 4000);
+        }
+
+        function showResult() {
+            // Pick a random question from the 100 items array
+            const randomIndex = Math.floor(Math.random() * items.length);
+            const selectedItem = items[randomIndex];
+
+            const modal = document.getElementById('resultModal');
+            const categoryLabel = document.getElementById('categoryLabel');
+            const questionText = document.getElementById('questionText');
+
+            // Set content based on selected item
+            categoryLabel.textContent = `[ ${selectedItem.type.toUpperCase()} ]`;
+            questionText.textContent = selectedItem.text;
+
+            // Update label styling
+            categoryLabel.className = 'category-label'; // Reset class
+            if (selectedItem.type === 'Truth') {
+                categoryLabel.classList.add('cat-truth');
+            } else if (selectedItem.type === 'Trivia') {
+                categoryLabel.classList.add('cat-trivia');
+            } else {
+                categoryLabel.classList.add('cat-dare');
+            }
+
+            // Show the modal
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
