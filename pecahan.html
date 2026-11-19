@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lab Matematika Interaktif — Pecahan, Desimal & Persen</title>
+<style>
+  :root{
+    --bg:#eef4ff;
+    --ink:#1b2642;
+    --muted:#5e6f94;
+    --card:rgba(255,255,255,0.92);
+    --line:#dce6fa;
+    --blue:#2e86de;
+    --blue-dark:#185ca3;
+    --blue-soft:#eaf4ff;
+    --coral:#ff6b4a;
+    --coral-dark:#c94224;
+    --coral-soft:#fff1ed;
+    --mint:#10ac84;
+    --mint-dark:#0a7a5d;
+    --mint-soft:#e6fbf5;
+    --purple:#6c5ce7;
+    --purple-soft:#f1efff;
+    --gold:#ffb800;
+  }
+
+  *{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  html, body{
+    margin:0;
+    padding:0;
+    height:100%;
+    font-family:"Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 520px at 5% -5%, #dcebff 0%, transparent 55%),
+      radial-gradient(900px 500px at 95% 0%, #f3e8ff 0%, transparent 50%),
+      linear-gradient(170deg, #f6f9ff 0%, #ebf2ff 100%);
+    overflow:hidden;
+  }
+
+  /* ================= APP SHELL ================= */
+  #app{
+    display:grid;
+    grid-template-rows:auto auto minmax(0, 1fr);
+    height:100dvh;
+    gap:10px;
+    padding:10px 14px 12px;
+  }
+
+  /* ================= HEADER & RESULT MODE BAR ================= */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    background:var(--card);
+    border:1.5px solid #fff;
+    border-radius:18px;
+    padding:8px 14px;
+    box-shadow:0 8px 24px rgba(40,70,140,.09);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .logo{
+    width:40px; height:40px; border-radius:13px;
+    display:grid; place-items:center; font-size:21px;
+    background:linear-gradient(135deg, #2e86de, #6c5ce7);
+    color:#fff;
+    box-shadow:0 6px 14px rgba(65,105,225,.3);
+  }
+  .brand h1{
+    margin:0;
+    font-size:17px;
+    font-weight:900;
+    letter-spacing:-.2px;
+  }
+  .brand p{
+    margin:1px 0 0;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--muted);
+  }
+
+  .mode-bar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+    background:#eef3ff;
+    padding:5px 8px;
+    border-radius:14px;
+    border:1.5px solid #dbe6ff;
+  }
+  .mode-label{
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    color:#425685;
+    padding:0 4px;
+  }
+  .rm-btn{
+    border:none;
+    background:transparent;
+    color:#4c5f8a;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    padding:6px 10px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.14s;
+  }
+  .rm-btn:hover{ background:rgba(255,255,255,.7); }
+  .rm-btn.active{
+    background:#fff;
+    color:var(--blue-dark);
+    box-shadow:0 3px 10px rgba(45,85,170,.16);
+  }
+
+  .hdr-tools{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .tool-btn{
+    border:1.5px solid var(--line);
+    background:#f7faff;
+    color:#32456e;
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:800;
+    padding:7px 11px;
+    border-radius:11px;
+    cursor:pointer;
+    transition:.14s;
+  }
+  .tool-btn:hover{ background:#e8f0ff; }
+
+  /* ================= TAB NAVIGATION ================= */
+  .tabs{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:8px;
+  }
+  .tab-btn{
+    border:2px solid #fff;
+    background:rgba(255,255,255,.78);
+    color:#485a82;
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:800;
+    padding:9px 12px;
+    border-radius:15px;
+    cursor:pointer;
+    transition:.15s;
+    box-shadow:0 4px 12px rgba(45,75,140,.06);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+  }
+  .tab-btn:hover{ background:#fff; transform:translateY(-1px); }
+  .tab-btn.active{
+    background:linear-gradient(135deg, #2e86de, #54a0ff);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 8px 18px rgba(46,134,222,.32);
+  }
+
+  /* ================= WORKSPACE VIEWS ================= */
+  .view{
+    display:none;
+    min-height:0;
+    height:100%;
+  }
+  .view.active{
+    display:grid;
+  }
+
+  .panel{
+    background:var(--card);
+    backdrop-filter:blur(12px);
+    border:1.5px solid #fff;
+    border-radius:22px;
+    padding:14px;
+    box-shadow:0 10px 28px rgba(45,75,140,.10);
+    overflow-y:auto;
+    min-height:0;
+  }
+  .panel::-webkit-scrollbar{ width:7px; }
+  .panel::-webkit-scrollbar-thumb{ background:#d2dff7; border-radius:8px; }
+
+  .sec-title{
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.8px;
+    color:var(--muted);
+    margin:0 0 8px;
+  }
+
+  /* ================= STACKED FRACTION TYPOGRAPHY ================= */
+  .frac{
+    display:inline-flex;
+    align-items:center;
+    vertical-align:middle;
+    font-weight:900;
+    gap:4px;
+  }
+  .frac-whole{
+    font-size:1.15em;
+  }
+  .frac-stack{
+    display:inline-flex;
+    flex-direction:column;
+    align-items:center;
+    line-height:1.05;
+  }
+  .frac-num{
+    padding:0 4px 2px;
+    border-bottom:2.5px solid currentColor;
+  }
+  .frac-den{
+    padding:2px 4px 0;
+  }
+
+  /* ================= VIEW 1: EKSPLORASI & KONVERSI ================= */
+  #viewExplore{
+    grid-template-columns:280px minmax(0, 1fr) 335px;
+    gap:12px;
+  }
+
+  .stepper-card{
+    background:#f4f8ff;
+    border:1.5px solid #e1ecff;
+    border-radius:16px;
+    padding:10px 12px;
+    margin-bottom:10px;
+  }
+  .stepper-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:8px;
+  }
+  .stepper-row:last-child{ margin-bottom:0; }
+  .stepper-lbl{
+    font-size:12.5px;
+    font-weight:800;
+    color:#33456e;
+  }
+  .stepper-lbl small{
+    display:block;
+    font-size:10.5px;
+    color:var(--muted);
+    font-weight:700;
+  }
+  .step-ctrl{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .step-btn{
+    width:36px; height:36px;
+    border:none;
+    border-radius:11px;
+    background:#fff;
+    color:var(--blue-dark);
+    font-size:20px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 3px 8px rgba(45,80,150,.12);
+    transition:.1s;
+  }
+  .step-btn:active{ transform:scale(.93); }
+  .step-num{
+    width:46px;
+    text-align:center;
+    font-size:19px;
+    font-weight:900;
+    color:var(--ink);
+    font-variant-numeric:tabular-nums;
+  }
+
+  .chip-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:6px;
+    margin-bottom:12px;
+  }
+  .chip-btn{
+    padding:7px 4px;
+    border:1.5px solid #dfe9fc;
+    border-radius:11px;
+    background:#f7faff;
+    color:#33466f;
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.13s;
+  }
+  .chip-btn:hover{ background:#e8f1ff; }
+  .chip-btn.active{
+    background:var(--blue);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 4px 10px rgba(46,134,222,.3);
+  }
+
+  .vis-type-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-bottom:12px;
+  }
+  .vis-btn{
+    padding:9px 8px;
+    border:2px solid #e1ebff;
+    border-radius:13px;
+    background:#f7faff;
+    color:#3d507a;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.14s;
+  }
+  .vis-btn.active{
+    background:linear-gradient(135deg, #6c5ce7, #8e7ff5);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 5px 12px rgba(108,92,231,.3);
+  }
+
+  .direct-box{
+    background:#f8f6ff;
+    border:1.5px solid #e4ddff;
+    border-radius:15px;
+    padding:10px;
+  }
+  .direct-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:6px;
+  }
+  .direct-field label{
+    display:block;
+    font-size:10.5px;
+    font-weight:800;
+    color:#5d5299;
+    margin-bottom:3px;
+  }
+  .direct-in{
+    width:100%;
+    padding:7px 8px;
+    border-radius:10px;
+    border:2px solid #d9d0ff;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:900;
+    color:var(--ink);
+    text-align:center;
+    outline:none;
+    user-select:text;
+    -webkit-user-select:text;
+  }
+  .direct-in:focus{ border-color:var(--purple); }
+
+  /* Center Visual Stage */
+  .stage-panel{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    position:relative;
+    background:radial-gradient(circle at 50% 45%, #ffffff 0%, #f1f6ff 100%);
+  }
+  .stage-top-hint{
+    font-size:12px;
+    font-weight:800;
+    color:#4c608a;
+    background:#eef4ff;
+    padding:6px 14px;
+    border-radius:99px;
+  }
+  #exploreSvgWrap{
+    width:100%;
+    flex:1 1 auto;
+    display:grid;
+    place-items:center;
+    min-height:0;
+    padding:8px;
+  }
+  #exploreSvg{
+    width:100%;
+    height:100%;
+    max-height:430px;
+    overflow:visible;
+  }
+  .svg-slice{
+    cursor:pointer;
+    transition:fill .15s, transform .15s, opacity .15s;
+  }
+  .svg-slice:hover{
+    opacity:0.88;
+  }
+  .stage-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .mini-pill-btn{
+    border:1.5px solid #dce6fa;
+    background:#fff;
+    color:#384b75;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    padding:6px 12px;
+    border-radius:11px;
+    cursor:pointer;
+    box-shadow:0 3px 8px rgba(45,75,140,.08);
+  }
+  .mini-pill-btn:hover{ background:#eef4ff; }
+
+  /* Right Result Cards */
+  .hero-result{
+    background:linear-gradient(145deg, #2e86de, #5b9bff);
+    color:#fff;
+    border-radius:20px;
+    padding:14px 16px;
+    text-align:center;
+    margin-bottom:12px;
+    box-shadow:0 10px 22px rgba(46,134,222,.28);
+  }
+  .hero-result .hr-label{
+    font-size:11px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    opacity:.9;
+    margin-bottom:6px;
+  }
+  .hero-result .hr-val{
+    font-size:34px;
+    font-weight:900;
+    line-height:1.15;
+  }
+  .hero-result .hr-sub{
+    margin-top:6px;
+    font-size:12px;
+    font-weight:700;
+    opacity:.92;
+  }
+
+  .conv-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-bottom:12px;
+  }
+  .conv-card{
+    background:#f7faff;
+    border:2px solid #e5eeff;
+    border-radius:16px;
+    padding:10px 8px;
+    text-align:center;
+    cursor:pointer;
+    transition:.14s;
+  }
+  .conv-card:hover{ transform:translateY(-2px); border-color:#bcd6ff; }
+  .conv-card.highlight{
+    background:#eef6ff;
+    border-color:var(--blue);
+    box-shadow:0 6px 14px rgba(46,134,222,.15);
+  }
+  .conv-card span{
+    display:block;
+    font-size:10px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    color:var(--muted);
+    margin-bottom:4px;
+  }
+  .conv-card b{
+    font-size:20px;
+    font-weight:900;
+    color:var(--ink);
+  }
+
+  .steps-box{
+    background:#fff9eb;
+    border:1.5px solid #ffe4a3;
+    border-radius:16px;
+    padding:11px 13px;
+    font-size:12.5px;
+    font-weight:700;
+    color:#78530a;
+    line-height:1.55;
+  }
+  .steps-box h4{
+    margin:0 0 5px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    color:#a16e00;
+  }
+
+  /* ================= VIEW 2: OPERASI VISUAL ================= */
+  #viewOps{
+    grid-template-rows:auto minmax(0, 1fr);
+    gap:12px;
+  }
+  .ops-toolbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    background:var(--card);
+    border:1.5px solid #fff;
+    border-radius:20px;
+    padding:10px 16px;
+    box-shadow:0 8px 22px rgba(45,75,140,.08);
+  }
+  .op-operand{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 12px;
+    border-radius:15px;
+  }
+  .op-operand.a{ background:var(--blue-soft); border:2px solid #bfdfff; }
+  .op-operand.b{ background:var(--coral-soft); border:2px solid #ffd1c7; }
+
+  .mini-stack{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+  }
+  .mini-step-row{
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .m-btn{
+    width:28px; height:28px;
+    border:none;
+    border-radius:8px;
+    background:#fff;
+    font-weight:900;
+    font-size:16px;
+    cursor:pointer;
+    box-shadow:0 2px 5px rgba(0,0,0,.1);
+  }
+  .m-val{
+    width:30px;
+    text-align:center;
+    font-size:17px;
+    font-weight:900;
+  }
+  .m-bar{
+    width:72px;
+    height:3px;
+    background:var(--ink);
+    border-radius:2px;
+  }
+
+  .op-signs{
+    display:flex;
+    gap:6px;
+  }
+  .sign-btn{
+    width:44px; height:44px;
+    border:2px solid #dce6fa;
+    border-radius:14px;
+    background:#f7faff;
+    color:var(--ink);
+    font-size:22px;
+    font-weight:900;
+    cursor:pointer;
+    transition:.13s;
+  }
+  .sign-btn.active{
+    background:linear-gradient(135deg, #6c5ce7, #8c7ae6);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 6px 14px rgba(108,92,231,.32);
+  }
+
+  .ops-extras{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .toggle-pill{
+    padding:9px 13px;
+    border:2px solid #dce6fa;
+    border-radius:13px;
+    background:#fff;
+    color:#394c78;
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.14s;
+  }
+  .toggle-pill.active{
+    background:linear-gradient(135deg, #10ac84, #1dd1a1);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 5px 14px rgba(16,172,132,.3);
+  }
+
+  .ops-body{
+    display:grid;
+    grid-template-columns:minmax(0, 1.45fr) minmax(300px, 0.85fr);
+    gap:12px;
+    min-height:0;
+  }
+  .ops-canvas-panel{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+  }
+  #opsSvg{
+    width:100%;
+    height:100%;
+    max-height:420px;
+  }
+
+  .ops-result-hero{
+    background:linear-gradient(145deg, #10ac84, #1dd1a1);
+    color:#fff;
+    border-radius:20px;
+    padding:14px;
+    text-align:center;
+    margin-bottom:12px;
+    box-shadow:0 10px 22px rgba(16,172,132,.26);
+  }
+  .ops-result-hero .lbl{
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    opacity:.92;
+  }
+  .ops-result-hero .big{
+    font-size:32px;
+    font-weight:900;
+    margin:6px 0 4px;
+  }
+  .ops-alt-row{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:6px;
+    margin-bottom:12px;
+  }
+  .alt-pill{
+    background:#f4f8ff;
+    border:1.5px solid #e0ebff;
+    border-radius:12px;
+    padding:8px 6px;
+    text-align:center;
+  }
+  .alt-pill span{
+    display:block;
+    font-size:9.5px;
+    font-weight:800;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  .alt-pill b{
+    font-size:14.5px;
+    font-weight:900;
+    color:var(--ink);
+  }
+
+  .step-list{
+    background:#f8faff;
+    border:1.5px solid #e4eeff;
+    border-radius:16px;
+    padding:12px;
+    font-size:13px;
+    font-weight:700;
+    line-height:1.65;
+  }
+  .step-list h4{
+    margin:0 0 6px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    color:var(--muted);
+  }
+
+  /* ================= VIEW 3: DINDING PECAHAN SENILAI ================= */
+  #viewWall{
+    grid-template-rows:auto minmax(0, 1fr);
+    gap:10px;
+  }
+  .wall-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    background:var(--card);
+    border:1.5px solid #fff;
+    border-radius:18px;
+    padding:10px 16px;
+    box-shadow:0 8px 20px rgba(45,75,140,.08);
+  }
+  .wall-readout{
+    font-size:15px;
+    font-weight:900;
+    color:var(--ink);
+  }
+  .wall-readout .eq-list{
+    color:var(--blue-dark);
+  }
+  .wall-grid-panel{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    justify-content:space-between;
+  }
+  .wall-row{
+    display:flex;
+    gap:4px;
+    flex:1 1 0;
+    min-height:28px;
+  }
+  .wall-tile{
+    flex:1 1 0;
+    border:1.5px solid rgba(255,255,255,.85);
+    border-radius:9px;
+    display:grid;
+    place-items:center;
+    font-size:12px;
+    font-weight:900;
+    color:#fff;
+    cursor:pointer;
+    transition:transform .1s, box-shadow .12s, filter .12s;
+    text-shadow:0 1px 2px rgba(0,0,0,.22);
+  }
+  .wall-tile:hover{ filter:brightness(1.06); }
+  .wall-tile.selected{
+    outline:3.5px solid #1b2642;
+    transform:scale(1.02);
+    z-index:2;
+  }
+  .wall-tile.equiv{
+    background:linear-gradient(135deg, #ffb800, #ff8f00) !important;
+    color:#1b2642;
+    text-shadow:none;
+    box-shadow:0 4px 12px rgba(255,165,0,.35);
+  }
+  .wall-tile.cmp-b{
+    background:linear-gradient(135deg, #ff5e6c, #ff3b53) !important;
+    outline:3px solid #9e1123;
+  }
+
+  /* ================= VIEW 4: TANTANGAN LAB ================= */
+  #viewQuiz{
+    grid-template-columns:minmax(0, 1.25fr) minmax(320px, 0.9fr);
+    gap:12px;
+  }
+  .quiz-visual-panel{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
+  #quizSvg{
+    width:100%;
+    height:100%;
+    max-height:390px;
+  }
+  .quiz-side{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .quiz-scorebar{
+    display:flex;
+    justify-content:space-between;
+    background:linear-gradient(135deg, #fff4d4, #ffe6a8);
+    padding:10px 14px;
+    border-radius:15px;
+    font-size:13.5px;
+    font-weight:900;
+    color:#8f5e00;
+    margin-bottom:12px;
+  }
+  .quiz-prompt{
+    font-size:17px;
+    font-weight:900;
+    line-height:1.45;
+    color:var(--ink);
+    margin-bottom:14px;
+  }
+  .quiz-opts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .q-opt{
+    padding:16px 12px;
+    border:2.5px solid #dce6fa;
+    border-radius:16px;
+    background:#f8fbff;
+    font-family:inherit;
+    font-size:18px;
+    font-weight:900;
+    color:var(--ink);
+    cursor:pointer;
+    transition:.14s;
+  }
+  .q-opt:hover:not(:disabled){ background:#ebf3ff; border-color:#adcaff; transform:translateY(-2px); }
+  .q-opt.ok{ background:#d4f8e8; border-color:#10ac84; color:#096b52; }
+  .q-opt.no{ background:#ffe0e5; border-color:#ff4757; color:#a61426; }
+
+  .quiz-fb{
+    margin-top:12px;
+    padding:11px 13px;
+    border-radius:14px;
+    font-size:13px;
+    font-weight:800;
+    line-height:1.45;
+  }
+  .quiz-fb:empty{ display:none; }
+  .quiz-fb.ok{ background:#e6fbf5; color:#0b7559; border:1.5px solid #b5f0de; }
+  .quiz-fb.no{ background:#fff0f2; color:#b81d31; border:1.5px solid #ffc7cf; }
+
+  .btn-action{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:16px;
+    background:linear-gradient(135deg, #2e86de, #6c5ce7);
+    color:#fff;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(65,105,225,.32);
+    margin-top:12px;
+  }
+  .btn-action:hover{ transform:translateY(-1px); }
+
+  @media (max-width:960px){
+    html, body{ overflow:auto; }
+    #app{ height:auto; min-height:100dvh; }
+    .tabs{ grid-template-columns:1fr 1fr; }
+    #viewExplore, .ops-body, #viewQuiz{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="logo">🧪</div>
+      <div>
+        <h1>Lab Pecahan, Desimal &amp; Persen</h1>
+        <p>Manipulasi visual interaktif untuk papan tulis digital</p>
+      </div>
+    </div>
+
+    <div class="mode-bar" id="resultModeBar">
+      <span class="mode-label">Mode Hasil:</span>
+      <button type="button" class="rm-btn active" data-rm="all">📊 Semua</button>
+      <button type="button" class="rm-btn" data-rm="simplified">➗ Pecahan Sederhana</button>
+      <button type="button" class="rm-btn" data-rm="mixed">🔢 Campuran</button>
+      <button type="button" class="rm-btn" data-rm="decimal">🔘 Desimal</button>
+      <button type="button" class="rm-btn" data-rm="percent">💯 Persen</button>
+    </div>
+
+    <div class="hdr-tools">
+      <button type="button" class="tool-btn" id="btnSound">🔊 Suara</button>
+      <button type="button" class="tool-btn" id="btnFull">⛶ Layar Penuh</button>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs" id="mainTabs">
+    <button type="button" class="tab-btn active" data-tab="viewExplore">🎨 Eksplorasi &amp; Konversi</button>
+    <button type="button" class="tab-btn" data-tab="viewOps">➕ Operasi Visual (+ − × ÷)</button>
+    <button type="button" class="tab-btn" data-tab="viewWall">🧱 Dinding Pecahan Senilai</button>
+    <button type="button" class="tab-btn" data-tab="viewQuiz">🎯 Tantangan Lab</button>
+  </nav>
+
+  <!-- ==================== 1. EKSPLORASI & KONVERSI ==================== -->
+  <section class="view active" id="viewExplore">
+    <!-- Panel Kiri -->
+    <aside class="panel">
+      <h2 class="sec-title">1. Atur Nilai Pecahan</h2>
+      <div class="stepper-card">
+        <div class="stepper-row">
+          <div class="stepper-lbl">Pembilang (Atas)<small>Bagian yang diwarnai</small></div>
+          <div class="step-ctrl">
+            <button type="button" class="step-btn" data-act="num-minus">−</button>
+            <span class="step-num" id="expNumVal">3</span>
+            <button type="button" class="step-btn" data-act="num-plus">+</button>
+          </div>
+        </div>
+        <div class="stepper-row">
+          <div class="stepper-lbl">Penyebut (Bawah)<small>Total bagian per 1 utuh</small></div>
+          <div class="step-ctrl">
+            <button type="button" class="step-btn" data-act="den-minus">−</button>
+            <span class="step-num" id="expDenVal">4</span>
+            <button type="button" class="step-btn" data-act="den-plus">+</button>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="sec-title">2. Contoh Cepat</h2>
+      <div class="chip-grid" id="presetGrid">
+        <button type="button" class="chip-btn" data-n="1" data-d="2">1/2</button>
+        <button type="button" class="chip-btn" data-n="1" data-d="3">1/3</button>
+        <button type="button" class="chip-btn active" data-n="3" data-d="4">3/4</button>
+        <button type="button" class="chip-btn" data-n="2" data-d="5">2/5</button>
+        <button type="button" class="chip-btn" data-n="5" data-d="8">5/8</button>
+        <button type="button" class="chip-btn" data-n="7" data-d="10">7/10</button>
+        <button type="button" class="chip-btn" data-n="5" data-d="4">5/4</button>
+        <button type="button" class="chip-btn" data-n="3" data-d="2">3/2</button>
+      </div>
+
+      <h2 class="sec-title">3. Bentuk Model Visual</h2>
+      <div class="vis-type-grid" id="visTypeGrid">
+        <button type="button" class="vis-btn active" data-vis="pie">🥧 Lingkaran Kue</button>
+        <button type="button" class="vis-btn" data-vis="bar">🍫 Batang Pecahan</button>
+        <button type="button" class="vis-btn" data-vis="grid">🟦 Grid 10×10 (%)</button>
+        <button type="button" class="vis-btn" data-vis="line">📏 Garis Bilangan</button>
+      </div>
+
+      <div class="direct-box">
+        <h2 class="sec-title" style="margin-bottom:2px;color:#514594;">4. Ubah dari Desimal / Persen</h2>
+        <div class="direct-row">
+          <div class="direct-field">
+            <label>Ketik Desimal (0 – 2)</label>
+            <input type="text" inputmode="decimal" class="direct-in" id="inDirectDec" value="0,75">
+          </div>
+          <div class="direct-field">
+            <label>Ketik Persen (0 – 200%)</label>
+            <input type="text" inputmode="decimal" class="direct-in" id="inDirectPct" value="75">
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Panel Tengah (Kanvas Interaktif) -->
+    <main class="panel stage-panel">
+      <div class="stage-top-hint" id="expStageHint">👆 Ketuk langsung bagian gambar untuk mewarnai atau menghapus!</div>
+      <div id="exploreSvgWrap">
+        <svg id="exploreSvg" viewBox="0 0 600 380"></svg>
+      </div>
+      <div class="stage-actions">
+        <button type="button" class="mini-pill-btn" id="btnExpClear">🧹 Kosongkan (0)</button>
+        <button type="button" class="mini-pill-btn" id="btnExpHalf">🌗 Setengah (1/2)</button>
+        <button type="button" class="mini-pill-btn" id="btnExpFull">🌕 Penuh (1)</button>
+        <button type="button" class="mini-pill-btn" id="btnExpSimplify">✨ Sederhanakan Visual</button>
+      </div>
+    </main>
+
+    <!-- Panel Kanan (Hasil & Langkah) -->
+    <aside class="panel">
+      <div class="hero-result">
+        <div class="hr-label" id="expHeroLabel">Hasil Konversi Lengkap</div>
+        <div class="hr-val" id="expHeroVal">3/4 = 0,75 = 75%</div>
+        <div class="hr-sub" id="expHeroSub">Pecahan sudah dalam bentuk paling sederhana</div>
+      </div>
+
+      <h2 class="sec-title">Representasi Setara (Klik untuk Fokus Mode)</h2>
+      <div class="conv-grid" id="expConvGrid">
+        <div class="conv-card" data-rm="simplified">
+          <span>Pecahan Sederhana</span>
+          <b id="cardSimple">3/4</b>
+        </div>
+        <div class="conv-card" data-rm="mixed">
+          <span>Campuran / Biasa</span>
+          <b id="cardMixed">3/4</b>
+        </div>
+        <div class="conv-card" data-rm="decimal">
+          <span>Desimal</span>
+          <b id="cardDec">0,75</b>
+        </div>
+        <div class="conv-card" data-rm="percent">
+          <span>Persen</span>
+          <b id="cardPct">75%</b>
+        </div>
+      </div>
+
+      <div class="steps-box" id="expStepsBox">
+        <h4>💡 Penjelasan Langkah demi Langkah</h4>
+        <div id="expStepsText">–</div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ==================== 2. OPERASI VISUAL (+ - × ÷) ==================== -->
+  <section class="view" id="viewOps">
+    <div class="ops-toolbar">
+      <!-- Pecahan A -->
+      <div class="op-operand a">
+        <strong style="color:var(--blue-dark);font-size:13px;">Pecahan 1</strong>
+        <div class="mini-stack">
+          <div class="mini-step-row">
+            <button type="button" class="m-btn" data-op="a-num-dec">−</button>
+            <span class="m-val" id="opANum">1</span>
+            <button type="button" class="m-btn" data-op="a-num-inc">+</button>
+          </div>
+          <div class="m-bar"></div>
+          <div class="mini-step-row">
+            <button type="button" class="m-btn" data-op="a-den-dec">−</button>
+            <span class="m-val" id="opADen">2</span>
+            <button type="button" class="m-btn" data-op="a-den-inc">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operator -->
+      <div class="op-signs" id="opSigns">
+        <button type="button" class="sign-btn active" data-sign="+">+</button>
+        <button type="button" class="sign-btn" data-sign="-">−</button>
+        <button type="button" class="sign-btn" data-sign="*">×</button>
+        <button type="button" class="sign-btn" data-sign="/">÷</button>
+      </div>
+
+      <!-- Pecahan B -->
+      <div class="op-operand b">
+        <strong style="color:var(--coral-dark);font-size:13px;">Pecahan 2</strong>
+        <div class="mini-stack">
+          <div class="mini-step-row">
+            <button type="button" class="m-btn" data-op="b-num-dec">−</button>
+            <span class="m-val" id="opBNum">1</span>
+            <button type="button" class="m-btn" data-op="b-num-inc">+</button>
+          </div>
+          <div class="m-bar"></div>
+          <div class="mini-step-row">
+            <button type="button" class="m-btn" data-op="b-den-dec">−</button>
+            <span class="m-val" id="opBDen">3</span>
+            <button type="button" class="m-btn" data-op="b-den-inc">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kontrol Visual Operasi -->
+      <div class="ops-extras">
+        <button type="button" class="toggle-pill active" id="btnCommonDen">✂️ Samakan Penyebut (KPK)</button>
+        <button type="button" class="toggle-pill" id="btnOpRandom">🎲 Soal Acak</button>
+      </div>
+    </div>
+
+    <div class="ops-body">
+      <div class="panel ops-canvas-panel">
+        <svg id="opsSvg" viewBox="0 0 680 380"></svg>
+      </div>
+
+      <aside class="panel">
+        <div class="ops-result-hero">
+          <div class="lbl" id="opsResLabel">Hasil Akhir</div>
+          <div class="big" id="opsResBig">5/6</div>
+          <div style="font-size:12px;font-weight:700;opacity:.92;" id="opsResSub">Gunakan tombol Mode Hasil di atas untuk ganti format</div>
+        </div>
+
+        <div class="ops-alt-row">
+          <div class="alt-pill"><span>Sederhana</span><b id="opAltSimple">5/6</b></div>
+          <div class="alt-pill"><span>Desimal</span><b id="opAltDec">≈ 0,8333</b></div>
+          <div class="alt-pill"><span>Persen</span><b id="opAltPct">≈ 83,33%</b></div>
+        </div>
+
+        <div class="step-list">
+          <h4>📝 Langkah Penyelesaian</h4>
+          <div id="opsStepsText">–</div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ==================== 3. DINDING PECAHAN SENILAI ==================== -->
+  <section class="view" id="viewWall">
+    <div class="wall-header">
+      <div class="wall-readout" id="wallReadout">
+        👆 Ketuk salah satu balok pecahan di bawah untuk melihat semua pecahan yang senilai!
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button type="button" class="toggle-pill" id="btnWallCompare">⚖️ Mode Bandingkan (2 Balok)</button>
+        <button type="button" class="tool-btn" id="btnWallClear">Reset</button>
+      </div>
+    </div>
+
+    <div class="panel wall-grid-panel" id="wallGrid"></div>
+  </section>
+
+  <!-- ==================== 4. TANTANGAN LAB ==================== -->
+  <section class="view" id="viewQuiz">
+    <div class="panel quiz-visual-panel">
+      <div class="stage-top-hint" id="quizVisualHint" style="margin-bottom:8px;">Perhatikan gambar di bawah ini</div>
+      <svg id="quizSvg" viewBox="0 0 560 340"></svg>
+    </div>
+
+    <aside class="panel quiz-side">
+      <div>
+        <div class="quiz-scorebar">
+          <span>⭐ Skor: <b id="qScore">0 / 0</b></span>
+          <span>🔥 Streak: <b id="qStreak">0</b></span>
+        </div>
+        <div class="quiz-prompt" id="qPrompt">–</div>
+        <div class="quiz-opts" id="qOpts"></div>
+        <button type="button" class="btn-action" id="btnQuizCheck" hidden>✓ Periksa Warnaku!</button>
+        <div class="quiz-fb" id="qFb"></div>
+      </div>
+      <button type="button" class="btn-action" id="btnQuizNext" hidden>Soal Berikutnya ➡️</button>
+    </aside>
+  </section>
+</div>
+
+<script>
+/* ==========================================================================
+   0. AUDIO SYNTHESIZER (WEB AUDIO API)
+   ========================================================================== */
+const FX = {
+  on: true,
+  ctx: null,
+  tone(f = 520, dur = 0.06, type = 'sine', vol = 0.06) {
+    if (!this.on) return;
+    try {
+      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(f, this.ctx.currentTime);
+      g.gain.setValueAtTime(vol, this.ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + dur);
+      osc.connect(g);
+      g.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + dur);
+    } catch (_) {}
+  },
+  ok() {
+    this.tone(523.25, 0.09, 'triangle', 0.08);
+    setTimeout(() => this.tone(659.25, 0.14, 'triangle', 0.08), 80);
+  },
+  err() {
+    this.tone(210, 0.16, 'sawtooth', 0.05);
+  }
+};
+
+/* ==========================================================================
+   1. UTILITAS MATEMATIKA & FORMATTER MODE HASIL
+   ========================================================================== */
+const gcd = (a, b) => {
+  a = Math.abs(Math.round(a));
+  b = Math.abs(Math.round(b));
+  while (b) { [a, b] = [b, a % b]; }
+  return a || 1;
+};
+const lcm = (a, b) => (a && b) ? Math.abs(a * b) / gcd(a, b) : 0;
+
+// Cek apakah penyebut sederhana menghasilkan desimal berhenti (hanya faktor 2 & 5)
+function isExactDecimal(den) {
+  let d = Math.abs(den);
+  if (d === 0) return true;
+  while (d % 2 === 0) d /= 2;
+  while (d % 5 === 0) d /= 5;
+  return d === 1;
+}
+
+function fmtID(val, maxDec = 4) {
+  const rounded = Number(val.toFixed(maxDec));
+  return rounded.toLocaleString('id-ID', { maximumFractionDigits: maxDec });
+}
+
+function fracHTML(num, den, whole = null) {
+  if (den === 1 && whole === null) return `<span>${num}</span>`;
+  let html = `<span class="frac">`;
+  if (whole !== null && whole !== 0) html += `<span class="frac-whole">${whole}</span>`;
+  if (num !== 0 || whole === null || whole === 0) {
+    html += `<span class="frac-stack"><span class="frac-num">${num}</span><span class="frac-den">${den}</span></span>`;
+  }
+  html += `</span>`;
+  return html;
+}
+
+function analyzeFraction(num, den) {
+  if (den === 0) den = 1;
+  if (den < 0) { num = -num; den = -den; }
+
+  const sign = num < 0 ? -1 : 1;
+  const absN = Math.abs(num);
+  const g = gcd(absN, den);
+  const sn = (absN / g) * sign;
+  const sd = den / g;
+
+  const exact = isExactDecimal(sd);
+  const decVal = num / den;
+  const pctVal = decVal * 100;
+
+  const simpleStr = sd === 1 ? `${sn}` : `${sn}/${sd}`;
+  const simpleHtml = fracHTML(sn, sd);
+
+  let mixedStr = simpleStr;
+  let mixedHtml = simpleHtml;
+  if (sd > 1 && Math.abs(sn) > sd) {
+    const w = Math.trunc(sn / sd);
+    const r = Math.abs(sn % sd);
+    mixedStr = r === 0 ? `${w}` : `${w} ${r}/${sd}`;
+    mixedHtml = fracHTML(r, sd, w);
+  }
+
+  const prefix = exact ? '' : '≈ ';
+  const decStr = prefix + fmtID(decVal, 4);
+  const pctStr = prefix + fmtID(pctVal, 2) + '%';
+
+  return {
+    num, den, g, sn, sd, exact,
+    decVal, pctVal,
+    simpleStr, simpleHtml,
+    mixedStr, mixedHtml,
+    decStr, pctStr
+  };
+}
+
+// State global Mode Tampilan Hasil: 'all' | 'simplified' | 'mixed' | 'decimal' | 'percent'
+let resultMode = 'all';
+
+function formatByResultMode(info, useHtml = true) {
+  if (resultMode === 'simplified') return useHtml ? info.simpleHtml : info.simpleStr;
+  if (resultMode === 'mixed') return useHtml ? info.mixedHtml : info.mixedStr;
+  if (resultMode === 'decimal') return info.decStr;
+  if (resultMode === 'percent') return info.pctStr;
+  // Mode 'all'
+  if (useHtml) {
+    return `${info.simpleHtml} <span style="opacity:.65;font-size:.75em;">=</span> ${info.decStr} <span style="opacity:.65;font-size:.75em;">=</span> ${info.pctStr}`;
+  }
+  return `${info.simpleStr} = ${info.decStr} = ${info.pctStr}`;
+}
+
+/* ==========================================================================
+   2. NAVIGASI TAB & PENGUBAH MODE HASIL
+   ========================================================================== */
+document.getElementById('resultModeBar').addEventListener('click', e => {
+  const btn = e.target.closest('.rm-btn');
+  if (!btn) return;
+  resultMode = btn.dataset.rm;
+  document.querySelectorAll('.rm-btn').forEach(b => b.classList.toggle('active', b === btn));
+  FX.tone(560, 0.05);
+  refreshAllViews();
+});
+
+document.getElementById('mainTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  const targetId = btn.dataset.tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === targetId));
+  FX.tone(480, 0.05);
+  refreshAllViews();
+});
+
+document.getElementById('btnSound').addEventListener('click', e => {
+  FX.on = !FX.on;
+  e.target.textContent = FX.on ? '🔊 Suara' : '🔇 Senyap';
+  if (FX.on) FX.tone(620, 0.07);
+});
+
+document.getElementById('btnFull').addEventListener('click', () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+  else document.exitFullscreen?.().catch(() => {});
+});
+
+/* ==========================================================================
+   3. MODUL 1: EKSPLORASI & KONVERSI VISUAL
+   ========================================================================== */
+const explore = {
+  num: 3,
+  den: 4,
+  vis: 'pie', // 'pie' | 'bar' | 'grid' | 'line'
+  gridCells: new Set() // khusus mode grid 10x10 agar siswa bisa mewarnai sel mana saja
+};
+
+function syncGridCellsFromRatio() {
+  explore.gridCells.clear();
+  const count = Math.min(100, Math.max(0, Math.round((explore.num / explore.den) * 100)));
+  for (let i = 0; i < count; i++) explore.gridCells.add(i);
+}
+syncGridCellsFromRatio();
+
+function setExploreFraction(n, d, syncGrid = true) {
+  d = Math.max(1, Math.min(20, Math.round(d)));
+  n = Math.max(0, Math.min(d * 2, Math.round(n)));
+  explore.num = n;
+  explore.den = d;
+  if (syncGrid && explore.vis !== 'grid') syncGridCellsFromRatio();
+  if (syncGrid && explore.vis === 'grid') {
+    explore.den = 100;
+    explore.num = Math.max(0, Math.min(100, Math.round((n / d) * 100)));
+    syncGridCellsFromRatio();
+  }
+  renderExplore();
+}
+
+function renderExplore() {
+  const isGrid = explore.vis === 'grid';
+  const curNum = isGrid ? explore.gridCells.size : explore.num;
+  const curDen = isGrid ? 100 : explore.den;
+
+  document.getElementById('expNumVal').textContent = curNum;
+  document.getElementById('expDenVal').textContent = curDen;
+
+  // Update highlight tombol preset
+  document.querySelectorAll('#presetGrid .chip-btn').forEach(b => {
+    const match = Number(b.dataset.n) === curNum && Number(b.dataset.d) === curDen;
+    b.classList.toggle('active', match);
+  });
+
+  const info = analyzeFraction(curNum, curDen);
+
+  // Sync input desimal & persen (jika tidak sedang diketik user)
+  const inDec = document.getElementById('inDirectDec');
+  const inPct = document.getElementById('inDirectPct');
+  if (document.activeElement !== inDec) inDec.value = fmtID(info.decVal, 4);
+  if (document.activeElement !== inPct) inPct.value = fmtID(info.pctVal, 2);
+
+  // Hero Result berdasarkan Mode Hasil aktif
+  const modeNames = {
+    all: 'Hasil Konversi Lengkap',
+    simplified: 'Mode: Pecahan Paling Sederhana',
+    mixed: 'Mode: Pecahan Campuran / Biasa',
+    decimal: 'Mode: Bilangan Desimal',
+    percent: 'Mode: Bentuk Persen (%)'
+  };
+  document.getElementById('expHeroLabel').textContent = modeNames[resultMode];
+  document.getElementById('expHeroVal').innerHTML = formatByResultMode(info, true);
+  document.getElementById('expHeroSub').textContent =
+    info.g > 1
+      ? `Disederhanakan dari ${curNum}/${curDen} (dibagi FPB = ${info.g})`
+      : `${curNum}/${curDen} sudah dalam bentuk paling sederhana`;
+
+  // Kartu 4 representasi
+  document.getElementById('cardSimple').innerHTML = info.simpleHtml;
+  document.getElementById('cardMixed').innerHTML = info.mixedHtml;
+  document.getElementById('cardDec').textContent = info.decStr;
+  document.getElementById('cardPct').textContent = info.pctStr;
+
+  document.querySelectorAll('#expConvGrid .conv-card').forEach(c => {
+    c.classList.toggle('highlight', c.dataset.rm === resultMode);
+  });
+
+  // Langkah konversi
+  const stepLines = [];
+  if (info.g > 1) {
+    stepLines.push(`1. Sederhanakan: (${curNum} ÷ ${info.g}) / (${curDen} ÷ ${info.g}) = <b>${info.simpleStr}</b>`);
+  } else {
+    stepLines.push(`1. Bentuk sederhana: <b>${info.simpleStr}</b> (FPB = 1)`);
+  }
+  stepLines.push(`2. Ke Desimal: ${curNum} ÷ ${curDen} = <b>${info.decStr}</b>`);
+  stepLines.push(`3. Ke Persen: ${fmtID(info.decVal, 4)} × 100% = <b>${info.pctStr}</b>`);
+  document.getElementById('expStepsText').innerHTML = stepLines.join('<br>');
+
+  // Gambar SVG Visual
+  drawExploreSVG(curNum, curDen);
+}
+
+function drawExploreSVG(num, den) {
+  const svg = document.getElementById('exploreSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  if (explore.vis === 'pie') {
+    const wholes = num > den ? 2 : 1;
+    const centers = wholes === 1 ? [300] : [175, 425];
+    const r = wholes === 1 ? 142 : 112;
+    const cy = 190;
+
+    centers.forEach((cx, wIdx) => {
+      el('text', {
+        x: cx, y: cy + r + 28, 'text-anchor': 'middle',
+        fill: '#5e6f94', 'font-size': '13', 'font-weight': '800'
+      }).textContent = `Satuan Ke-${wIdx + 1}`;
+
+      if (den === 1) {
+        const idx = wIdx;
+        const filled = idx < num;
+        const c = el('circle', {
+          cx, cy, r,
+          fill: filled ? '#2e86de' : '#e8f0fe',
+          stroke: '#1b2642', 'stroke-width': '3',
+          class: 'svg-slice'
+        });
+        c.addEventListener('pointerdown', () => {
+          FX.tone(540, 0.05);
+          setExploreFraction(filled && num === idx + 1 ? idx : idx + 1, 1);
+        });
+      } else {
+        for (let i = 0; i < den; i++) {
+          const globalIdx = wIdx * den + i;
+          const filled = globalIdx < num;
+          const a1 = (i / den) * Math.PI * 2 - Math.PI / 2;
+          const a2 = ((i + 1) / den) * Math.PI * 2 - Math.PI / 2;
+          const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+          const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+          const largeArc = (a2 - a1) > Math.PI ? 1 : 0;
+          const d = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+
+          const slice = el('path', {
+            d,
+            fill: filled ? '#2e86de' : '#edf3ff',
+            stroke: '#1b2642', 'stroke-width': '2.4',
+            class: 'svg-slice'
+          });
+          slice.addEventListener('pointerdown', () => {
+            FX.tone(460 + i * 25, 0.05);
+            const nextNum = (filled && num === globalIdx + 1) ? globalIdx : globalIdx + 1;
+            setExploreFraction(nextNum, den);
+          });
+        }
+      }
+    });
+  }
+
+  else if (explore.vis === 'bar') {
+    const wholes = num > den ? 2 : 1;
+    const barW = 500;
+    const barH = wholes === 1 ? 110 : 86;
+    const startX = 50;
+
+    for (let wIdx = 0; wIdx < wholes; wIdx++) {
+      const y = wholes === 1 ? 135 : (75 + wIdx * 135);
+      el('text', {
+        x: startX, y: y - 10, fill: '#4f628a', 'font-size': '13', 'font-weight': '800'
+      }).textContent = `Batang Satuan #${wIdx + 1} (dibagi ${den} bagian sama besar)`;
+
+      const segW = barW / den;
+      for (let i = 0; i < den; i++) {
+        const globalIdx = wIdx * den + i;
+        const filled = globalIdx < num;
+        const rect = el('rect', {
+          x: startX + i * segW, y, width: segW, height: barH,
+          fill: filled ? '#2e86de' : '#edf3ff',
+          stroke: '#1b2642', 'stroke-width': '2.4',
+          rx: 4, class: 'svg-slice'
+        });
+        rect.addEventListener('pointerdown', () => {
+          FX.tone(480 + i * 20, 0.05);
+          const nextNum = (filled && num === globalIdx + 1) ? globalIdx : globalIdx + 1;
+          setExploreFraction(nextNum, den);
+        });
+
+        if (den <= 12) {
+          el('text', {
+            x: startX + i * segW + segW / 2,
+            y: y + barH / 2 + 5,
+            'text-anchor': 'middle',
+            fill: filled ? '#fff' : '#5e6f94',
+            'font-size': den > 8 ? '12' : '15',
+            'font-weight': '900',
+            'pointer-events': 'none'
+          }).textContent = `1/${den}`;
+        }
+      }
+    }
+  }
+
+  else if (explore.vis === 'grid') {
+    // Grid 10x10 Interaktif (100 Kotak = 100%)
+    const size = 29;
+    const ox = 155, oy = 32;
+    el('text', {
+      x: 300, y: 20, 'text-anchor': 'middle', fill: '#514594', 'font-size': '13', 'font-weight': '800'
+    }).textContent = `Grid Persen 10×10 — ${explore.gridCells.size} dari 100 kotak diwarnai (${explore.gridCells.size}%)`;
+
+    for (let r = 0; r < 10; r++) {
+      for (let c = 0; c < 10; c++) {
+        const idx = c * 10 + r; // isi per kolom agar tampak rapi seperti batang persen
+        const filled = explore.gridCells.has(idx);
+        const cell = el('rect', {
+          x: ox + c * size, y: oy + r * size,
+          width: size - 2, height: size - 2, rx: 5,
+          fill: filled ? '#6c5ce7' : '#ece9ff',
+          stroke: '#c9c0ff', 'stroke-width': '1.2',
+          class: 'svg-slice'
+        });
+        cell.addEventListener('pointerdown', () => {
+          FX.tone(540, 0.04);
+          if (explore.gridCells.has(idx)) explore.gridCells.delete(idx);
+          else explore.gridCells.add(idx);
+          renderExplore();
+        });
+      }
+    }
+  }
+
+  else if (explore.vis === 'line') {
+    // Garis Bilangan 0 sampai 1 (atau 0 sampai 2 jika num > den)
+    const maxWhole = num > den ? 2 : 1;
+    const x0 = 60, x1 = 540, y = 195;
+    const totalSteps = den * maxWhole;
+
+    // Garis dasar
+    el('line', { x1: x0, y1: y, x2: x1, y2: y, stroke: '#cbd8f2', 'stroke-width': '10', 'stroke-linecap': 'round' });
+
+    // Garis terisi dari 0 sampai num/den
+    const fillX = x0 + (Math.min(num, totalSteps) / totalSteps) * (x1 - x0);
+    el('line', { x1: x0, y1: y, x2: fillX, y2: y, stroke: '#2e86de', 'stroke-width': '10', 'stroke-linecap': 'round' });
+
+    for (let i = 0; i <= totalSteps; i++) {
+      const tx = x0 + (i / totalSteps) * (x1 - x0);
+      const isWhole = i % den === 0;
+      const tickH = isWhole ? 28 : 16;
+
+      el('line', {
+        x1: tx, y1: y - tickH / 2, x2: tx, y2: y + tickH / 2,
+        stroke: isWhole ? '#1b2642' : '#5e6f94',
+        'stroke-width': isWhole ? '3.5' : '2'
+      });
+
+      // Target sentuh transparan besar
+      const hit = el('circle', { cx: tx, cy: y, r: 18, fill: 'transparent', class: 'svg-slice' });
+      hit.addEventListener('pointerdown', () => {
+        FX.tone(520, 0.05);
+        setExploreFraction(i, den);
+      });
+
+      if (isWhole) {
+        el('text', {
+          x: tx, y: y + 40, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '18', 'font-weight': '900'
+        }).textContent = String(i / den);
+      } else if (totalSteps <= 16) {
+        el('text', {
+          x: tx, y: y + 32, 'text-anchor': 'middle', fill: '#5e6f94', 'font-size': '11.5', 'font-weight': '800'
+        }).textContent = `${i}/${den}`;
+      }
+    }
+
+    // Penanda posisi aktif
+    el('circle', { cx: fillX, cy: y, r: 13, fill: '#ff6b4a', stroke: '#fff', 'stroke-width': '3.5' });
+    const info = analyzeFraction(num, den);
+    el('rect', { x: fillX - 64, y: y - 62, width: 128, height: 34, rx: 11, fill: '#1b2642' });
+    el('text', {
+      x: fillX, y: y - 40, 'text-anchor': 'middle', fill: '#fff', 'font-size': '13.5', 'font-weight': '900'
+    }).textContent = `${info.simpleStr} (${info.decStr})`;
+  }
+}
+
+// Event Listener Modul 1
+document.getElementById('viewExplore').addEventListener('click', e => {
+  const stepBtn = e.target.closest('[data-act]');
+  if (stepBtn) {
+    const act = stepBtn.dataset.act;
+    FX.tone(500, 0.04);
+    if (explore.vis === 'grid') {
+      let cur = explore.gridCells.size;
+      if (act === 'num-plus') cur = Math.min(100, cur + 1);
+      if (act === 'num-minus') cur = Math.max(0, cur - 1);
+      explore.num = cur; explore.den = 100;
+      syncGridCellsFromRatio();
+      renderExplore();
+      return;
+    }
+    if (act === 'num-plus') setExploreFraction(explore.num + 1, explore.den);
+    if (act === 'num-minus') setExploreFraction(explore.num - 1, explore.den);
+    if (act === 'den-plus') setExploreFraction(explore.num, explore.den + 1);
+    if (act === 'den-minus') setExploreFraction(explore.num, explore.den - 1);
+  }
+
+  const preset = e.target.closest('#presetGrid .chip-btn');
+  if (preset) {
+    FX.tone(560, 0.05);
+    const n = Number(preset.dataset.n), d = Number(preset.dataset.d);
+    if (explore.vis === 'grid') {
+      explore.num = Math.min(100, Math.round((n / d) * 100));
+      explore.den = 100;
+      syncGridCellsFromRatio();
+      renderExplore();
+    } else {
+      setExploreFraction(n, d);
+    }
+  }
+
+  const visBtn = e.target.closest('#visTypeGrid .vis-btn');
+  if (visBtn) {
+    FX.tone(530, 0.05);
+    document.querySelectorAll('#visTypeGrid .vis-btn').forEach(b => b.classList.remove('active'));
+    visBtn.classList.add('active');
+    const prevVis = explore.vis;
+    explore.vis = visBtn.dataset.vis;
+
+    if (explore.vis === 'grid' && prevVis !== 'grid') {
+      syncGridCellsFromRatio();
+    } else if (explore.vis !== 'grid' && prevVis === 'grid') {
+      const info = analyzeFraction(explore.gridCells.size, 100);
+      explore.num = info.sn;
+      explore.den = Math.min(20, info.sd);
+    }
+    renderExplore();
+  }
+
+  const convCard = e.target.closest('#expConvGrid .conv-card');
+  if (convCard) {
+    resultMode = convCard.dataset.rm;
+    document.querySelectorAll('.rm-btn').forEach(b => b.classList.toggle('active', b.dataset.rm === resultMode));
+    FX.tone(580, 0.05);
+    renderExplore();
+  }
+});
+
+document.getElementById('btnExpClear').addEventListener('click', () => {
+  FX.tone(420, 0.05);
+  if (explore.vis === 'grid') { explore.gridCells.clear(); renderExplore(); }
+  else setExploreFraction(0, explore.den);
+});
+document.getElementById('btnExpHalf').addEventListener('click', () => {
+  FX.tone(520, 0.05);
+  if (explore.vis === 'grid') { explore.num = 50; explore.den = 100; syncGridCellsFromRatio(); renderExplore(); }
+  else setExploreFraction(1, 2);
+});
+document.getElementById('btnExpFull').addEventListener('click', () => {
+  FX.tone(600, 0.05);
+  if (explore.vis === 'grid') { explore.num = 100; explore.den = 100; syncGridCellsFromRatio(); renderExplore(); }
+  else setExploreFraction(explore.den, explore.den);
+});
+document.getElementById('btnExpSimplify').addEventListener('click', () => {
+  const n = explore.vis === 'grid' ? explore.gridCells.size : explore.num;
+  const d = explore.vis === 'grid' ? 100 : explore.den;
+  const info = analyzeFraction(n, d);
+  if (info.sd <= 20 && explore.vis !== 'grid') {
+    FX.ok();
+    setExploreFraction(info.sn, info.sd);
+  } else {
+    FX.tone(450, 0.05);
+  }
+});
+
+// Input langsung dari Desimal / Persen
+function applyDirectDecimal(raw) {
+  const clean = parseFloat(String(raw).replace(',', '.'));
+  if (!isFinite(clean) || clean < 0 || clean > 2) return;
+  // Cari pendekatan pecahan dengan penyebut 1..20 terdekat
+  let bestN = Math.round(clean * 100), bestD = 100, minErr = 1;
+  for (let d = 1; d <= 20; d++) {
+    const n = Math.round(clean * d);
+    const err = Math.abs(clean - n / d);
+    if (err < minErr - 1e-6) {
+      minErr = err; bestN = n; bestD = d;
+    }
+  }
+  if (explore.vis === 'grid') {
+    explore.num = Math.min(100, Math.round(clean * 100));
+    explore.den = 100;
+    syncGridCellsFromRatio();
+    renderExplore();
+  } else {
+    setExploreFraction(bestN, bestD);
+  }
+}
+
+document.getElementById('inDirectDec').addEventListener('change', e => applyDirectDecimal(e.target.value));
+document.getElementById('inDirectPct').addEventListener('change', e => {
+  const pct = parseFloat(String(e.target.value).replace(',', '.').replace('%', ''));
+  if (isFinite(pct)) applyDirectDecimal(pct / 100);
+});
+
+/* ==========================================================================
+   4. MODUL 2: OPERASI PECAHAN VISUAL (+, −, ×, ÷)
+   ========================================================================== */
+const ops = {
+  aN: 1, aD: 2,
+  bN: 1, bD: 3,
+  sign: '+', // '+' | '-' | '*' | '/'
+  showCommon: true
+};
+
+function renderOps() {
+  document.getElementById('opANum').textContent = ops.aN;
+  document.getElementById('opADen').textContent = ops.aD;
+  document.getElementById('opBNum').textContent = ops.bN;
+  document.getElementById('opBDen').textContent = ops.bD;
+
+  const btnCommon = document.getElementById('btnCommonDen');
+  btnCommon.hidden = !(ops.sign === '+' || ops.sign === '-');
+  btnCommon.classList.toggle('active', ops.showCommon);
+
+  // Hitung hasil eksak
+  let resN = 0, resD = 1;
+  const steps = [];
+  const kpk = lcm(ops.aD, ops.bD);
+
+  if (ops.sign === '+') {
+    const mA = kpk / ops.aD, mB = kpk / ops.bD;
+    const eqAN = ops.aN * mA, eqBN = ops.bN * mB;
+    resN = eqAN + eqBN;
+    resD = kpk;
+    steps.push(`1. Cari KPK dari penyebut ${ops.aD} dan ${ops.bD} → <b>${kpk}</b>`);
+    steps.push(`2. Samakan penyebut: <b>${eqAN}/${kpk} + ${eqBN}/${kpk}</b>`);
+    steps.push(`3. Jumlahkan pembilang: (${eqAN} + ${eqBN})/${kpk} = <b>${resN}/${resD}</b>`);
+  } else if (ops.sign === '-') {
+    const mA = kpk / ops.aD, mB = kpk / ops.bD;
+    const eqAN = ops.aN * mA, eqBN = ops.bN * mB;
+    resN = eqAN - eqBN;
+    resD = kpk;
+    steps.push(`1. Cari KPK dari penyebut ${ops.aD} dan ${ops.bD} → <b>${kpk}</b>`);
+    steps.push(`2. Samakan penyebut: <b>${eqAN}/${kpk} − ${eqBN}/${kpk}</b>`);
+    steps.push(`3. Kurangkan pembilang: (${eqAN} − ${eqBN})/${kpk} = <b>${resN}/${resD}</b>`);
+  } else if (ops.sign === '*') {
+    resN = ops.aN * ops.bN;
+    resD = ops.aD * ops.bD;
+    steps.push(`1. Kalikan pembilang dengan pembilang: ${ops.aN} × ${ops.bN} = <b>${resN}</b>`);
+    steps.push(`2. Kalikan penyebut dengan penyebut: ${ops.aD} × ${ops.bD} = <b>${resD}</b>`);
+    steps.push(`3. Diperoleh pecahan: <b>${resN}/${resD}</b>`);
+  } else if (ops.sign === '/') {
+    const bNumSafe = Math.max(1, ops.bN);
+    resN = ops.aN * ops.bD;
+    resD = ops.aD * bNumSafe;
+    steps.push(`1. Ubah pembagian menjadi perkalian dengan kebalikan pecahan kedua:`);
+    steps.push(`   <b>${ops.aN}/${ops.aD} × ${ops.bD}/${bNumSafe}</b>`);
+    steps.push(`2. Kalikan atas & bawah: (${ops.aN}×${ops.bD}) / (${ops.aD}×${bNumSafe}) = <b>${resN}/${resD}</b>`);
+  }
+
+  const info = analyzeFraction(resN, resD);
+  if (info.g > 1 && resN !== 0) {
+    steps.push(`4. Sederhanakan (÷ ${info.g}): <b>${info.simpleStr}</b>`);
+  }
+  steps.push(`5. Konversi: Desimal = <b>${info.decStr}</b> | Persen = <b>${info.pctStr}</b>`);
+
+  document.getElementById('opsResBig').innerHTML = formatByResultMode(info, true);
+  document.getElementById('opAltSimple').innerHTML = info.simpleHtml;
+  document.getElementById('opAltDec').textContent = info.decStr;
+  document.getElementById('opAltPct').textContent = info.pctStr;
+  document.getElementById('opsStepsText').innerHTML = steps.join('<br>');
+
+  drawOpsSVG(info, kpk);
+}
+
+function drawOpsSVG(resInfo, kpk) {
+  const svg = document.getElementById('opsSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const drawBar = (x, y, w, h, num, den, fillColor, subDen = null, label = '') => {
+    el('text', { x, y: y - 9, fill: '#2c3d63', 'font-size': '14', 'font-weight': '900' }).textContent = label;
+    const wholes = Math.max(1, Math.ceil(Math.abs(num) / den));
+    const singleW = (w - (wholes - 1) * 14) / wholes;
+
+    for (let wi = 0; wi < wholes; wi++) {
+      const bx = x + wi * (singleW + 14);
+      const segW = singleW / den;
+      for (let i = 0; i < den; i++) {
+        const gIdx = wi * den + i;
+        const filled = num >= 0 ? gIdx < num : gIdx < Math.abs(num);
+        el('rect', {
+          x: bx + i * segW, y, width: segW, height: h,
+          fill: filled ? (num < 0 ? '#ff4757' : fillColor) : '#f0f5ff',
+          stroke: '#1b2642', 'stroke-width': '2'
+        });
+      }
+      // Garis pembagi KPK putus-putus jika aktif
+      if (subDen && subDen > den && subDen <= 36) {
+        const subW = singleW / subDen;
+        for (let s = 1; s < subDen; s++) {
+          if (s % (subDen / den) === 0) continue;
+          el('line', {
+            x1: bx + s * subW, y1: y, x2: bx + s * subW, y2: y + h,
+            stroke: '#1b2642', 'stroke-width': '1.3', 'stroke-dasharray': '4,3', opacity: '0.65'
+          });
+        }
+      }
+    }
+  };
+
+  if (ops.sign === '+' || ops.sign === '-') {
+    const sub = ops.showCommon ? kpk : null;
+    const mA = kpk / ops.aD, mB = kpk / ops.bD;
+    const lblA = ops.showCommon && mA > 1
+      ? `Pecahan 1: ${ops.aN}/${ops.aD} = ${ops.aN * mA}/${kpk}`
+      : `Pecahan 1: ${ops.aN}/${ops.aD}`;
+    const lblB = ops.showCommon && mB > 1
+      ? `Pecahan 2: ${ops.bN}/${ops.bD} = ${ops.bN * mB}/${kpk}`
+      : `Pecahan 2: ${ops.bN}/${ops.bD}`;
+
+    drawBar(45, 48, 590, 56, ops.aN, ops.aD, '#2e86de', sub, lblA);
+    drawBar(45, 152, 590, 56, ops.bN, ops.bD, '#ff6b4a', sub, lblB);
+
+    const resLbl = resInfo.num < 0
+      ? `Hasil Negatif: ${resInfo.simpleStr}`
+      : `Hasil Gabungan: ${resInfo.num}/${resInfo.den} = ${resInfo.simpleStr}`;
+    drawBar(45, 268, 590, 68, resInfo.num, resInfo.den, '#10ac84', null, resLbl);
+  }
+  else if (ops.sign === '*') {
+    // Area Model (Model Luas Persegi)
+    const size = 250;
+    const ox = 215, oy = 68;
+    el('text', {
+      x: 340, y: 28, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '15', 'font-weight': '900'
+    }).textContent = `Model Luas Perkalian: (${ops.aN}/${ops.aD}) × (${ops.bN}/${ops.bD})`;
+
+    el('text', {
+      x: ox - 14, y: oy + size / 2, 'text-anchor': 'end', fill: '#2e86de', 'font-size': '14', 'font-weight': '900'
+    }).textContent = `${ops.aN}/${ops.aD} (Baris)`;
+
+    el('text', {
+      x: ox + size / 2, y: oy - 12, 'text-anchor': 'middle', fill: '#ff6b4a', 'font-size': '14', 'font-weight': '900'
+    }).textContent = `${ops.bN}/${ops.bD} (Kolom)`;
+
+    const cellW = size / ops.bD;
+    const cellH = size / ops.aD;
+
+    for (let r = 0; r < ops.aD; r++) {
+      for (let c = 0; c < ops.bD; c++) {
+        const inA = r < ops.aN;
+        const inB = c < ops.bN;
+        let fill = '#f2f6ff';
+        if (inA && inB) fill = '#10ac84';       // Irisan (Hasil!)
+        else if (inA) fill = '#a8d3ff';         // Hanya Pecahan A
+        else if (inB) fill = '#ffc7ba';         // Hanya Pecahan B
+
+        el('rect', {
+          x: ox + c * cellW, y: oy + r * cellH,
+          width: cellW, height: cellH,
+          fill, stroke: '#1b2642', 'stroke-width': '1.8'
+        });
+      }
+    }
+
+    el('text', {
+      x: 340, y: oy + size + 30, 'text-anchor': 'middle', fill: '#0a7a5d', 'font-size': '14', 'font-weight': '900'
+    }).textContent = `Kotak Hijau (Irisan) = ${ops.aN * ops.bN} dari ${ops.aD * ops.bD} kotak`;
+  }
+  else if (ops.sign === '/') {
+    // Pembagian: Berapa kali Pecahan B masuk ke dalam Pecahan A?
+    const bNumSafe = Math.max(1, ops.bN);
+    const common = lcm(ops.aD, ops.bD);
+    const unitsA = ops.aN * (common / ops.aD);
+    const unitsB = bNumSafe * (common / ops.bD);
+    const maxUnits = Math.max(unitsA, unitsB, common);
+
+    el('text', {
+      x: 340, y: 30, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '15', 'font-weight': '900'
+    }).textContent = `Berapa kali (${bNumSafe}/${ops.bD}) muat ke dalam (${ops.aN}/${ops.aD})?`;
+
+    const barW = 580;
+    const unitW = barW / maxUnits;
+
+    // Batang A
+    el('text', { x: 50, y: 74, fill: '#2e86de', 'font-size': '14', 'font-weight': '900' }).textContent =
+      `Yang Dibagi: ${ops.aN}/${ops.aD} (= ${unitsA}/${common})`;
+    for (let i = 0; i < maxUnits; i++) {
+      el('rect', {
+        x: 50 + i * unitW, y: 84, width: unitW, height: 64,
+        fill: i < unitsA ? '#2e86de' : '#f0f5ff',
+        stroke: '#1b2642', 'stroke-width': '1.8'
+      });
+    }
+
+    // Batang B (dikelompokkan per ukuran pembagi)
+    el('text', { x: 50, y: 192, fill: '#ff6b4a', 'font-size': '14', 'font-weight': '900' }).textContent =
+      `Ukuran 1 Kelompok Pembagi: ${bNumSafe}/${ops.bD} (= ${unitsB}/${common})`;
+    for (let i = 0; i < maxUnits; i++) {
+      const grpIdx = Math.floor(i / unitsB);
+      const isCovered = i < unitsA;
+      const fill = isCovered
+        ? (grpIdx % 2 === 0 ? '#10ac84' : '#2ecc71')
+        : (i < unitsB ? '#ffc7ba' : '#f4f7ff');
+      el('rect', {
+        x: 50 + i * unitW, y: 202, width: unitW, height: 64,
+        fill, stroke: '#1b2642', 'stroke-width': '1.8'
+      });
+    }
+
+    el('text', {
+      x: 340, y: 315, 'text-anchor': 'middle', fill: '#0a7a5d', 'font-size': '15', 'font-weight': '900'
+    }).textContent = `Banyak kelompok penuh/bagian = ${unitsA} ÷ ${unitsB} = ${resInfo.simpleStr}`;
+  }
+}
+
+document.getElementById('viewOps').addEventListener('click', e => {
+  const opBtn = e.target.closest('[data-op]');
+  if (opBtn) {
+    FX.tone(510, 0.04);
+    const act = opBtn.dataset.op;
+    if (act === 'a-num-inc') ops.aN = Math.min(12, ops.aN + 1);
+    if (act === 'a-num-dec') ops.aN = Math.max(0, ops.aN - 1);
+    if (act === 'a-den-inc') ops.aD = Math.min(12, ops.aD + 1);
+    if (act === 'a-den-dec') ops.aD = Math.max(1, ops.aD - 1);
+    if (act === 'b-num-inc') ops.bN = Math.min(12, ops.bN + 1);
+    if (act === 'b-num-dec') ops.bN = Math.max(0, ops.bN - 1);
+    if (act === 'b-den-inc') ops.bD = Math.min(12, ops.bD + 1);
+    if (act === 'b-den-dec') ops.bD = Math.max(1, ops.bD - 1);
+    renderOps();
+  }
+
+  const sBtn = e.target.closest('#opSigns .sign-btn');
+  if (sBtn) {
+    FX.tone(560, 0.05);
+    ops.sign = sBtn.dataset.sign;
+    document.querySelectorAll('#opSigns .sign-btn').forEach(b => b.classList.toggle('active', b === sBtn));
+    renderOps();
+  }
+});
+
+document.getElementById('btnCommonDen').addEventListener('click', () => {
+  ops.showCommon = !ops.showCommon;
+  FX.tone(540, 0.05);
+  renderOps();
+});
+
+document.getElementById('btnOpRandom').addEventListener('click', () => {
+  FX.tone(600, 0.06);
+  const dens = [2, 3, 4, 5, 6, 8, 10];
+  ops.aD = dens[Math.floor(Math.random() * dens.length)];
+  ops.bD = dens[Math.floor(Math.random() * dens.length)];
+  ops.aN = Math.floor(Math.random() * (ops.aD - 1)) + 1;
+  ops.bN = Math.floor(Math.random() * (ops.bD - 1)) + 1;
+  renderOps();
+});
+
+/* ==========================================================================
+   5. MODUL 3: DINDING PECAHAN SENILAI (FRACTION WALL)
+   ========================================================================== */
+const wall = {
+  compareMode: false,
+  selA: null, // { n, d }
+  selB: null  // { n, d }
+};
+
+const WALL_COLORS = [
+  '#2e86de', '#10ac84', '#ff6b4a', '#6c5ce7',
+  '#f39c12', '#00a8ff', '#e84393', '#20bf6b',
+  '#3867d6', '#fa8231', '#8854d0'
+];
+
+function buildWall() {
+  const grid = document.getElementById('wallGrid');
+  grid.innerHTML = '';
+  const denoms = [1, 2, 3, 4, 5, 6, 8, 9, 10, 12];
+
+  denoms.forEach((d, rIdx) => {
+    const row = document.createElement('div');
+    row.className = 'wall-row';
+    const baseColor = WALL_COLORS[rIdx % WALL_COLORS.length];
+
+    for (let i = 1; i <= d; i++) {
+      const tile = document.createElement('div');
+      tile.className = 'wall-tile';
+      tile.style.background = baseColor;
+      tile.dataset.n = i;
+      tile.dataset.d = d;
+      tile.textContent = d === 1 ? '1 Utuh (100%)' : `${i}/${d}`;
+
+      tile.addEventListener('pointerdown', () => handleWallTap(i, d));
+      row.appendChild(tile);
+    }
+    grid.appendChild(row);
+  });
+}
+
+function handleWallTap(n, d) {
+  FX.tone(440 + d * 24, 0.05);
+  if (!wall.compareMode) {
+    wall.selA = { n, d };
+    wall.selB = null;
+  } else {
+    if (!wall.selA || (wall.selA && wall.selB)) {
+      wall.selA = { n, d };
+      wall.selB = null;
+    } else {
+      wall.selB = { n, d };
+    }
+  }
+  updateWallHighlights();
+}
+
+function updateWallHighlights() {
+  const tiles = document.querySelectorAll('#wallGrid .wall-tile');
+  const readout = document.getElementById('wallReadout');
+
+  tiles.forEach(t => {
+    t.classList.remove('selected', 'equiv', 'cmp-b');
+    const tn = Number(t.dataset.n), td = Number(t.dataset.d);
+
+    if (wall.selA) {
+      if (tn === wall.selA.n && td === wall.selA.d) {
+        t.classList.add('selected');
+      } else if (!wall.compareMode && tn * wall.selA.d === wall.selA.n * td) {
+        t.classList.add('equiv');
+      }
+    }
+    if (wall.compareMode && wall.selB && tn === wall.selB.n && td === wall.selB.d) {
+      t.classList.add('cmp-b');
+    }
+  });
+
+  if (!wall.selA) {
+    readout.innerHTML = wall.compareMode
+      ? '⚖️ Mode Bandingkan: Ketuk <b>Balok Pertama</b>, lalu ketuk <b>Balok Kedua</b>!'
+      : '👆 Ketuk salah satu balok pecahan di bawah untuk melihat semua pecahan yang senilai!';
+    return;
+  }
+
+  const infoA = analyzeFraction(wall.selA.n, wall.selA.d);
+
+  if (!wall.compareMode) {
+    // Kumpulkan semua pecahan senilai di dinding
+    const eqSet = new Set();
+    tiles.forEach(t => {
+      const tn = Number(t.dataset.n), td = Number(t.dataset.d);
+      if (tn * wall.selA.d === wall.selA.n * td) eqSet.add(`${tn}/${td}`);
+    });
+    const listStr = [...eqSet].join(' = ');
+    readout.innerHTML = `✨ Pecahan Senilai: <span class="eq-list">${listStr}</span> &nbsp;|&nbsp; Desimal: <b>${infoA.decStr}</b> &nbsp;|&nbsp; Persen: <b>${infoA.pctStr}</b>`;
+  } else {
+    if (!wall.selB) {
+      readout.innerHTML = `Balok 1: <b>${wall.selA.n}/${wall.selA.d}</b> (${infoA.decStr}) — Sekarang ketuk <b>Balok Kedua</b>!`;
+    } else {
+      const infoB = analyzeFraction(wall.selB.n, wall.selB.d);
+      const diff = infoA.decVal - infoB.decVal;
+      const sym = Math.abs(diff) < 1e-6 ? '=' : (diff > 0 ? '>' : '<');
+      readout.innerHTML = `⚖️ Perbandingan: <b>${wall.selA.n}/${wall.selA.d}</b> (${infoA.pctStr}) &nbsp;<span style="font-size:20px;color:var(--blue-dark);">${sym}</span>&nbsp; <b>${wall.selB.n}/${wall.selB.d}</b> (${infoB.pctStr})`;
+    }
+  }
+}
+
+document.getElementById('btnWallCompare').addEventListener('click', e => {
+  wall.compareMode = !wall.compareMode;
+  wall.selA = null;
+  wall.selB = null;
+  e.target.classList.toggle('active', wall.compareMode);
+  FX.tone(540, 0.05);
+  updateWallHighlights();
+});
+
+document.getElementById('btnWallClear').addEventListener('click', () => {
+  wall.selA = null;
+  wall.selB = null;
+  FX.tone(440, 0.05);
+  updateWallHighlights();
+});
+
+/* ==========================================================================
+   6. MODUL 4: TANTANGAN LAB (KUIS VISUAL INTERAKTIF)
+   ========================================================================== */
+const quiz = {
+  score: 0,
+  total: 0,
+  streak: 0,
+  answered: false,
+  type: 'identify', // 'identify' | 'paint'
+  targetN: 1,
+  targetD: 2,
+  userPainted: 0,
+  correctOption: '',
+  explain: ''
+};
+
+function newQuizQuestion() {
+  quiz.answered = false;
+  quiz.userPainted = 0;
+  document.getElementById('btnQuizNext').hidden = true;
+  const fb = document.getElementById('qFb');
+  fb.textContent = '';
+  fb.className = 'quiz-fb';
+
+  const pool = [
+    { n: 1, d: 2 }, { n: 1, d: 4 }, { n: 3, d: 4 },
+    { n: 2, d: 5 }, { n: 3, d: 5 }, { n: 4, d: 5 },
+    { n: 2, d: 4 }, { n: 4, d: 6 }, { n: 6, d: 8 },
+    { n: 3, d: 10 }, { n: 7, d: 10 }, { n: 6, d: 10 }
+  ];
+  const item = pool[Math.floor(Math.random() * pool.length)];
+  quiz.targetN = item.n;
+  quiz.targetD = item.d;
+  const info = analyzeFraction(item.n, item.d);
+
+  // Bergantian antara soal "Warnai Visual" dan soal "Tebak Nilai"
+  quiz.type = Math.random() < 0.48 ? 'paint' : 'identify';
+
+  const optsEl = document.getElementById('qOpts');
+  const checkBtn = document.getElementById('btnQuizCheck');
+  optsEl.innerHTML = '';
+
+  if (quiz.type === 'paint') {
+    optsEl.hidden = true;
+    checkBtn.hidden = false;
+    const askAsPct = Math.random() < 0.5;
+    const targetTxt = askAsPct ? info.pctStr : info.decStr;
+    document.getElementById('quizVisualHint').textContent = '👆 Ketuk bagian batang di bawah untuk mewarnainya!';
+    document.getElementById('qPrompt').innerHTML =
+      `Misi Praktikum: Warnai batang pecahan di samping sehingga nilainya sama dengan <span style="color:var(--blue-dark);font-size:21px;">${targetTxt}</span>!`;
+    quiz.explain = `${targetTxt} = ${info.simpleStr}. Karena batang dibagi menjadi ${item.d} bagian, kita mewarnai ${info.sn * (item.d / info.sd)} bagian.`;
+  } else {
+    optsEl.hidden = false;
+    checkBtn.hidden = true;
+    document.getElementById('quizVisualHint').textContent = 'Amati bagian yang berwarna biru pada gambar';
+
+    // Gunakan Mode Hasil aktif (atau acak antara pecahan sederhana, desimal, persen)
+    const askKind = ['simplified', 'decimal', 'percent'][Math.floor(Math.random() * 3)];
+    const kindLabel = askKind === 'simplified' ? 'pecahan paling sederhana'
+                    : askKind === 'decimal' ? 'bilangan desimal' : 'bentuk persen';
+
+    document.getElementById('qPrompt').innerHTML =
+      `Berapakah nilai bagian yang diwarnai jika ditulis dalam <b>${kindLabel}</b>?`;
+
+    const ansStr = askKind === 'simplified' ? info.simpleStr
+                 : askKind === 'decimal' ? info.decStr : info.pctStr;
+    quiz.correctOption = ansStr;
+    quiz.explain = `Gambar menunjukkan ${item.n}/${item.d}, yang senilai dengan ${info.simpleStr} = ${info.decStr} = ${info.pctStr}.`;
+
+    const distractors = pool
+      .map(p => analyzeFraction(p.n, p.d))
+      .map(inf => askKind === 'simplified' ? inf.simpleStr : askKind === 'decimal' ? inf.decStr : inf.pctStr)
+      .filter(s => s !== ansStr);
+
+    const uniqueFakes = [...new Set(distractors)].sort(() => Math.random() - 0.5).slice(0, 3);
+    const choices = [ansStr, ...uniqueFakes].sort(() => Math.random() - 0.5);
+
+    choices.forEach(ch => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'q-opt';
+      b.textContent = ch;
+      b.addEventListener('click', () => handleQuizChoice(b, ch));
+      optsEl.appendChild(b);
+    });
+  }
+
+  drawQuizSVG();
+}
+
+function drawQuizSVG() {
+  const svg = document.getElementById('quizSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const count = quiz.type === 'paint' ? quiz.userPainted : quiz.targetN;
+  const den = quiz.targetD;
+
+  // Gambar batang pecahan besar di tengah
+  const bx = 40, by = 115, bw = 480, bh = 105;
+  const segW = bw / den;
+
+  for (let i = 0; i < den; i++) {
+    const filled = i < count;
+    const r = el('rect', {
+      x: bx + i * segW, y: by, width: segW, height: bh, rx: 5,
+      fill: filled ? '#2e86de' : '#edf3ff',
+      stroke: '#1b2642', 'stroke-width': '2.6',
+      class: quiz.type === 'paint' ? 'svg-slice' : ''
+    });
+
+    if (quiz.type === 'paint') {
+      r.addEventListener('pointerdown', () => {
+        if (quiz.answered) return;
+        FX.tone(500 + i * 25, 0.05);
+        quiz.userPainted = (filled && quiz.userPainted === i + 1) ? i : i + 1;
+        drawQuizSVG();
+      });
+    }
+  }
+
+  if (quiz.type === 'paint') {
+    el('text', {
+      x: 280, y: by + bh + 34, 'text-anchor': 'middle', fill: '#4f628a', 'font-size': '14', 'font-weight': '800'
+    }).textContent = `Terwarnai saat ini: ${quiz.userPainted} dari ${den} bagian`;
+  }
+}
+
+function finishQuizAnswer(ok) {
+  quiz.answered = true;
+  quiz.total++;
+  if (ok) {
+    quiz.score++;
+    quiz.streak++;
+    FX.ok();
+  } else {
+    quiz.streak = 0;
+    FX.err();
+  }
+
+  document.getElementById('qScore').textContent = `${quiz.score} / ${quiz.total}`;
+  document.getElementById('qStreak').textContent = String(quiz.streak);
+
+  const fb = document.getElementById('qFb');
+  fb.textContent = (ok ? '🎉 Tepat Sekali! ' : '😊 Belum tepat. ') + quiz.explain;
+  fb.className = 'quiz-fb ' + (ok ? 'ok' : 'no');
+  document.getElementById('btnQuizCheck').hidden = true;
+  document.getElementById('btnQuizNext').hidden = false;
+}
+
+function handleQuizChoice(btn, chosen) {
+  if (quiz.answered) return;
+  const ok = chosen === quiz.correctOption;
+  document.querySelectorAll('#qOpts .q-opt').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === quiz.correctOption) b.classList.add('ok');
+  });
+  if (!ok) btn.classList.add('no');
+  finishQuizAnswer(ok);
+}
+
+document.getElementById('btnQuizCheck').addEventListener('click', () => {
+  if (quiz.answered) return;
+  const ok = quiz.userPainted * quiz.targetD === quiz.targetN * quiz.targetD;
+  finishQuizAnswer(ok);
+});
+
+document.getElementById('btnQuizNext').addEventListener('click', newQuizQuestion);
+
+/* ==========================================================================
+   7. INISIALISASI AWAL
+   ========================================================================== */
+function refreshAllViews() {
+  renderExplore();
+  renderOps();
+}
+
+buildWall();
+refreshAllViews();
+newQuizQuestion();
+</script>
+</body>
+</html>

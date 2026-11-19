@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lab Pengukuran, Waktu & Satuan — Papan Tulis Digital</title>
+<style>
+  :root{
+    --ink:#1b2642;
+    --muted:#5b6d94;
+    --card:rgba(255,255,255,0.93);
+    --line:#dce6fa;
+    --blue:#2e86de;
+    --blue-dark:#16579c;
+    --blue-soft:#eaf4ff;
+    --coral:#ff6b4a;
+    --coral-dark:#c73e1f;
+    --coral-soft:#fff0ec;
+    --mint:#10ac84;
+    --mint-dark:#087559;
+    --mint-soft:#e6fbf5;
+    --purple:#6c5ce7;
+    --purple-soft:#f1efff;
+    --gold:#ffb800;
+  }
+
+  *{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  html, body{
+    margin:0;
+    padding:0;
+    height:100%;
+    font-family:"Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 520px at 5% -5%, #dcebff 0%, transparent 55%),
+      radial-gradient(900px 500px at 95% 0%, #f3e8ff 0%, transparent 50%),
+      linear-gradient(170deg, #f6f9ff 0%, #eaf1ff 100%);
+    overflow:hidden;
+  }
+
+  /* ================= LAYOUT UTAMA ================= */
+  #app{
+    display:grid;
+    grid-template-rows:auto auto minmax(0, 1fr);
+    height:100dvh;
+    gap:9px;
+    padding:9px 14px 11px;
+  }
+
+  /* ================= HEADER ================= */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    background:var(--card);
+    border:1.5px solid #fff;
+    border-radius:18px;
+    padding:7px 14px;
+    box-shadow:0 8px 24px rgba(40,70,140,.09);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .logo{
+    width:38px; height:38px; border-radius:12px;
+    display:grid; place-items:center; font-size:20px;
+    background:linear-gradient(135deg, #2e86de, #6c5ce7);
+    color:#fff;
+    box-shadow:0 5px 14px rgba(65,105,225,.3);
+  }
+  .brand h1{
+    margin:0;
+    font-size:16.5px;
+    font-weight:900;
+    letter-spacing:-.2px;
+  }
+  .brand p{
+    margin:1px 0 0;
+    font-size:11px;
+    font-weight:700;
+    color:var(--muted);
+  }
+
+  .hdr-tools{
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+  .tool-btn{
+    border:1.5px solid var(--line);
+    background:#f7faff;
+    color:#32456e;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    padding:7px 11px;
+    border-radius:11px;
+    cursor:pointer;
+    transition:.13s;
+  }
+  .tool-btn:hover{ background:#e8f0ff; }
+
+  /* ================= TABS ================= */
+  .tabs{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:8px;
+  }
+  .tab-btn{
+    border:2px solid #fff;
+    background:rgba(255,255,255,.8);
+    color:#485a82;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:800;
+    padding:8px 10px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:.14s;
+    box-shadow:0 4px 12px rgba(45,75,140,.06);
+  }
+  .tab-btn:hover{ background:#fff; transform:translateY(-1px); }
+  .tab-btn.active{
+    background:linear-gradient(135deg, #2e86de, #54a0ff);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 8px 18px rgba(46,134,222,.3);
+  }
+
+  /* ================= VIEWS & PANELS ================= */
+  .view{
+    display:none;
+    min-height:0;
+    height:100%;
+  }
+  .view.active{
+    display:grid;
+  }
+
+  .panel{
+    background:var(--card);
+    backdrop-filter:blur(12px);
+    border:1.5px solid #fff;
+    border-radius:20px;
+    padding:13px;
+    box-shadow:0 10px 26px rgba(45,75,140,.09);
+    overflow-y:auto;
+    min-height:0;
+  }
+  .panel::-webkit-scrollbar{ width:6px; }
+  .panel::-webkit-scrollbar-thumb{ background:#d2dff7; border-radius:8px; }
+
+  .sec-title{
+    font-size:10.5px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.75px;
+    color:var(--muted);
+    margin:0 0 7px;
+  }
+
+  /* ================= VIEW 1: JAM ANALOG & SELISIH WAKTU ================= */
+  #viewClock{
+    grid-template-columns:285px minmax(0, 1fr) 340px;
+    gap:11px;
+  }
+
+  .preset-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:11px;
+  }
+  .preset-btn{
+    padding:8px 10px;
+    border:1.5px solid #dfe9fc;
+    border-radius:12px;
+    background:#f7faff;
+    color:#2e416b;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    text-align:left;
+    cursor:pointer;
+    transition:.12s;
+  }
+  .preset-btn:hover{ background:#eaf2ff; border-color:#b6d2ff; }
+
+  .step-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:6px;
+    margin-bottom:11px;
+  }
+  .t-step{
+    padding:8px 4px;
+    border:1.5px solid #dce6fa;
+    border-radius:11px;
+    background:#fff;
+    color:var(--ink);
+    font-family:inherit;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 2px 6px rgba(45,75,140,.06);
+  }
+  .t-step:active{ transform:scale(.95); }
+
+  .lock-btn{
+    width:100%;
+    padding:12px 10px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg, #2e86de, #54a0ff);
+    color:#fff;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 7px 18px rgba(46,134,222,.3);
+    margin-bottom:8px;
+    transition:.14s;
+  }
+  .lock-btn.locked{
+    background:linear-gradient(135deg, #10ac84, #1dd1a1);
+    box-shadow:0 7px 18px rgba(16,172,132,.3);
+  }
+
+  .clock-stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    background:radial-gradient(circle at 50% 48%, #ffffff 0%, #f1f6ff 100%);
+  }
+  .stage-hint{
+    font-size:12px;
+    font-weight:800;
+    color:#3a4e78;
+    background:#eef4ff;
+    padding:5px 14px;
+    border-radius:99px;
+    text-align:center;
+  }
+  #clockSvg{
+    width:100%;
+    flex:1 1 auto;
+    min-height:0;
+    max-height:420px;
+    touch-action:none;
+  }
+
+  /* Panel Kanan Jam */
+  .digital-pair{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .dig-card{
+    background:#f5f9ff;
+    border:2px solid #dce8ff;
+    border-radius:15px;
+    padding:9px 10px;
+    text-align:center;
+  }
+  .dig-card.end{
+    background:#fff5f2;
+    border-color:#ffd6cc;
+  }
+  .dig-card span{
+    display:block;
+    font-size:10px;
+    font-weight:900;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .dig-card b{
+    display:block;
+    font-size:24px;
+    font-weight:900;
+    font-variant-numeric:tabular-nums;
+    margin:2px 0;
+  }
+  .dig-card small{
+    font-size:11px;
+    font-weight:800;
+    color:#4c608a;
+  }
+
+  .elapsed-hero{
+    background:linear-gradient(145deg, #6c5ce7, #8e7ff5);
+    color:#fff;
+    border-radius:18px;
+    padding:12px 14px;
+    text-align:center;
+    margin-bottom:10px;
+    box-shadow:0 9px 20px rgba(108,92,231,.28);
+  }
+  .elapsed-hero span{
+    display:block;
+    font-size:10.5px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    opacity:.92;
+  }
+  .elapsed-hero b{
+    display:block;
+    font-size:23px;
+    font-weight:900;
+    margin:4px 0 2px;
+  }
+  .elapsed-hero small{
+    font-size:11.5px;
+    font-weight:700;
+    opacity:.92;
+  }
+
+  .timeline-box{
+    background:#f8faff;
+    border:1.5px solid #e2ecff;
+    border-radius:15px;
+    padding:10px 12px;
+    margin-bottom:10px;
+  }
+  .tl-bar{
+    height:16px;
+    background:#e4ecfc;
+    border-radius:99px;
+    overflow:hidden;
+    margin:7px 0 5px;
+    position:relative;
+  }
+  .tl-fill{
+    height:100%;
+    background:linear-gradient(90deg, #2e86de, #ff6b4a);
+    border-radius:99px;
+    transition:width .12s;
+  }
+  .tl-labels{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    font-weight:800;
+    color:var(--muted);
+  }
+
+  .clock-notes{
+    background:#fffaf0;
+    border:1.5px solid #ffe4ab;
+    border-radius:14px;
+    padding:9px 11px;
+    font-size:12px;
+    font-weight:700;
+    color:#694b0c;
+    line-height:1.5;
+  }
+
+  /* ================= VIEW 2: TIMBANGAN KESEIMBANGAN ================= */
+  #viewScale{
+    grid-template-columns:295px minmax(0, 1fr) 320px;
+    gap:11px;
+  }
+  .pan-target-bar{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .pt-btn{
+    padding:8px 6px;
+    border:2px solid #dce6fa;
+    border-radius:12px;
+    background:#f7faff;
+    color:#3a4e78;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+  }
+  .pt-btn.active.left{ background:var(--blue); color:#fff; border-color:transparent; }
+  .pt-btn.active.right{ background:var(--coral); color:#fff; border-color:transparent; }
+
+  .weight-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .w-chip{
+    padding:8px 4px;
+    border:1.5px solid #dce6fa;
+    border-radius:11px;
+    background:#fff;
+    color:var(--ink);
+    font-family:inherit;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 2px 6px rgba(45,75,140,.06);
+  }
+  .w-chip:hover{ background:#eef4ff; }
+  .w-chip:active{ transform:scale(.95); }
+
+  .obj-mass-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .om-btn{
+    padding:7px 6px;
+    border:1.5px solid #e2eaff;
+    border-radius:11px;
+    background:#f8fbff;
+    color:#2e416b;
+    font-family:inherit;
+    font-size:11.5px;
+    font-weight:800;
+    cursor:pointer;
+    text-align:left;
+  }
+  .om-btn:hover{ background:#eaf2ff; }
+
+  .scale-stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    background:radial-gradient(circle at 50% 45%, #ffffff 0%, #f1f6ff 100%);
+  }
+  #scaleSvg{
+    width:100%;
+    flex:1 1 auto;
+    min-height:0;
+    max-height:420px;
+  }
+
+  .balance-status{
+    border-radius:16px;
+    padding:12px;
+    text-align:center;
+    color:#fff;
+    background:linear-gradient(135deg, #2e86de, #54a0ff);
+    margin-bottom:10px;
+    box-shadow:0 8px 18px rgba(46,134,222,.25);
+    transition:background .2s;
+  }
+  .balance-status.balanced{
+    background:linear-gradient(135deg, #10ac84, #1dd1a1);
+    box-shadow:0 8px 20px rgba(16,172,132,.32);
+  }
+  .balance-status b{
+    display:block;
+    font-size:19px;
+    font-weight:900;
+  }
+  .balance-status small{
+    font-size:11.5px;
+    font-weight:700;
+    opacity:.94;
+  }
+
+  .pan-summary{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .ps-card{
+    border-radius:14px;
+    padding:9px;
+    background:#f5f9ff;
+    border:1.5px solid #dce8ff;
+  }
+  .ps-card.r{ background:#fff5f2; border-color:#ffd6cc; }
+  .ps-card h4{ margin:0 0 4px; font-size:11px; text-transform:uppercase; }
+  .ps-card b{ font-size:17px; font-weight:900; }
+  .ps-items{
+    margin-top:6px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px;
+    max-height:110px;
+    overflow-y:auto;
+  }
+  .item-tag{
+    background:#fff;
+    border:1px solid #d5e2fa;
+    border-radius:7px;
+    padding:2px 6px;
+    font-size:10.5px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .item-tag:hover{ background:#ffe4e8; border-color:#ff9aa6; }
+
+  /* ================= VIEW 3: BANDINGKAN & UKUR OBJEK ================= */
+  #viewMeasure{
+    grid-template-columns:295px minmax(0, 1fr);
+    gap:11px;
+  }
+  .cmp-obj-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-bottom:9px;
+  }
+  .co-btn{
+    padding:7px 6px;
+    border:1.5px solid #dce6fa;
+    border-radius:10px;
+    background:#f7faff;
+    color:#33466f;
+    font-family:inherit;
+    font-size:11.5px;
+    font-weight:800;
+    cursor:pointer;
+    text-align:left;
+  }
+  .co-btn.active{
+    background:var(--blue);
+    color:#fff;
+    border-color:transparent;
+  }
+  .co-btn.active-b{
+    background:var(--coral);
+    color:#fff;
+    border-color:transparent;
+  }
+
+  .calib-box{
+    background:#f5f3ff;
+    border:1.5px solid #dfd9ff;
+    border-radius:14px;
+    padding:9px 11px;
+    margin-bottom:9px;
+  }
+  .calib-box label{
+    display:flex;
+    justify-content:space-between;
+    font-size:11.5px;
+    font-weight:900;
+    color:#4c3fa3;
+    margin-bottom:4px;
+  }
+  .calib-box input[type="range"]{
+    width:100%;
+    accent-color:var(--purple);
+  }
+
+  .diff-card{
+    background:linear-gradient(135deg, #10ac84, #1dd1a1);
+    color:#fff;
+    border-radius:15px;
+    padding:10px 12px;
+    font-size:12px;
+    font-weight:800;
+    line-height:1.5;
+  }
+  .diff-card b{
+    font-size:17px;
+    display:block;
+  }
+
+  .measure-stage{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    background:radial-gradient(circle at 50% 45%, #ffffff 0%, #f1f6ff 100%);
+  }
+  #measureSvg{
+    width:100%;
+    flex:1 1 auto;
+    min-height:0;
+    touch-action:none;
+  }
+
+  /* ================= VIEW 4: TANTANGAN LAB ================= */
+  #viewQuiz{
+    grid-template-columns:minmax(0, 1.25fr) minmax(320px, 0.9fr);
+    gap:12px;
+  }
+  .quiz-stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  #quizSvg{
+    width:100%;
+    height:100%;
+    max-height:390px;
+  }
+  .quiz-side{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .q-scorebar{
+    display:flex;
+    justify-content:space-between;
+    background:linear-gradient(135deg, #fff4d4, #ffe6a8);
+    padding:10px 14px;
+    border-radius:14px;
+    font-size:13.5px;
+    font-weight:900;
+    color:#8f5e00;
+    margin-bottom:12px;
+  }
+  .q-prompt{
+    font-size:16.5px;
+    font-weight:900;
+    line-height:1.45;
+    margin-bottom:14px;
+  }
+  .q-opts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+  .q-opt{
+    padding:14px 10px;
+    border:2.5px solid #dce6fa;
+    border-radius:15px;
+    background:#f8fbff;
+    font-family:inherit;
+    font-size:15.5px;
+    font-weight:900;
+    color:var(--ink);
+    cursor:pointer;
+    transition:.13s;
+  }
+  .q-opt:hover:not(:disabled){ background:#ebf3ff; border-color:#adcaff; transform:translateY(-2px); }
+  .q-opt.ok{ background:#d4f8e8; border-color:#10ac84; color:#096b52; }
+  .q-opt.no{ background:#ffe0e5; border-color:#ff4757; color:#a61426; }
+  .q-fb{
+    margin-top:12px;
+    padding:11px 13px;
+    border-radius:14px;
+    font-size:13px;
+    font-weight:800;
+    line-height:1.45;
+  }
+  .q-fb:empty{ display:none; }
+  .q-fb.ok{ background:#e6fbf5; color:#0b7559; border:1.5px solid #b5f0de; }
+  .q-fb.no{ background:#fff0f2; color:#b81d31; border:1.5px solid #ffc7cf; }
+  .btn-next{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:15px;
+    background:linear-gradient(135deg, #2e86de, #6c5ce7);
+    color:#fff;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+    margin-top:12px;
+    box-shadow:0 8px 20px rgba(65,105,225,.3);
+  }
+
+  @media (max-width:980px){
+    html, body{ overflow:auto; }
+    #app{ height:auto; min-height:100dvh; }
+    .tabs{ grid-template-columns:1fr 1fr; }
+    #viewClock, #viewScale, #viewMeasure, #viewQuiz{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="logo">⏱️</div>
+      <div>
+        <h1>Lab Pengukuran, Waktu &amp; Satuan</h1>
+        <p>Simulasi interaktif jam analog, timbangan keseimbangan, dan perbandingan ukuran objek</p>
+      </div>
+    </div>
+
+    <div class="hdr-tools">
+      <button type="button" class="tool-btn" id="btnSound">🔊 Suara</button>
+      <button type="button" class="tool-btn" id="btnFull">⛶ Layar Penuh</button>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs" id="mainTabs">
+    <button type="button" class="tab-btn active" data-tab="viewClock">🕰️ Jam Analog &amp; Selisih Waktu</button>
+    <button type="button" class="tab-btn" data-tab="viewScale">⚖️ Timbangan &amp; Satuan Massa</button>
+    <button type="button" class="tab-btn" data-tab="viewMeasure">📏 Bandingkan &amp; Ukur Objek</button>
+    <button type="button" class="tab-btn" data-tab="viewQuiz">🎯 Tantangan Lab</button>
+  </nav>
+
+  <!-- ==================== 1. JAM ANALOG & SELISIH WAKTU ==================== -->
+  <section class="view active" id="viewClock">
+    <!-- Panel Kiri -->
+    <aside class="panel">
+      <h2 class="sec-title">1. Mode Pengukuran Selisih Waktu</h2>
+      <button type="button" class="lock-btn" id="btnLockStart">🔒 Kunci Waktu Mulai &amp; Ukur Selisih</button>
+      <div style="display:flex;gap:6px;margin-bottom:12px;">
+        <button type="button" class="tool-btn" id="btnToggleAmPm" style="flex:1;">🌗 Pagi / Siang-Malam</button>
+        <button type="button" class="tool-btn" id="btnResetClock">🔄 Reset</button>
+      </div>
+
+      <h2 class="sec-title">2. Geser Jarum Cepat</h2>
+      <div class="step-grid" id="clockStepGrid">
+        <button type="button" class="t-step" data-dm="-15">−15 mnt</button>
+        <button type="button" class="t-step" data-dm="5">+5 mnt</button>
+        <button type="button" class="t-step" data-dm="15">+15 mnt</button>
+        <button type="button" class="t-step" data-dm="30">+30 mnt</button>
+        <button type="button" class="t-step" data-dm="60">+1 Jam</button>
+        <button type="button" class="t-step" data-dm="120">+2 Jam</button>
+      </div>
+
+      <h2 class="sec-title">3. Skenario Jadwal Sekolah</h2>
+      <div class="preset-list" id="clockPresets">
+        <button type="button" class="preset-btn" data-s="390" data-e="585">🎒 Berangkat (06:30) → Istirahat (09:45)</button>
+        <button type="button" class="preset-btn" data-s="420" data-e="510">📐 Pelajaran Matematika (07:00 → 08:30)</button>
+        <button type="button" class="preset-btn" data-s="585" data-e="610">🥪 Jam Istirahat (09:45 → 10:10)</button>
+        <button type="button" class="preset-btn" data-s="420" data-e="750">🏫 Masuk (07:00) → Pulang Sekolah (12:30)</button>
+        <button type="button" class="preset-btn" data-s="1140" data-e="1245">🌙 Belajar Malam (19:00 → 20:45)</button>
+      </div>
+    </aside>
+
+    <!-- Panel Tengah (Kanvas Jam Analog Interaktif) -->
+    <main class="panel clock-stage">
+      <div class="stage-hint" id="clockHint">👆 Seret ujung <b>Jarum Menit (Biru)</b> atau <b>Jarum Jam (Merah)</b> langsung di papan tulis!</div>
+      <svg id="clockSvg" viewBox="0 0 460 440"></svg>
+      <div style="font-size:11.5px;font-weight:800;color:var(--muted);">
+        1 putaran penuh jarum menit = <b>60 menit (1 jam)</b> · 1 angka besar = <b>5 menit</b>
+      </div>
+    </main>
+
+    <!-- Panel Kanan (Digital Sync & Selisih Waktu) -->
+    <aside class="panel">
+      <div class="digital-pair">
+        <div class="dig-card">
+          <span>Waktu Mulai</span>
+          <b id="digStart" style="color:var(--blue-dark);">06:30</b>
+          <small id="periodStart">Pagi</small>
+        </div>
+        <div class="dig-card end">
+          <span id="lblEndCard">Waktu Saat Ini</span>
+          <b id="digEnd" style="color:var(--coral-dark);">06:30</b>
+          <small id="periodEnd">Pagi</small>
+        </div>
+      </div>
+
+      <div class="elapsed-hero">
+        <span>Selisih Waktu (Durasi Berlalu)</span>
+        <b id="elapsedMain">0 Jam 0 Menit</b>
+        <small id="elapsedSub">Kunci waktu mulai lalu putar jarum untuk menghitung selisih</small>
+      </div>
+
+      <div class="timeline-box">
+        <div style="display:flex;justify-content:space-between;font-size:11.5px;font-weight:900;">
+          <span>Linimasa Perjalanan Waktu</span>
+          <span id="tlPct" style="color:var(--purple);">0 menit</span>
+        </div>
+        <div class="tl-bar"><div class="tl-fill" id="tlFill" style="width:0%;"></div></div>
+        <div class="tl-labels">
+          <span id="tlStartLbl">Mulai 06:30</span>
+          <span id="tlEndLbl">Selesai 06:30</span>
+        </div>
+      </div>
+
+      <div class="clock-notes" id="clockExplain">
+        💡 <b>Tips Kelas:</b> Atur jarum ke jam berangkat sekolah siswa, klik <b>Kunci Waktu Mulai</b>, lalu minta siswa maju memutar jarum ke jam istirahat untuk melihat arsiran waktu yang berlalu!
+      </div>
+    </aside>
+  </section>
+
+  <!-- ==================== 2. TIMBANGAN KESEIMBANGAN ==================== -->
+  <section class="view" id="viewScale">
+    <!-- Panel Kiri -->
+    <aside class="panel">
+      <h2 class="sec-title">1. Pilih Piringan Tujuan</h2>
+      <div class="pan-target-bar" id="panTargetBar">
+        <button type="button" class="pt-btn active left" data-pan="left">⬅️ Piringan Kiri</button>
+        <button type="button" class="pt-btn right" data-pan="right">➡️ Piringan Kanan</button>
+      </div>
+
+      <h2 class="sec-title">2. Anak Timbangan Baku</h2>
+      <div class="weight-grid" id="stdWeightGrid">
+        <button type="button" class="w-chip" data-name="1 kg" data-g="1000" data-kind="weight">1 kg</button>
+        <button type="button" class="w-chip" data-name="500 g" data-g="500" data-kind="weight">500 g</button>
+        <button type="button" class="w-chip" data-name="250 g" data-g="250" data-kind="weight">250 g</button>
+        <button type="button" class="w-chip" data-name="100 g" data-g="100" data-kind="weight">100 g</button>
+        <button type="button" class="w-chip" data-name="50 g" data-g="50" data-kind="weight">50 g</button>
+        <button type="button" class="w-chip" data-name="10 g" data-g="10" data-kind="weight">10 g</button>
+      </div>
+
+      <h2 class="sec-title">3. Benda Sehari-hari</h2>
+      <div class="obj-mass-grid" id="objMassGrid">
+        <button type="button" class="om-btn" data-name="🍎 Apel" data-g="150" data-kind="item">🍎 Apel (150 g)</button>
+        <button type="button" class="om-btn" data-name="📘 Buku" data-g="450" data-kind="item">📘 Buku (450 g)</button>
+        <button type="button" class="om-btn" data-name="🍶 Botol" data-g="600" data-kind="item">🍶 Botol (600 g)</button>
+        <button type="button" class="om-btn" data-name="🍉 Semangka" data-g="1500" data-kind="item">🍉 Semangka (1,5 kg)</button>
+        <button type="button" class="om-btn" data-name="🎒 Tas" data-g="2250" data-kind="item">🎒 Tas (2,25 kg)</button>
+        <button type="button" class="om-btn" data-name="🧱 Bata" data-g="1800" data-kind="item">🧱 Bata (1,8 kg)</button>
+      </div>
+
+      <div style="display:flex;gap:6px;">
+        <button type="button" class="tool-btn" id="btnMysteryBox" style="flex:1;background:#fff4d4;border-color:#ffd770;">📦 Soal Kotak Misteri (?)</button>
+        <button type="button" class="tool-btn" id="btnClearScale">🧹 Kosongkan</button>
+      </div>
+    </aside>
+
+    <!-- Panel Tengah (Kanvas Timbangan) -->
+    <main class="panel scale-stage">
+      <div class="stage-hint">Klik anak timbangan/benda di panel kiri untuk menaruhnya, atau klik benda di piringan untuk melepas</div>
+      <svg id="scaleSvg" viewBox="0 0 600 410"></svg>
+      <div style="font-size:11.5px;font-weight:800;color:var(--muted);">
+        1 kilogram (kg) = <b>10 ons (hg)</b> = <b>1.000 gram (g)</b>
+      </div>
+    </main>
+
+    <!-- Panel Kanan (Status & Konversi Massa) -->
+    <aside class="panel">
+      <div class="balance-status" id="balanceBanner">
+        <b id="balanceText">⚖️ SEIMBANG (0 g = 0 g)</b>
+        <small id="balanceDiff">Tambahkan beban ke piringan kiri dan kanan</small>
+      </div>
+
+      <div class="pan-summary">
+        <div class="ps-card">
+          <h4 style="color:var(--blue-dark);">⬅️ Piringan Kiri</h4>
+          <b id="massLeftTxt">0 g</b>
+          <div class="ps-items" id="listLeft"></div>
+        </div>
+        <div class="ps-card r">
+          <h4 style="color:var(--coral-dark);">➡️ Piringan Kanan</h4>
+          <b id="massRightTxt">0 g</b>
+          <div class="ps-items" id="listRight"></div>
+        </div>
+      </div>
+
+      <div class="clock-notes" id="massConvBox">
+        <b>Konversi Satuan Massa:</b><br>
+        • Kiri: <b>0 kg</b> = <b>0 ons</b> = <b>0 g</b><br>
+        • Kanan: <b>0 kg</b> = <b>0 ons</b> = <b>0 g</b>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ==================== 3. BANDINGKAN & UKUR OBJEK ==================== -->
+  <section class="view" id="viewMeasure">
+    <!-- Panel Kiri -->
+    <aside class="panel">
+      <h2 class="sec-title">1. Benda Pertama (Atas — Biru)</h2>
+      <div class="cmp-obj-grid" id="cmpGridA">
+        <button type="button" class="co-btn active" data-id="pencil">✏️ Pensil (14,5 cm)</button>
+        <button type="button" class="co-btn" data-id="marker">🖊️ Spidol (13,8 cm)</button>
+        <button type="button" class="co-btn" data-id="eraser">🧽 Penghapus (11,2 cm)</button>
+        <button type="button" class="co-btn" data-id="book">📘 Buku Tulis (21,0 cm)</button>
+      </div>
+
+      <h2 class="sec-title">2. Benda Kedua (Bawah — Oranye)</h2>
+      <div class="cmp-obj-grid" id="cmpGridB">
+        <button type="button" class="co-btn" data-id="key">🔑 Kunci (5,8 cm)</button>
+        <button type="button" class="co-btn active-b" data-id="brush">🖌️ Kuas (16,4 cm)</button>
+        <button type="button" class="co-btn" data-id="crayon">🖍️ Krayon (9,2 cm)</button>
+        <button type="button" class="co-btn" data-id="custom">🎗️ Pita Tarik Bebas</button>
+      </div>
+
+      <div class="calib-box">
+        <label>
+          <span>📐 Kalibrasi Skala Nyata (1:1 PID)</span>
+          <span id="calibPct">100%</span>
+        </label>
+        <input type="range" id="calibSlider" min="70" max="145" value="100">
+        <div style="font-size:10.5px;font-weight:700;color:#5a4db0;margin-top:3px;">
+          Tempelkan penggaris fisik ke kotak referensi <b>10 cm</b> di layar, lalu geser agar ukurannya sama persis!
+        </div>
+      </div>
+
+      <div class="diff-card" id="cmpDiffCard">
+        <span>Perbandingan Ukuran:</span>
+        <b>Kuas lebih panjang 1,9 cm (19 mm)</b>
+        <div>Pensil: 14,5 cm (145 mm) | Kuas: 16,4 cm (164 mm)</div>
+      </div>
+
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button type="button" class="tool-btn" id="btnAlignAllZero" style="flex:1;">📏 Sejajarkan ke 0 cm</button>
+        <button type="button" class="tool-btn" id="btnRandomRuler" style="flex:1;">🎲 Geser Penggaris</button>
+      </div>
+    </aside>
+
+    <!-- Panel Kanan (Meja Bandingkan & Penggaris Virtual) -->
+    <main class="panel measure-stage">
+      <div class="stage-hint">👆 Geser kedua benda atau penggaris di layar untuk membandingkan &amp; mengukur panjangnya!</div>
+      <svg id="measureSvg" viewBox="0 0 820 430"></svg>
+    </main>
+  </section>
+
+  <!-- ==================== 4. TANTANGAN LAB ==================== -->
+  <section class="view" id="viewQuiz">
+    <div class="panel quiz-stage">
+      <svg id="quizSvg" viewBox="0 0 560 350"></svg>
+    </div>
+
+    <aside class="panel quiz-side">
+      <div>
+        <div class="q-scorebar">
+          <span>⭐ Skor: <b id="qScore">0 / 0</b></span>
+          <span>🔥 Streak: <b id="qStreak">0</b></span>
+        </div>
+        <div class="q-prompt" id="qPrompt">–</div>
+        <div class="q-opts" id="qOpts"></div>
+        <div class="q-fb" id="qFb"></div>
+      </div>
+      <button type="button" class="btn-next" id="btnQuizNext" hidden>Soal Berikutnya ➡️</button>
+    </aside>
+  </section>
+</div>
+
+<script>
+/* ==========================================================================
+   0. AUDIO SYNTHESIZER & FORMATTER
+   ========================================================================== */
+const FX = {
+  on: true,
+  ctx: null,
+  tone(f = 520, dur = 0.045, type = 'sine', vol = 0.045) {
+    if (!this.on) return;
+    try {
+      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(f, this.ctx.currentTime);
+      g.gain.setValueAtTime(vol, this.ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + dur);
+      osc.connect(g);
+      g.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + dur);
+    } catch (_) {}
+  },
+  tick() { this.tone(740, 0.02, 'triangle', 0.035); },
+  clink() { this.tone(420, 0.07, 'triangle', 0.07); },
+  ok() {
+    this.tone(523.25, 0.08, 'triangle', 0.08);
+    setTimeout(() => this.tone(659.25, 0.13, 'triangle', 0.08), 80);
+  },
+  err() {
+    this.tone(205, 0.16, 'sawtooth', 0.05);
+  }
+};
+
+function fmt(n, maxDec = 2) {
+  const v = Number(n.toFixed(maxDec));
+  return v.toLocaleString('id-ID', { maximumFractionDigits: maxDec });
+}
+
+/* ==========================================================================
+   1. MODUL 1: JAM ANALOG & SELISIH WAKTU
+   ========================================================================== */
+const clockState = {
+  startMin: 390, // 06:30 (menit sejak 00:00, rentang 0..1439)
+  currMin: 390,  // waktu jarum aktif saat ini
+  locked: false, // false = mengatur waktu mulai; true = mengukur selisih dari startMin ke currMin
+  dragging: null, // 'minute' | 'hour'
+  lastAngle: 0
+};
+
+function formatTime24(totalMin) {
+  const m = ((Math.round(totalMin) % 1440) + 1440) % 1440;
+  const hh = String(Math.floor(m / 60)).padStart(2, '0');
+  const mm = String(m % 60).padStart(2, '0');
+  return `${hh}:${mm}`;
+}
+
+function getDayPeriod(totalMin) {
+  const h = Math.floor((((Math.round(totalMin) % 1440) + 1440) % 1440) / 60);
+  if (h >= 4 && h < 11) return 'Pagi (AM)';
+  if (h >= 11 && h < 15) return 'Siang (PM)';
+  if (h >= 15 && h < 18) return 'Sore (PM)';
+  return 'Malam';
+}
+
+function getElapsedMinutes() {
+  if (!clockState.locked) return 0;
+  let diff = Math.round(clockState.currMin - clockState.startMin);
+  if (diff < 0) diff += 1440; // melewati tengah malam
+  return diff;
+}
+
+function polarToXY(cx, cy, r, degFromTop) {
+  const rad = ((degFromTop - 90) * Math.PI) / 180;
+  return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+}
+
+function describeArcSector(cx, cy, r, startDeg, sweepDeg) {
+  if (sweepDeg <= 0.1) return '';
+  const clampedSweep = Math.min(359.9, sweepDeg);
+  const [x1, y1] = polarToXY(cx, cy, r, startDeg);
+  const [x2, y2] = polarToXY(cx, cy, r, startDeg + clampedSweep);
+  const largeArc = clampedSweep > 180 ? 1 : 0;
+  return `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+}
+
+function renderClock() {
+  const svg = document.getElementById('clockSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const cx = 230, cy = 220, R = 175;
+
+  // Bingkai luar jam
+  el('circle', { cx, cy, r: R + 16, fill: '#dfe9ff', stroke: '#b9cdf7', 'stroke-width': '3' });
+  el('circle', { cx, cy, r: R, fill: '#ffffff', stroke: '#1b2642', 'stroke-width': '4' });
+
+  // Arsiran Selisih Waktu (jika mode kunci aktif)
+  const elapsed = getElapsedMinutes();
+  if (clockState.locked && elapsed > 0) {
+    const startM = clockState.startMin % 60;
+    const startDeg = (startM / 60) * 360;
+    const totalSweepDeg = (elapsed / 60) * 360;
+
+    // Jika >= 60 menit (1 jam penuh atau lebih), beri cincin luar penuh
+    if (elapsed >= 60) {
+      el('circle', {
+        cx, cy, r: R - 10,
+        fill: 'none', stroke: 'rgba(108, 92, 231, 0.28)', 'stroke-width': '18'
+      });
+    }
+    const remDeg = totalSweepDeg % 360;
+    if (remDeg > 0) {
+      el('path', {
+        d: describeArcSector(cx, cy, R - 4, startDeg, remDeg),
+        fill: 'rgba(108, 92, 231, 0.22)'
+      });
+    } else if (elapsed >= 60) {
+      el('circle', { cx, cy, r: R - 4, fill: 'rgba(108, 92, 231, 0.22)' });
+    }
+  }
+
+  // Skala 60 menit & 12 angka jam
+  for (let i = 0; i < 60; i++) {
+    const deg = i * 6;
+    const isHour = i % 5 === 0;
+    const [x1, y1] = polarToXY(cx, cy, R - (isHour ? 16 : 9), deg);
+    const [x2, y2] = polarToXY(cx, cy, R - 2, deg);
+    el('line', {
+      x1, y1, x2, y2,
+      stroke: isHour ? '#1b2642' : '#94a6cc',
+      'stroke-width': isHour ? '3.5' : '1.5',
+      'stroke-linecap': 'round'
+    });
+
+    if (isHour) {
+      const num = i === 0 ? 12 : i / 5;
+      const [nx, ny] = polarToXY(cx, cy, R - 34, deg);
+      el('text', {
+        x: nx, y: ny + 7, 'text-anchor': 'middle',
+        fill: '#1b2642', 'font-size': '22', 'font-weight': '900'
+      }).textContent = String(num);
+
+      // Angka kecil kelipatan 5 menit di bagian luar bingkai
+      const [mx, my] = polarToXY(cx, cy, R + 9, deg);
+      el('text', {
+        x: mx, y: my + 3.5, 'text-anchor': 'middle',
+        fill: '#5b6d94', 'font-size': '9.5', 'font-weight': '800'
+      }).textContent = i === 0 ? '00' : String(i);
+    }
+  }
+
+  // Jarum Bayangan Waktu Mulai (jika dikunci)
+  if (clockState.locked) {
+    const sH = (clockState.startMin % 720) / 60;
+    const sM = clockState.startMin % 60;
+    const [shx, shy] = polarToXY(cx, cy, 95, sH * 30);
+    const [smx, smy] = polarToXY(cx, cy, 140, sM * 6);
+    el('line', {
+      x1: cx, y1: cy, x2: shx, y2: shy,
+      stroke: 'rgba(255, 107, 74, 0.35)', 'stroke-width': '8', 'stroke-linecap': 'round', 'stroke-dasharray': '5,4'
+    });
+    el('line', {
+      x1: cx, y1: cy, x2: smx, y2: smy,
+      stroke: 'rgba(46, 134, 222, 0.35)', 'stroke-width': '5', 'stroke-linecap': 'round', 'stroke-dasharray': '5,4'
+    });
+  }
+
+  // Jarum Aktif (Jam & Menit)
+  const activeMin = ((clockState.currMin % 1440) + 1440) % 1440;
+  const hDeg = ((activeMin % 720) / 60) * 30;
+  const mDeg = (activeMin % 60) * 6;
+
+  // Jarum Pendek (Jam - Merah/Oranye)
+  const [hx, hy] = polarToXY(cx, cy, 98, hDeg);
+  const gHour = el('g', { style: 'cursor:grab;' });
+  el('line', {
+    x1: cx, y1: cy, x2: hx, y2: hy,
+    stroke: '#ff6b4a', 'stroke-width': '9', 'stroke-linecap': 'round'
+  }, gHour);
+  el('circle', { cx: hx, cy: hy, r: 14, fill: 'rgba(255,107,74,0.22)', stroke: '#ff6b4a', 'stroke-width': '2' }, gHour);
+  gHour.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    clockState.dragging = 'hour';
+    clockState.lastAngle = getPointerClockAngle(svg, e, cx, cy);
+  });
+
+  // Jarum Panjang (Menit - Biru)
+  const [mx, my] = polarToXY(cx, cy, 144, mDeg);
+  const gMin = el('g', { style: 'cursor:grab;' });
+  el('line', {
+    x1: cx, y1: cy, x2: mx, y2: my,
+    stroke: '#2e86de', 'stroke-width': '6', 'stroke-linecap': 'round'
+  }, gMin);
+  el('circle', { cx: mx, cy: my, r: 14, fill: 'rgba(46,134,222,0.22)', stroke: '#2e86de', 'stroke-width': '2' }, gMin);
+  gMin.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    clockState.dragging = 'minute';
+    clockState.lastAngle = getPointerClockAngle(svg, e, cx, cy);
+  });
+
+  // Poros tengah
+  el('circle', { cx, cy, r: 9, fill: '#1b2642', stroke: '#fff', 'stroke-width': '2.5' });
+
+  // Update Panel Kanan
+  document.getElementById('digStart').textContent = formatTime24(clockState.startMin);
+  document.getElementById('periodStart').textContent = getDayPeriod(clockState.startMin);
+  document.getElementById('digEnd').textContent = formatTime24(clockState.currMin);
+  document.getElementById('periodEnd').textContent = getDayPeriod(clockState.currMin);
+  document.getElementById('lblEndCard').textContent = clockState.locked ? 'Waktu Selesai' : 'Waktu Aktif';
+
+  const btnLock = document.getElementById('btnLockStart');
+  btnLock.textContent = clockState.locked ? '🔓 Buka Kunci (Ubah Waktu Mulai)' : '🔒 Kunci Waktu Mulai & Ukur Selisih';
+  btnLock.classList.toggle('locked', clockState.locked);
+
+  if (!clockState.locked) {
+    document.getElementById('elapsedMain').textContent = 'Siap Mengukur';
+    document.getElementById('elapsedSub').textContent = 'Atur jarum ke waktu mulai, lalu tekan tombol Kunci di kiri';
+    document.getElementById('tlFill').style.width = '0%';
+    document.getElementById('tlPct').textContent = '0 menit';
+  } else {
+    const hrs = Math.floor(elapsed / 60);
+    const mins = elapsed % 60;
+    const decHrs = fmt(elapsed / 60, 2);
+    document.getElementById('elapsedMain').textContent = `${hrs} Jam ${mins} Menit`;
+    document.getElementById('elapsedSub').textContent = `Total = ${elapsed} menit  |  ${decHrs} jam`;
+    const pct = Math.min(100, (elapsed / 480) * 100); // skala bar 8 jam
+    document.getElementById('tlFill').style.width = `${pct}%`;
+    document.getElementById('tlPct').textContent = `${elapsed} menit`;
+  }
+  document.getElementById('tlStartLbl').textContent = `Mulai ${formatTime24(clockState.startMin)}`;
+  document.getElementById('tlEndLbl').textContent = `Selesai ${formatTime24(clockState.currMin)}`;
+}
+
+function getPointerClockAngle(svg, evt, cx, cy) {
+  const rect = svg.getBoundingClientRect();
+  const x = ((evt.clientX - rect.left) / rect.width) * 460;
+  const y = ((evt.clientY - rect.top) / rect.height) * 440;
+  let deg = (Math.atan2(y - cy, x - cx) * 180) / Math.PI + 90;
+  if (deg < 0) deg += 360;
+  return deg;
+}
+
+const cSvg = document.getElementById('clockSvg');
+cSvg.addEventListener('pointermove', e => {
+  if (!clockState.dragging) return;
+  const ang = getPointerClockAngle(cSvg, e, 230, 220);
+
+  if (clockState.dragging === 'minute') {
+    let delta = ang - clockState.lastAngle;
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+    const dMin = Math.round(delta / 6);
+    if (dMin !== 0) {
+      clockState.lastAngle = (clockState.lastAngle + dMin * 6 + 360) % 360;
+      clockState.currMin = ((clockState.currMin + dMin) % 1440 + 1440) % 1440;
+      if (!clockState.locked) clockState.startMin = clockState.currMin;
+      FX.tick();
+      renderClock();
+    }
+  } else if (clockState.dragging === 'hour') {
+    const targetHour12 = Math.floor(ang / 30) % 12;
+    const isPM = Math.floor(clockState.currMin / 60) >= 12;
+    const mins = clockState.currMin % 60;
+    const nextTotal = (targetHour12 + (isPM ? 12 : 0)) * 60 + mins;
+    if (nextTotal !== clockState.currMin) {
+      clockState.currMin = nextTotal;
+      if (!clockState.locked) clockState.startMin = clockState.currMin;
+      FX.tick();
+      renderClock();
+    }
+  }
+});
+window.addEventListener('pointerup', () => { clockState.dragging = null; });
+
+document.getElementById('btnLockStart').addEventListener('click', () => {
+  FX.tone(580, 0.06);
+  clockState.locked = !clockState.locked;
+  if (!clockState.locked) {
+    clockState.startMin = clockState.currMin;
+  }
+  renderClock();
+});
+
+document.getElementById('btnToggleAmPm').addEventListener('click', () => {
+  FX.tone(520, 0.05);
+  clockState.currMin = (clockState.currMin + 720) % 1440;
+  if (!clockState.locked) clockState.startMin = clockState.currMin;
+  renderClock();
+});
+
+document.getElementById('btnResetClock').addEventListener('click', () => {
+  FX.tone(440, 0.05);
+  clockState.startMin = 390;
+  clockState.currMin = 390;
+  clockState.locked = false;
+  renderClock();
+});
+
+document.getElementById('clockStepGrid').addEventListener('click', e => {
+  const btn = e.target.closest('.t-step');
+  if (!btn) return;
+  FX.tick();
+  const dm = Number(btn.dataset.dm);
+  clockState.currMin = ((clockState.currMin + dm) % 1440 + 1440) % 1440;
+  if (!clockState.locked) clockState.startMin = clockState.currMin;
+  renderClock();
+});
+
+document.getElementById('clockPresets').addEventListener('click', e => {
+  const btn = e.target.closest('.preset-btn');
+  if (!btn) return;
+  FX.ok();
+  clockState.startMin = Number(btn.dataset.s);
+  clockState.currMin = Number(btn.dataset.e);
+  clockState.locked = true;
+  renderClock();
+});
+
+/* ==========================================================================
+   2. MODUL 2: TIMBANGAN KESEIMBANGAN & SATUAN MASSA
+   ========================================================================== */
+const scaleState = {
+  targetPan: 'left', // 'left' | 'right'
+  leftItems: [],     // [{ id, name, g, kind, mystery }]
+  rightItems: [],
+  visualAngle: 0
+};
+let itemUid = 1;
+
+function getPanMass(list) {
+  return list.reduce((acc, it) => acc + it.g, 0);
+}
+
+function addScaleItem(pan, item) {
+  const target = pan === 'left' ? scaleState.leftItems : scaleState.rightItems;
+  if (target.length >= 10) return;
+  target.push({ ...item, id: itemUid++ });
+  FX.clink();
+  updateScaleUI();
+}
+
+function removeScaleItem(pan, id) {
+  if (pan === 'left') {
+    scaleState.leftItems = scaleState.leftItems.filter(i => i.id !== id);
+  } else {
+    scaleState.rightItems = scaleState.rightItems.filter(i => i.id !== id);
+  }
+  FX.tone(360, 0.04);
+  updateScaleUI();
+}
+
+function formatMassDual(g) {
+  if (g >= 1000) {
+    const kg = Math.floor(g / 1000);
+    const rem = g % 1000;
+    return rem === 0 ? `${kg} kg` : `${kg} kg ${rem} g`;
+  }
+  return `${g} g`;
+}
+
+function updateScaleUI() {
+  const mL = getPanMass(scaleState.leftItems);
+  const mR = getPanMass(scaleState.rightItems);
+  const hasMystery = scaleState.leftItems.some(i => i.mystery);
+
+  document.getElementById('massLeftTxt').textContent = hasMystery ? '??? g (Misteri)' : formatMassDual(mL);
+  document.getElementById('massRightTxt').textContent = formatMassDual(mR);
+
+  const renderTags = (list, pan, elId) => {
+    const box = document.getElementById(elId);
+    box.innerHTML = '';
+    list.forEach(it => {
+      const span = document.createElement('span');
+      span.className = 'item-tag';
+      span.textContent = `${it.name} ✕`;
+      span.title = 'Klik untuk melepas dari piringan';
+      span.addEventListener('click', () => removeScaleItem(pan, it.id));
+      box.appendChild(span);
+    });
+  };
+  renderTags(scaleState.leftItems, 'left', 'listLeft');
+  renderTags(scaleState.rightItems, 'right', 'listRight');
+
+  const banner = document.getElementById('balanceBanner');
+  const bTxt = document.getElementById('balanceText');
+  const bSub = document.getElementById('balanceDiff');
+
+  if (mL === mR) {
+    banner.classList.add('balanced');
+    if (hasMystery) {
+      bTxt.textContent = `🎉 TERPECAHKAN! Massa = ${formatMassDual(mR)}`;
+      bSub.textContent = `Timbangan seimbang! Kotak Misteri bermassa ${mR} gram (${fmt(mR / 1000, 3)} kg)`;
+      // Ungkap misteri
+      scaleState.leftItems.forEach(i => { if (i.mystery) { i.mystery = false; i.name = `📦 ${i.g} g`; } });
+    } else {
+      bTxt.textContent = `⚖️ SEIMBANG (${formatMassDual(mL)})`;
+      bSub.textContent = mL === 0 ? 'Tambahkan beban ke piringan kiri dan kanan' : 'Massa piringan kiri sama persis dengan piringan kanan';
+    }
+  } else {
+    banner.classList.remove('balanced');
+    const diff = Math.abs(mL - mR);
+    if (mL > mR) {
+      bTxt.textContent = '⬅️ Lebih Berat ke Kiri';
+      bSub.textContent = hasMystery ? 'Tambahkan anak timbangan di kanan hingga seimbang!' : `Selisih massa: ${formatMassDual(diff)}`;
+    } else {
+      bTxt.textContent = '➡️ Lebih Berat ke Kanan';
+      bSub.textContent = hasMystery ? 'Terlalu berat! Kurangi beban di piringan kanan.' : `Selisih massa: ${formatMassDual(diff)}`;
+    }
+  }
+
+  const leftStr = hasMystery ? '???' : `${fmt(mL / 1000, 3)} kg = ${fmt(mL / 100, 2)} ons = ${mL} g`;
+  const rightStr = `${fmt(mR / 1000, 3)} kg = ${fmt(mR / 100, 2)} ons = ${mR} g`;
+  document.getElementById('massConvBox').innerHTML =
+    `<b>Konversi Satuan Massa:</b><br>• Kiri: <b>${leftStr}</b><br>• Kanan: <b>${rightStr}</b>`;
+
+  drawScaleSVG(mL, mR);
+}
+
+function drawScaleSVG(mL, mR) {
+  const svg = document.getElementById('scaleSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const cx = 300, pivotY = 175;
+  const diff = mR - mL;
+  const targetDeg = Math.max(-16, Math.min(16, (diff / 1200) * 16));
+  const rad = (targetDeg * Math.PI) / 180;
+  const armLen = 185;
+
+  // Alas & Tiang Tengah Timbangan
+  el('rect', { x: 205, y: 365, width: 190, height: 22, rx: 10, fill: '#2c3d63' });
+  el('rect', { x: 288, y: 175, width: 24, height: 192, rx: 6, fill: '#4f6491' });
+
+  // Busur derajat keseimbangan di atas poros
+  el('path', { d: 'M 255 140 A 55 55 0 0 1 345 140', fill: 'none', stroke: '#b8c9eb', 'stroke-width': '4' });
+  el('line', { x1: 300, y1: 118, x2: 300, y2: 134, stroke: mL === mR ? '#10ac84' : '#ff6b4a', 'stroke-width': '3.5' });
+
+  // Lengan Timbangan Berputar
+  const lx = cx - Math.cos(rad) * armLen;
+  const ly = pivotY - Math.sin(rad) * armLen;
+  const rx = cx + Math.cos(rad) * armLen;
+  const ry = pivotY + Math.sin(rad) * armLen;
+
+  el('line', {
+    x1: lx, y1: ly, x2: rx, y2: ry,
+    stroke: '#1b2642', 'stroke-width': '10', 'stroke-linecap': 'round'
+  });
+
+  // Jarum penunjuk tengah tegak lurus lengan
+  const nx = cx + Math.sin(rad) * 46;
+  const ny = pivotY - Math.cos(rad) * 46;
+  el('line', { x1: cx, y1: pivotY, x2: nx, y2: ny, stroke: mL === mR ? '#10ac84' : '#ff6b4a', 'stroke-width': '4.5', 'stroke-linecap': 'round' });
+  el('circle', { cx, cy: pivotY, r: 12, fill: '#ffb800', stroke: '#1b2642', 'stroke-width': '3' });
+
+  // Gambar Piringan Kiri & Kanan beserta isinya
+  const drawPan = (px, py, items, panSide, color) => {
+    const panY = py + 72;
+    // Tali penggantung piringan
+    el('line', { x1: px, y1: py, x2: px - 62, y2: panY, stroke: '#7f92b8', 'stroke-width': '2.2' });
+    el('line', { x1: px, y1: py, x2: px + 62, y2: panY, stroke: '#7f92b8', 'stroke-width': '2.2' });
+
+    // Piringan datar
+    el('rect', { x: px - 74, y: panY, width: 148, height: 12, rx: 6, fill: color, stroke: '#1b2642', 'stroke-width': '2' });
+
+    // Susun balok beban di atas piringan
+    items.forEach((it, idx) => {
+      const col = idx % 3;
+      const row = Math.floor(idx / 3);
+      const bw = 42, bh = 26;
+      const bx = px - 64 + col * 44;
+      const by = panY - bh - row * (bh + 2);
+
+      const gIt = el('g', { style: 'cursor:pointer;' });
+      el('rect', {
+        x: bx, y: by, width: bw, height: bh, rx: 6,
+        fill: it.mystery ? '#ffb800' : (it.kind === 'weight' ? '#34495e' : '#ffffff'),
+        stroke: '#1b2642', 'stroke-width': '1.8'
+      }, gIt);
+      el('text', {
+        x: bx + bw / 2, y: by + 17, 'text-anchor': 'middle',
+        fill: (it.kind === 'weight' && !it.mystery) ? '#fff' : '#1b2642',
+        'font-size': '10', 'font-weight': '900'
+      }, gIt).textContent = it.name.replace(/^[^\w?]+\s*/, '');
+
+      gIt.addEventListener('click', () => removeScaleItem(panSide, it.id));
+    });
+  };
+
+  drawPan(lx, ly, scaleState.leftItems, 'left', '#2e86de');
+  drawPan(rx, ry, scaleState.rightItems, 'right', '#ff6b4a');
+}
+
+document.getElementById('panTargetBar').addEventListener('click', e => {
+  const btn = e.target.closest('.pt-btn');
+  if (!btn) return;
+  FX.tone(520, 0.04);
+  scaleState.targetPan = btn.dataset.pan;
+  document.querySelectorAll('#panTargetBar .pt-btn').forEach(b => {
+    b.classList.toggle('active', b === btn);
+  });
+});
+
+document.getElementById('stdWeightGrid').addEventListener('click', e => {
+  const btn = e.target.closest('.w-chip');
+  if (!btn) return;
+  addScaleItem(scaleState.targetPan, { name: btn.dataset.name, g: Number(btn.dataset.g), kind: 'weight' });
+});
+
+document.getElementById('objMassGrid').addEventListener('click', e => {
+  const btn = e.target.closest('.om-btn');
+  if (!btn) return;
+  addScaleItem(scaleState.targetPan, { name: btn.dataset.name, g: Number(btn.dataset.g), kind: 'item' });
+});
+
+document.getElementById('btnMysteryBox').addEventListener('click', () => {
+  const choices = [350, 450, 650, 750, 850, 1150, 1350, 1600];
+  const g = choices[Math.floor(Math.random() * choices.length)];
+  scaleState.leftItems = [{ id: itemUid++, name: '📦 ?', g, kind: 'item', mystery: true }];
+  scaleState.rightItems = [];
+  scaleState.targetPan = 'right';
+  document.querySelectorAll('#panTargetBar .pt-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.pan === 'right');
+  });
+  FX.ok();
+  updateScaleUI();
+});
+
+document.getElementById('btnClearScale').addEventListener('click', () => {
+  scaleState.leftItems = [];
+  scaleState.rightItems = [];
+  FX.tone(400, 0.05);
+  updateScaleUI();
+});
+
+/* ==========================================================================
+   3. MODUL 3: BANDINGKAN & UKUR OBJEK + SKALA NYATA PID
+   ========================================================================== */
+const CMP_OBJECTS = {
+  pencil: { name: 'Pensil Kayu', cm: 14.5, color: '#f39c12' },
+  marker: { name: 'Spidol Papan', cm: 13.8, color: '#2e86de' },
+  eraser: { name: 'Penghapus Papan', cm: 11.2, color: '#6c5ce7' },
+  book: { name: 'Buku Tulis', cm: 21.0, color: '#0984e3' },
+  key: { name: 'Kunci Kelas', cm: 5.8, color: '#e1b12c' },
+  brush: { name: 'Kuas Lukis', cm: 16.4, color: '#ff6b4a' },
+  crayon: { name: 'Krayon Warna', cm: 9.2, color: '#e84393' },
+  custom: { name: 'Pita Tarik Bebas', cm: 12.0, color: '#10ac84' }
+};
+
+const cmpState = {
+  objA: 'pencil',
+  objB: 'brush',
+  customCm: 12.0,
+  xA: 70,
+  xB: 70,
+  rulerX: 70,
+  calibScale: 1.0,
+  dragTarget: null,
+  dragOffsetX: 0
+};
+
+function renderMeasureBench() {
+  const svg = document.getElementById('measureSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const basePxPerCm = 28 * cmpState.calibScale; // 0..25 cm muat nyaman di 820px
+  const metaA = CMP_OBJECTS[cmpState.objA];
+  const metaB = CMP_OBJECTS[cmpState.objB];
+  const lenA = metaA.cm;
+  const lenB = cmpState.objB === 'custom' ? cmpState.customCm : metaB.cm;
+
+  // Update Kartu Perbandingan
+  const diffCm = Math.abs(lenA - lenB);
+  const diffMm = Math.round(diffCm * 10);
+  const longerName = Math.abs(lenA - lenB) < 0.05
+    ? 'Kedua benda sama panjang!'
+    : (lenA > lenB ? `${metaA.name} lebih panjang ${fmt(diffCm, 1)} cm (${diffMm} mm)` : `${metaB.name} lebih panjang ${fmt(diffCm, 1)} cm (${diffMm} mm)`);
+
+  document.getElementById('cmpDiffCard').innerHTML = `
+    <span>Perbandingan Ukuran:</span>
+    <b>${longerName}</b>
+    <div>${metaA.name}: ${fmt(lenA, 1)} cm (${Math.round(lenA * 10)} mm) | ${metaB.name}: ${fmt(lenB, 1)} cm (${Math.round(lenB * 10)} mm)</div>
+  `;
+
+  // Kotak Kalibrasi Referensi 10 cm di Pojok Kanan Atas
+  const calW = 10 * basePxPerCm;
+  const calX = 800 - calW;
+  el('rect', { x: calX, y: 12, width: calW, height: 26, rx: 6, fill: '#f1efff', stroke: '#6c5ce7', 'stroke-width': '2', 'stroke-dasharray': '5,3' });
+  el('text', {
+    x: calX + calW / 2, y: 29, 'text-anchor': 'middle', fill: '#4c3fa3', 'font-size': '11.5', 'font-weight': '900'
+  }).textContent = '↔ Kotak Referensi Nyata: 10 cm';
+
+  // Benda A (Atas)
+  const wA = lenA * basePxPerCm;
+  const yA = 78;
+  const gA = el('g', { style: 'cursor:grab;' });
+  gA.addEventListener('pointerdown', e => {
+    cmpState.dragTarget = 'A';
+    cmpState.dragOffsetX = getMeasureSvgX(svg, e) - cmpState.xA;
+  });
+  el('rect', { x: cmpState.xA, y: yA, width: wA, height: 34, rx: 8, fill: '#2e86de', stroke: '#1b2642', 'stroke-width': '2' }, gA);
+  el('text', {
+    x: cmpState.xA + wA / 2, y: yA + 21, 'text-anchor': 'middle', fill: '#fff', 'font-size': '12.5', 'font-weight': '900'
+  }, gA).textContent = `${metaA.name} (${fmt(lenA, 1)} cm)`;
+
+  // Benda B (Tengah)
+  const wB = lenB * basePxPerCm;
+  const yB = 136;
+  const gB = el('g', { style: 'cursor:grab;' });
+  gB.addEventListener('pointerdown', e => {
+    cmpState.dragTarget = 'B';
+    cmpState.dragOffsetX = getMeasureSvgX(svg, e) - cmpState.xB;
+  });
+  el('rect', { x: cmpState.xB, y: yB, width: wB, height: 34, rx: 8, fill: '#ff6b4a', stroke: '#1b2642', 'stroke-width': '2' }, gB);
+  el('text', {
+    x: cmpState.xB + wB / 2, y: yB + 21, 'text-anchor': 'middle', fill: '#fff', 'font-size': '12.5', 'font-weight': '900'
+  }, gB).textContent = `${metaB.name} (${fmt(lenB, 1)} cm)`;
+
+  if (cmpState.objB === 'custom') {
+    const hdl = el('circle', {
+      cx: cmpState.xB + wB, cy: yB + 17, r: 11, fill: '#10ac84', stroke: '#fff', 'stroke-width': '2.5', style: 'cursor:ew-resize;'
+    });
+    hdl.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      cmpState.dragTarget = 'stretchB';
+    });
+  }
+
+  // Garis pembanding ujung kanan A dan B
+  el('line', { x1: cmpState.xA + wA, y1: yA, x2: cmpState.xA + wA, y2: 275, stroke: '#2e86de', 'stroke-width': '1.6', 'stroke-dasharray': '4,3' });
+  el('line', { x1: cmpState.xB + wB, y1: yB, x2: cmpState.xB + wB, y2: 275, stroke: '#ff6b4a', 'stroke-width': '1.6', 'stroke-dasharray': '4,3' });
+
+  // Penggaris Virtual 0..25 cm (Draggable)
+  const rx = cmpState.rulerX;
+  const ry = 205;
+  const maxCm = 25;
+  const rW = maxCm * basePxPerCm + 24;
+  const gRuler = el('g', { style: 'cursor:grab;' });
+  gRuler.addEventListener('pointerdown', e => {
+    cmpState.dragTarget = 'ruler';
+    cmpState.dragOffsetX = getMeasureSvgX(svg, e) - cmpState.rulerX;
+  });
+
+  el('rect', { x: rx - 12, y: ry, width: rW, height: 68, rx: 8, fill: 'rgba(255,248,214,0.95)', stroke: '#d4a017', 'stroke-width': '2.2' }, gRuler);
+  for (let m = 0; m <= maxCm * 10; m++) {
+    const tx = rx + (m / 10) * basePxPerCm;
+    const isCm = m % 10 === 0;
+    const isHalf = m % 5 === 0 && !isCm;
+    el('line', {
+      x1: tx, y1: ry, x2: tx, y2: ry + (isCm ? 24 : isHalf ? 15 : 9),
+      stroke: '#3d2c00', 'stroke-width': isCm ? '1.9' : '1'
+    }, gRuler);
+    if (isCm) {
+      el('text', {
+        x: tx, y: ry + 42, 'text-anchor': 'middle', fill: '#3d2c00', 'font-size': '11.5', 'font-weight': '900'
+      }, gRuler).textContent = String(m / 10);
+    }
+  }
+  el('text', {
+    x: rx + 6, y: ry + 59, fill: '#8a6800', 'font-size': '10.5', 'font-weight': '900'
+  }, gRuler).textContent = '↔ Geser Penggaris (Skala cm & mm)';
+
+  // Bar Visual Selisih di Bagian Bawah
+  const barY = 318;
+  el('text', { x: 40, y: barY - 8, fill: '#1b2642', 'font-size': '13', 'font-weight': '900' }).textContent =
+    `Visualisasi Selisih Panjang: ${longerName}`;
+  el('rect', { x: 40, y: barY, width: wA, height: 22, rx: 6, fill: '#2e86de' });
+  el('rect', { x: 40, y: barY + 28, width: wB, height: 22, rx: 6, fill: '#ff6b4a' });
+
+  if (diffCm >= 0.1) {
+    const minW = Math.min(wA, wB);
+    const maxW = Math.max(wA, wB);
+    el('rect', {
+      x: 40 + minW, y: barY, width: maxW - minW, height: 50, rx: 4,
+      fill: 'rgba(16, 172, 132, 0.25)', stroke: '#10ac84', 'stroke-width': '2', 'stroke-dasharray': '4,3'
+    });
+    el('text', {
+      x: 40 + maxW + 10, y: barY + 30, fill: '#087559', 'font-size': '13', 'font-weight': '900'
+    }).textContent = `Selisih = ${fmt(diffCm, 1)} cm`;
+  }
+}
+
+function getMeasureSvgX(svg, evt) {
+  const rect = svg.getBoundingClientRect();
+  return ((evt.clientX - rect.left) / rect.width) * 820;
+}
+
+const mSvg = document.getElementById('measureSvg');
+mSvg.addEventListener('pointermove', e => {
+  if (!cmpState.dragTarget) return;
+  const x = getMeasureSvgX(mSvg, e);
+  const basePxPerCm = 28 * cmpState.calibScale;
+  if (cmpState.dragTarget === 'A') cmpState.xA = Math.max(20, Math.min(350, x - cmpState.dragOffsetX));
+  else if (cmpState.dragTarget === 'B') cmpState.xB = Math.max(20, Math.min(350, x - cmpState.dragOffsetX));
+  else if (cmpState.dragTarget === 'ruler') cmpState.rulerX = Math.max(15, Math.min(220, x - cmpState.dragOffsetX));
+  else if (cmpState.dragTarget === 'stretchB') {
+    const raw = (x - cmpState.xB) / basePxPerCm;
+    cmpState.customCm = Math.max(2.0, Math.min(22.0, Math.round(raw * 10) / 10));
+  }
+  renderMeasureBench();
+});
+window.addEventListener('pointerup', () => { cmpState.dragTarget = null; });
+
+document.getElementById('cmpGridA').addEventListener('click', e => {
+  const btn = e.target.closest('.co-btn');
+  if (!btn) return;
+  FX.tone(540, 0.04);
+  cmpState.objA = btn.dataset.id;
+  document.querySelectorAll('#cmpGridA .co-btn').forEach(b => b.classList.toggle('active', b === btn));
+  renderMeasureBench();
+});
+
+document.getElementById('cmpGridB').addEventListener('click', e => {
+  const btn = e.target.closest('.co-btn');
+  if (!btn) return;
+  FX.tone(540, 0.04);
+  cmpState.objB = btn.dataset.id;
+  document.querySelectorAll('#cmpGridB .co-btn').forEach(b => b.classList.toggle('active-b', b === btn));
+  renderMeasureBench();
+});
+
+document.getElementById('calibSlider').addEventListener('input', e => {
+  const val = Number(e.target.value);
+  cmpState.calibScale = val / 100;
+  document.getElementById('calibPct').textContent = `${val}%`;
+  renderMeasureBench();
+});
+
+document.getElementById('btnAlignAllZero').addEventListener('click', () => {
+  FX.tone(580, 0.05);
+  cmpState.xA = 60;
+  cmpState.xB = 60;
+  cmpState.rulerX = 60;
+  renderMeasureBench();
+});
+
+document.getElementById('btnRandomRuler').addEventListener('click', () => {
+  FX.tone(520, 0.05);
+  const pxCm = 28 * cmpState.calibScale;
+  const shift = (Math.floor(Math.random() * 4) + 1) * pxCm;
+  cmpState.rulerX = 40;
+  cmpState.xA = 40 + shift;
+  cmpState.xB = 40 + shift;
+  renderMeasureBench();
+});
+
+/* ==========================================================================
+   4. MODUL 4: TANTANGAN LAB (KUIS VISUAL WAKTU, MASSA, & PANJANG)
+   ========================================================================== */
+const quizState = {
+  score: 0,
+  total: 0,
+  streak: 0,
+  answered: false,
+  correct: '',
+  explain: ''
+};
+
+function generateQuiz() {
+  quizState.answered = false;
+  document.getElementById('btnQuizNext').hidden = true;
+  const fb = document.getElementById('qFb');
+  fb.textContent = '';
+  fb.className = 'q-fb';
+
+  const svg = document.getElementById('quizSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const topic = Math.floor(Math.random() * 3); // 0: Selisih Jam, 1: Timbangan Massa, 2: Selisih Panjang
+  let prompt = '', choices = [];
+
+  if (topic === 0) {
+    // Selisih Waktu pada 2 Jam Analog
+    const startH = 7 + Math.floor(Math.random() * 3);
+    const startM = [0, 15, 30][Math.floor(Math.random() * 3)];
+    const addM = [45, 75, 90, 105, 135][Math.floor(Math.random() * 5)];
+    const startTotal = startH * 60 + startM;
+    const endTotal = startTotal + addM;
+
+    const hrs = Math.floor(addM / 60);
+    const mins = addM % 60;
+    const ansStr = `${hrs} jam ${mins} menit`;
+    prompt = `Amati <b>Jam Mulai</b> (kiri) dan <b>Jam Selesai</b> (kanan). Berapakah <b>selisih waktunya</b>?`;
+    quizState.correct = ansStr;
+    quizState.explain = `Dari pukul ${formatTime24(startTotal)} hingga ${formatTime24(endTotal)} berlalu ${ansStr} (${addM} menit).`;
+    choices = [ansStr, `${hrs + 1} jam ${mins} menit`, `${hrs} jam ${(mins + 15) % 60} menit`, `${Math.max(0, hrs - 1)} jam 45 menit`];
+
+    const drawMiniClock = (cx, cy, totalM, title) => {
+      el('text', { x: cx, y: cy - 112, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '14', 'font-weight': '900' }).textContent = title;
+      el('circle', { cx, cy, r: 95, fill: '#fff', stroke: '#1b2642', 'stroke-width': '3.5' });
+      for (let i = 1; i <= 12; i++) {
+        const [nx, ny] = polarToXY(cx, cy, 74, i * 30);
+        el('text', { x: nx, y: ny + 5, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '13', 'font-weight': '900' }).textContent = String(i);
+      }
+      const [hx, hy] = polarToXY(cx, cy, 52, ((totalM % 720) / 60) * 30);
+      const [mx, my] = polarToXY(cx, cy, 78, (totalM % 60) * 6);
+      el('line', { x1: cx, y1: cy, x2: hx, y2: hy, stroke: '#ff6b4a', 'stroke-width': '6', 'stroke-linecap': 'round' });
+      el('line', { x1: cx, y1: cy, x2: mx, y2: my, stroke: '#2e86de', 'stroke-width': '4', 'stroke-linecap': 'round' });
+      el('circle', { cx, cy, r: 5, fill: '#1b2642' });
+    };
+
+    drawMiniClock(155, 190, startTotal, `Mulai (${formatTime24(startTotal)})`);
+    drawMiniClock(405, 190, endTotal, `Selesai (${formatTime24(endTotal)})`);
+  }
+  else if (topic === 1) {
+    // Timbangan Keseimbangan
+    const leftG = [650, 850, 1250, 1450, 1750][Math.floor(Math.random() * 5)];
+    const givenRight = 500;
+    const needed = leftG - givenRight;
+
+    prompt = `Piringan kiri bermassa <b>${leftG} gram</b>. Di kanan sudah ada <b>500 g</b>. Berapa anak timbangan lagi agar <b>SEIMBANG</b>?`;
+    quizState.correct = `${needed} g`;
+    quizState.explain = `Agar seimbang: ${leftG} g − 500 g = ${needed} g.`;
+    choices = [`${needed} g`, `${leftG} g`, `${needed + 200} g`, `${Math.max(50, needed - 150)} g`];
+
+    // Gambar ilustrasi timbangan seimbang
+    el('rect', { x: 220, y: 295, width: 120, height: 18, rx: 8, fill: '#2c3d63' });
+    el('rect', { x: 272, y: 155, width: 16, height: 142, fill: '#4f6491' });
+    el('line', { x1: 120, y1: 155, x2: 440, y2: 155, stroke: '#1b2642', 'stroke-width': '8', 'stroke-linecap': 'round' });
+    el('rect', { x: 65, y: 210, width: 110, height: 10, rx: 5, fill: '#2e86de' });
+    el('rect', { x: 385, y: 210, width: 110, height: 10, rx: 5, fill: '#ff6b4a' });
+    el('rect', { x: 85, y: 168, width: 70, height: 40, rx: 8, fill: '#ffb800', stroke: '#1b2642', 'stroke-width': '2' });
+    el('text', { x: 120, y: 193, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '14', 'font-weight': '900' }).textContent = `${leftG} g`;
+    el('rect', { x: 392, y: 176, width: 46, height: 32, rx: 6, fill: '#34495e' });
+    el('text', { x: 415, y: 196, 'text-anchor': 'middle', fill: '#fff', 'font-size': '11', 'font-weight': '900' }).textContent = '500 g';
+    el('rect', { x: 444, y: 176, width: 46, height: 32, rx: 6, fill: '#e6fbf5', stroke: '#10ac84', 'stroke-width': '2', 'stroke-dasharray': '4,3' });
+    el('text', { x: 467, y: 197, 'text-anchor': 'middle', fill: '#087559', 'font-size': '14', 'font-weight': '900' }).textContent = '?';
+  }
+  else {
+    // Selisih panjang 2 benda di atas penggaris
+    const lenA = 9.5;
+    const lenB = 6.2;
+    const diff = 3.3;
+
+    prompt = `Pita biru panjangnya <b>9,5 cm</b> dan pita oranye <b>6,2 cm</b>. Berapa <b>selisih panjang</b> keduanya?`;
+    quizState.correct = '3,3 cm (33 mm)';
+    quizState.explain = `Selisih panjang = 9,5 cm − 6,2 cm = 3,3 cm = 33 mm.`;
+    choices = ['3,3 cm (33 mm)', '15,7 cm (157 mm)', '3,7 cm (37 mm)', '2,3 cm (23 mm)'];
+
+    const pxCm = 42;
+    el('rect', { x: 60, y: 80, width: lenA * pxCm, height: 32, rx: 7, fill: '#2e86de' });
+    el('text', { x: 60 + (lenA * pxCm) / 2, y: 101, 'text-anchor': 'middle', fill: '#fff', 'font-size': '13', 'font-weight': '900' }).textContent = '9,5 cm';
+    el('rect', { x: 60, y: 126, width: lenB * pxCm, height: 32, rx: 7, fill: '#ff6b4a' });
+    el('text', { x: 60 + (lenB * pxCm) / 2, y: 147, 'text-anchor': 'middle', fill: '#fff', 'font-size': '13', 'font-weight': '900' }).textContent = '6,2 cm';
+
+    el('rect', { x: 52, y: 185, width: 10 * pxCm + 16, height: 60, rx: 8, fill: '#fff8d6', stroke: '#d4a017', 'stroke-width': '2' });
+    for (let m = 0; m <= 100; m++) {
+      const tx = 60 + (m / 10) * pxCm;
+      const isCm = m % 10 === 0;
+      el('line', { x1: tx, y1: 185, x2: tx, y2: 185 + (isCm ? 22 : 10), stroke: '#3d2c00', 'stroke-width': isCm ? '2' : '1' });
+      if (isCm) el('text', { x: tx, y: 226, 'text-anchor': 'middle', fill: '#3d2c00', 'font-size': '12', 'font-weight': '900' }).textContent = String(m / 10);
+    }
+  }
+
+  document.getElementById('qPrompt').innerHTML = prompt;
+  const optsEl = document.getElementById('qOpts');
+  optsEl.innerHTML = '';
+  [...new Set(choices)].sort(() => Math.random() - 0.5).forEach(ch => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'q-opt';
+    b.textContent = ch;
+    b.addEventListener('click', () => handleQuizPick(b, ch));
+    optsEl.appendChild(b);
+  });
+}
+
+function handleQuizPick(btn, chosen) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  quizState.total++;
+
+  const ok = chosen === quizState.correct;
+  if (ok) {
+    quizState.score++;
+    quizState.streak++;
+    FX.ok();
+  } else {
+    quizState.streak = 0;
+    FX.err();
+  }
+
+  document.querySelectorAll('#qOpts .q-opt').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === quizState.correct) b.classList.add('ok');
+  });
+  if (!ok) btn.classList.add('no');
+
+  document.getElementById('qScore').textContent = `${quizState.score} / ${quizState.total}`;
+  document.getElementById('qStreak').textContent = String(quizState.streak);
+
+  const fb = document.getElementById('qFb');
+  fb.textContent = (ok ? '🎉 Tepat Sekali! ' : '😊 Belum tepat. ') + quizState.explain;
+  fb.className = 'q-fb ' + (ok ? 'ok' : 'no');
+  document.getElementById('btnQuizNext').hidden = false;
+}
+
+document.getElementById('btnQuizNext').addEventListener('click', generateQuiz);
+
+/* ==========================================================================
+   5. NAVIGASI GLOBAL & INISIALISASI
+   ========================================================================== */
+document.getElementById('mainTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  FX.tone(490, 0.05);
+  const target = btn.dataset.tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === target));
+});
+
+document.getElementById('btnSound').addEventListener('click', e => {
+  FX.on = !FX.on;
+  e.target.textContent = FX.on ? '🔊 Suara' : '🔇 Senyap';
+});
+
+document.getElementById('btnFull').addEventListener('click', () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+  else document.exitFullscreen?.().catch(() => {});
+});
+
+// Mulai semua modul
+renderClock();
+updateScaleUI();
+renderMeasureBench();
+generateQuiz();
+</script>
+</body>
+</html>

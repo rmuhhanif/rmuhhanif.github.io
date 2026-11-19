@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lab Eksplorasi Sudut & Simetri Lipat Interaktif — Papan Tulis Digital</title>
+<style>
+  :root{
+    --ink:#1b2642;
+    --muted:#5b6d94;
+    --card:rgba(255,255,255,0.94);
+    --line:#dce6fa;
+    --blue:#2e86de;
+    --blue-dark:#155396;
+    --mint:#10ac84;
+    --mint-dark:#087559;
+    --orange:#ff7b00;
+    --orange-dark:#bd5800;
+    --purple:#6c5ce7;
+    --purple-dark:#4838b5;
+    --coral:#ff4757;
+    --pink:#e84393;
+  }
+
+  *{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  html, body{
+    margin:0;
+    padding:0;
+    height:100%;
+    font-family:"Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 520px at 5% -5%, #dcebff 0%, transparent 55%),
+      radial-gradient(900px 500px at 95% 0%, #f3e8ff 0%, transparent 50%),
+      linear-gradient(170deg, #f6f9ff 0%, #eaf1ff 100%);
+    overflow:hidden;
+  }
+
+  /* ================= LAYOUT UTAMA ================= */
+  #app{
+    display:grid;
+    grid-template-rows:auto auto minmax(0, 1fr);
+    height:100dvh;
+    gap:9px;
+    padding:9px 14px 11px;
+  }
+
+  /* ================= HEADER ================= */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    background:var(--card);
+    border:1.5px solid #fff;
+    border-radius:18px;
+    padding:7px 14px;
+    box-shadow:0 8px 24px rgba(40,70,140,.09);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .logo{
+    width:38px; height:38px; border-radius:12px;
+    display:grid; place-items:center; font-size:20px;
+    background:linear-gradient(135deg, #10ac84, #2e86de);
+    color:#fff;
+    box-shadow:0 5px 14px rgba(46,134,222,.3);
+  }
+  .brand h1{
+    margin:0;
+    font-size:16.5px;
+    font-weight:900;
+    letter-spacing:-.2px;
+  }
+  .brand p{
+    margin:1px 0 0;
+    font-size:11px;
+    font-weight:700;
+    color:var(--muted);
+  }
+
+  .hdr-tools{
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+  .tool-btn{
+    border:1.5px solid var(--line);
+    background:#f7faff;
+    color:#32456e;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    padding:7px 11px;
+    border-radius:11px;
+    cursor:pointer;
+    transition:.13s;
+  }
+  .tool-btn:hover{ background:#e8f0ff; }
+
+  /* ================= TABS ================= */
+  .tabs{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:9px;
+  }
+  .tab-btn{
+    border:2px solid #fff;
+    background:rgba(255,255,255,.82);
+    color:#485a82;
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:800;
+    padding:9px 10px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:.14s;
+    box-shadow:0 4px 12px rgba(45,75,140,.06);
+  }
+  .tab-btn:hover{ background:#fff; transform:translateY(-1px); }
+  .tab-btn.active{
+    background:linear-gradient(135deg, #2e86de, #54a0ff);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 8px 18px rgba(46,134,222,.3);
+  }
+
+  /* ================= VIEWS & PANELS ================= */
+  .view{
+    display:none;
+    min-height:0;
+    height:100%;
+  }
+  .view.active{
+    display:grid;
+  }
+
+  .panel{
+    background:var(--card);
+    backdrop-filter:blur(12px);
+    border:1.5px solid #fff;
+    border-radius:20px;
+    padding:13px;
+    box-shadow:0 10px 26px rgba(45,75,140,.09);
+    overflow-y:auto;
+    min-height:0;
+  }
+  .panel::-webkit-scrollbar{ width:6px; }
+  .panel::-webkit-scrollbar-thumb{ background:#d2dff7; border-radius:8px; }
+
+  .sec-title{
+    font-size:10.5px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.75px;
+    color:var(--muted);
+    margin:0 0 7px;
+  }
+
+  /* ================= VIEW 1: BUSUR DERAJAT & JENIS SUDUT ================= */
+  #viewAngle{
+    grid-template-columns:280px minmax(0, 1fr) 330px;
+    gap:11px;
+  }
+
+  .preset-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .ang-preset{
+    padding:8px 6px;
+    border:1.5px solid #dfe9fc;
+    border-radius:11px;
+    background:#f7faff;
+    color:#2e416b;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.12s;
+  }
+  .ang-preset:hover{ background:#eaf2ff; border-color:#b6d2ff; }
+  .ang-preset.right{ background:#eaf4ff; border-color:#9cc9ff; color:var(--blue-dark); }
+  .ang-preset.straight{ background:#f1efff; border-color:#c7bfff; color:var(--purple-dark); }
+
+  .step-row{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:5px;
+    margin-bottom:11px;
+  }
+  .step-btn{
+    padding:8px 4px;
+    border:1.5px solid #dce6fa;
+    border-radius:10px;
+    background:#fff;
+    color:var(--ink);
+    font-family:inherit;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+  }
+  .step-btn:active{ transform:scale(.95); }
+
+  .toggle-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:11px;
+  }
+  .tgl-btn{
+    padding:8px 10px;
+    border:1.5px solid #dce6fa;
+    border-radius:11px;
+    background:#fff;
+    color:#3a4e78;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    text-align:left;
+    cursor:pointer;
+    transition:.12s;
+  }
+  .tgl-btn.active{
+    background:#e6fbf5;
+    border-color:var(--mint);
+    color:var(--mint-dark);
+  }
+
+  .base-rot-box{
+    background:#f4f8ff;
+    border:1.5px solid #e0ecff;
+    border-radius:13px;
+    padding:8px 10px;
+  }
+  .base-rot-box label{
+    display:flex;
+    justify-content:space-between;
+    font-size:11.5px;
+    font-weight:800;
+    margin-bottom:4px;
+  }
+  .base-rot-box input[type="range"]{
+    width:100%;
+    accent-color:var(--blue);
+  }
+
+  /* Center Stage */
+  .stage-panel{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    background:radial-gradient(circle at 50% 52%, #ffffff 0%, #f1f6ff 100%);
+  }
+  .stage-hint{
+    font-size:12px;
+    font-weight:800;
+    color:#3a4e78;
+    background:#eef4ff;
+    padding:5px 14px;
+    border-radius:99px;
+    text-align:center;
+  }
+  #angleSvg{
+    width:100%;
+    flex:1 1 auto;
+    min-height:0;
+    max-height:440px;
+    touch-action:none;
+  }
+  .color-legend{
+    display:flex;
+    gap:11px;
+    flex-wrap:wrap;
+    justify-content:center;
+    font-size:11.5px;
+    font-weight:800;
+    color:var(--muted);
+  }
+  .dot{
+    display:inline-block;
+    width:10px; height:10px;
+    border-radius:3px;
+    margin-right:4px;
+    vertical-align:middle;
+  }
+
+  /* Right Panel Angle Info */
+  .angle-hero{
+    border-radius:18px;
+    padding:14px;
+    color:#fff;
+    text-align:center;
+    margin-bottom:10px;
+    box-shadow:0 9px 22px rgba(35,65,130,.2);
+    transition:background .18s;
+  }
+  .angle-hero.zero{ background:linear-gradient(145deg, #7f8fa6, #95a5a6); }
+  .angle-hero.acute{ background:linear-gradient(145deg, #10ac84, #1dd1a1); }
+  .angle-hero.right{ background:linear-gradient(145deg, #2e86de, #54a0ff); }
+  .angle-hero.obtuse{ background:linear-gradient(145deg, #ff7b00, #ffa502); }
+  .angle-hero.straight{ background:linear-gradient(145deg, #6c5ce7, #8e7ff5); }
+  .angle-hero.reflex{ background:linear-gradient(145deg, #e84393, #fd79a8); }
+
+  .angle-hero span{
+    display:block;
+    font-size:10.5px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.7px;
+    opacity:.92;
+  }
+  .angle-hero b{
+    display:block;
+    font-size:38px;
+    font-weight:900;
+    line-height:1.1;
+    margin:4px 0;
+    font-variant-numeric:tabular-nums;
+  }
+  .angle-hero strong{
+    display:inline-block;
+    background:rgba(255,255,255,.22);
+    padding:4px 12px;
+    border-radius:99px;
+    font-size:13.5px;
+    font-weight:900;
+  }
+
+  .info-card{
+    background:#f6f9ff;
+    border:1.5px solid #e0ebff;
+    border-radius:15px;
+    padding:10px 12px;
+    margin-bottom:10px;
+    font-size:12.5px;
+    font-weight:700;
+    line-height:1.55;
+  }
+  .info-card h4{
+    margin:0 0 4px;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    color:var(--blue-dark);
+  }
+
+  .real-card{
+    background:#fffaf0;
+    border:1.5px solid #ffe4ab;
+    border-radius:15px;
+    padding:10px 12px;
+    font-size:12px;
+    font-weight:700;
+    color:#5c4310;
+    line-height:1.5;
+  }
+  .real-card h4{
+    margin:0 0 4px;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    color:#9c6500;
+  }
+
+  /* ================= VIEW 2: KERTAS LIPAT DIGITAL (SIMETRI) ================= */
+  #viewFold{
+    grid-template-columns:285px minmax(0, 1fr) 330px;
+    gap:11px;
+  }
+
+  .fold-shape-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:5px;
+    margin-bottom:10px;
+  }
+  .fs-btn{
+    padding:7px 6px;
+    border:1.5px solid #dfe9fc;
+    border-radius:10px;
+    background:#f7faff;
+    color:#2e416b;
+    font-family:inherit;
+    font-size:11.5px;
+    font-weight:800;
+    cursor:pointer;
+    text-align:left;
+    transition:.12s;
+  }
+  .fs-btn:hover{ background:#eaf2ff; }
+  .fs-btn.active{
+    background:linear-gradient(135deg, #2e86de, #4895ef);
+    color:#fff;
+    border-color:transparent;
+  }
+
+  .axis-preset-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:5px;
+    margin-bottom:8px;
+  }
+  .ax-btn{
+    padding:7px 6px;
+    border:1.5px solid #dce6fa;
+    border-radius:10px;
+    background:#fff;
+    color:#364973;
+    font-family:inherit;
+    font-size:11.5px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .ax-btn:hover{ background:#eef4ff; }
+
+  .fold-ctrl-box{
+    background:#f4f8ff;
+    border:1.5px solid #e0ecff;
+    border-radius:14px;
+    padding:9px 10px;
+    margin-bottom:9px;
+  }
+  .fold-ctrl-box label{
+    display:flex;
+    justify-content:space-between;
+    font-size:11.5px;
+    font-weight:800;
+    margin-bottom:3px;
+  }
+  .fold-ctrl-box input[type="range"]{
+    width:100%;
+    accent-color:var(--purple);
+    margin-bottom:6px;
+  }
+
+  .fold-action-btn{
+    width:100%;
+    padding:12px 10px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg, #6c5ce7, #8e7ff5);
+    color:#fff;
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 7px 18px rgba(108,92,231,.3);
+    transition:.14s;
+  }
+  .fold-action-btn.unfold{
+    background:linear-gradient(135deg, #ff7b00, #ffa502);
+    box-shadow:0 7px 18px rgba(255,123,0,.28);
+  }
+
+  #foldSvg{
+    width:100%;
+    flex:1 1 auto;
+    min-height:0;
+    max-height:440px;
+    touch-action:none;
+  }
+
+  /* Right Panel Symmetry Status */
+  .sym-status-card{
+    border-radius:17px;
+    padding:13px;
+    color:#fff;
+    text-align:center;
+    background:linear-gradient(145deg, #2e86de, #54a0ff);
+    margin-bottom:10px;
+    box-shadow:0 8px 20px rgba(46,134,222,.24);
+    transition:background .2s;
+  }
+  .sym-status-card.yes{
+    background:linear-gradient(145deg, #10ac84, #1dd1a1);
+    box-shadow:0 8px 20px rgba(16,172,132,.3);
+  }
+  .sym-status-card.no{
+    background:linear-gradient(145deg, #ff4757, #ff6b81);
+    box-shadow:0 8px 20px rgba(255,71,87,.28);
+  }
+  .sym-status-card b{
+    display:block;
+    font-size:17px;
+    font-weight:900;
+    margin-bottom:3px;
+  }
+  .sym-status-card small{
+    display:block;
+    font-size:11.5px;
+    font-weight:700;
+    line-height:1.45;
+    opacity:.95;
+  }
+
+  .stamp-btn{
+    width:100%;
+    padding:10px;
+    border:2px solid var(--mint);
+    border-radius:12px;
+    background:#e6fbf5;
+    color:var(--mint-dark);
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:900;
+    cursor:pointer;
+    margin-bottom:10px;
+  }
+  .stamp-btn:disabled{
+    opacity:0.45;
+    cursor:not-allowed;
+  }
+
+  .sym-counter-box{
+    background:#f6f9ff;
+    border:1.5px solid #e0ebff;
+    border-radius:15px;
+    padding:10px 12px;
+    margin-bottom:10px;
+  }
+  .sym-dots{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin-top:6px;
+  }
+  .s-badge{
+    padding:4px 9px;
+    border-radius:8px;
+    font-size:11px;
+    font-weight:900;
+    background:#e4ecfc;
+    color:#5b6d94;
+  }
+  .s-badge.found{
+    background:#10ac84;
+    color:#fff;
+  }
+
+  /* ================= VIEW 3: TANTANGAN LAB ================= */
+  #viewQuiz{
+    grid-template-columns:minmax(0, 1.25fr) minmax(320px, 0.9fr);
+    gap:12px;
+  }
+  .quiz-stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  #quizSvg{
+    width:100%;
+    height:100%;
+    max-height:390px;
+  }
+  .quiz-side{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .q-scorebar{
+    display:flex;
+    justify-content:space-between;
+    background:linear-gradient(135deg, #fff4d4, #ffe6a8);
+    padding:10px 14px;
+    border-radius:14px;
+    font-size:13.5px;
+    font-weight:900;
+    color:#8f5e00;
+    margin-bottom:12px;
+  }
+  .q-prompt{
+    font-size:16.5px;
+    font-weight:900;
+    line-height:1.45;
+    margin-bottom:14px;
+  }
+  .q-opts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+  .q-opt{
+    padding:14px 10px;
+    border:2.5px solid #dce6fa;
+    border-radius:15px;
+    background:#f8fbff;
+    font-family:inherit;
+    font-size:15.5px;
+    font-weight:900;
+    color:var(--ink);
+    cursor:pointer;
+    transition:.13s;
+  }
+  .q-opt:hover:not(:disabled){ background:#ebf3ff; border-color:#adcaff; transform:translateY(-2px); }
+  .q-opt.ok{ background:#d4f8e8; border-color:#10ac84; color:#096b52; }
+  .q-opt.no{ background:#ffe0e5; border-color:#ff4757; color:#a61426; }
+  .q-fb{
+    margin-top:12px;
+    padding:11px 13px;
+    border-radius:14px;
+    font-size:13px;
+    font-weight:800;
+    line-height:1.45;
+  }
+  .q-fb:empty{ display:none; }
+  .q-fb.ok{ background:#e6fbf5; color:#0b7559; border:1.5px solid #b5f0de; }
+  .q-fb.no{ background:#fff0f2; color:#b81d31; border:1.5px solid #ffc7cf; }
+  .btn-next{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:15px;
+    background:linear-gradient(135deg, #2e86de, #6c5ce7);
+    color:#fff;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+    margin-top:12px;
+    box-shadow:0 8px 20px rgba(65,105,225,.3);
+  }
+
+  @media (max-width:980px){
+    html, body{ overflow:auto; }
+    #app{ height:auto; min-height:100dvh; }
+    .tabs{ grid-template-columns:1fr; }
+    #viewAngle, #viewFold, #viewQuiz{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="logo">📐</div>
+      <div>
+        <h1>Lab Eksplorasi Sudut &amp; Simetri Lipat Interaktif</h1>
+        <p>Busur derajat raksasa &amp; simulasi kertas lipat digital untuk Papan Tulis Digital (PID)</p>
+      </div>
+    </div>
+
+    <div class="hdr-tools">
+      <button type="button" class="tool-btn" id="btnSound">🔊 Suara</button>
+      <button type="button" class="tool-btn" id="btnFull">⛶ Layar Penuh</button>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs" id="mainTabs">
+    <button type="button" class="tab-btn active" data-tab="viewAngle">📐 Busur Derajat &amp; Jenis Sudut</button>
+    <button type="button" class="tab-btn" data-tab="viewFold">🪞 Kertas Lipat Digital (Simetri)</button>
+    <button type="button" class="tab-btn" data-tab="viewQuiz">🎯 Tantangan Lab</button>
+  </nav>
+
+  <!-- ==================== 1. BUSUR DERAJAT & JENIS SUDUT ==================== -->
+  <section class="view active" id="viewAngle">
+    <!-- Panel Kiri -->
+    <aside class="panel">
+      <h2 class="sec-title">1. Pilih Sudut Cepat</h2>
+      <div class="preset-grid" id="anglePresets">
+        <button type="button" class="ang-preset" data-deg="30">30° (Lancip)</button>
+        <button type="button" class="ang-preset" data-deg="45">45° (Lancip)</button>
+        <button type="button" class="ang-preset" data-deg="60">60° (Lancip)</button>
+        <button type="button" class="ang-preset right" data-deg="90">90° (Siku-Siku)</button>
+        <button type="button" class="ang-preset" data-deg="120">120° (Tumpul)</button>
+        <button type="button" class="ang-preset" data-deg="135">135° (Tumpul)</button>
+        <button type="button" class="ang-preset" data-deg="150">150° (Tumpul)</button>
+        <button type="button" class="ang-preset straight" data-deg="180">180° (Lurus)</button>
+      </div>
+
+      <h2 class="sec-title">2. Geser Halus per Derajat</h2>
+      <div class="step-row" id="angleStepRow">
+        <button type="button" class="step-btn" data-d="-5">−5°</button>
+        <button type="button" class="step-btn" data-d="-1">−1°</button>
+        <button type="button" class="step-btn" data-d="1">+1°</button>
+        <button type="button" class="step-btn" data-d="5">+5°</button>
+      </div>
+
+      <h2 class="sec-title">3. Pengaturan Papan Tulis</h2>
+      <div class="toggle-list">
+        <button type="button" class="tgl-btn active" id="tglSnap">🧲 Kunci Magnetik (90° &amp; 180°)</button>
+        <button type="button" class="tgl-btn active" id="tglNumbers">🔢 Tampilkan Angka Busur</button>
+        <button type="button" class="tgl-btn" id="tglReflex">🔄 Mode Sudut Refleks (&gt; 180°)</button>
+      </div>
+
+      <div class="base-rot-box">
+        <label>
+          <span>↻ Putar Posisi Busur</span>
+          <b id="baseRotLbl">0°</b>
+        </label>
+        <input type="range" id="baseRotSlider" min="0" max="345" step="15" value="0">
+      </div>
+    </aside>
+
+    <!-- Panel Tengah (Kanvas Busur Derajat Raksasa) -->
+    <main class="panel stage-panel">
+      <div class="stage-hint">👆 Tarik gagang lingkaran <b>Kaki Sudut A</b> atau <b>Kaki Sudut B</b> memakai jari di layar!</div>
+      <svg id="angleSvg" viewBox="0 0 560 440"></svg>
+      <div class="color-legend">
+        <span><i class="dot" style="background:#10ac84;"></i>Lancip (&lt;90°)</span>
+        <span><i class="dot" style="background:#2e86de;"></i>Siku-Siku (90°)</span>
+        <span><i class="dot" style="background:#ff7b00;"></i>Tumpul (90°–180°)</span>
+        <span><i class="dot" style="background:#6c5ce7;"></i>Lurus (180°)</span>
+      </div>
+    </main>
+
+    <!-- Panel Kanan (Klasifikasi & Penjelasan) -->
+    <aside class="panel">
+      <div class="angle-hero right" id="angleHero">
+        <span>Besar Sudut ∠AOB</span>
+        <b id="angleDegBig">90°</b>
+        <strong id="angleTypeBadge">Sudut Siku-Siku</strong>
+      </div>
+
+      <div class="info-card">
+        <h4>📖 Ciri &amp; Definisi Sudut</h4>
+        <div id="angleDesc">
+          Besar sudut tepat <b>90°</b> (seperempat putaran penuh). Kedua kaki sudut saling berpotongan tegak lurus dan ditandai dengan simbol kotak siku (<b>∟</b>).
+        </div>
+      </div>
+
+      <div class="real-card">
+        <h4>🏫 Contoh di Sekitar Kelas</h4>
+        <div id="angleExamples">
+          • Pojok papan tulis digital &amp; buku tulis<br>
+          • Sudut meja belajar &amp; ubin lantai kelas<br>
+          • Jarum jam pada pukul 03:00 atau 09:00
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ==================== 2. KERTAS LIPAT DIGITAL (SIMETRI) ==================== -->
+  <section class="view" id="viewFold">
+    <!-- Panel Kiri -->
+    <aside class="panel">
+      <h2 class="sec-title">1. Pilih Kertas Bangun Datar</h2>
+      <div class="fold-shape-grid" id="foldShapeGrid">
+        <button type="button" class="fs-btn active" data-fshape="square">🟦 Persegi</button>
+        <button type="button" class="fs-btn" data-fshape="rect">▭ Persegi Panjang</button>
+        <button type="button" class="fs-btn" data-fshape="eqtri">🔺 △ Sama Sisi</button>
+        <button type="button" class="fs-btn" data-fshape="isotri">📐 △ Sama Kaki</button>
+        <button type="button" class="fs-btn" data-fshape="scalenetri">⚠️ △ Sembarang</button>
+        <button type="button" class="fs-btn" data-fshape="rhombus">💠 Belah Ketupat</button>
+        <button type="button" class="fs-btn" data-fshape="kite">🪁 Layang-Layang</button>
+        <button type="button" class="fs-btn" data-fshape="isotrap">⏢ Trapesium S.Kaki</button>
+        <button type="button" class="fs-btn" data-fshape="parallelogram">▱ Jajar Genjang</button>
+        <button type="button" class="fs-btn" data-fshape="hexagon">⬡ Segi Enam</button>
+      </div>
+
+      <h2 class="sec-title">2. Posisi Garis Lipat Cepat</h2>
+      <div class="axis-preset-grid" id="axisPresets">
+        <button type="button" class="ax-btn" data-ang="90" data-off="0">│ Vertikal</button>
+        <button type="button" class="ax-btn" data-ang="0" data-off="0">─ Horizontal</button>
+        <button type="button" class="ax-btn" data-ang="45" data-off="0">╲ Diagonal 1</button>
+        <button type="button" class="ax-btn" data-ang="135" data-off="0">╱ Diagonal 2</button>
+      </div>
+
+      <div class="fold-ctrl-box">
+        <label><span>Kemiringan Garis Lipat</span><b id="foldAngLbl">90°</b></label>
+        <input type="range" id="foldAngSlider" min="0" max="180" step="5" value="90">
+
+        <label><span>Geser Posisi Garis</span><b id="foldOffLbl">0 px</b></label>
+        <input type="range" id="foldOffSlider" min="-110" max="110" step="5" value="0">
+
+        <label style="color:var(--purple-dark);"><span>Tarikan Lipatan Kertas</span><b id="foldProgLbl">0%</b></label>
+        <input type="range" id="foldProgSlider" min="0" max="100" step="1" value="0">
+      </div>
+
+      <button type="button" class="fold-action-btn" id="btnAnimateFold">📄 Lipat Kertas (100%)</button>
+    </aside>
+
+    <!-- Panel Tengah (Kanvas Kertas Lipat Digital) -->
+    <main class="panel stage-panel">
+      <div class="stage-hint">👆 Geser gagang <b>P₁ / P₂</b> pada garis putus-putus untuk mengatur lipatan, lalu tekan <b>Lipat Kertas</b>!</div>
+      <svg id="foldSvg" viewBox="0 0 560 440"></svg>
+      <div class="color-legend">
+        <span><i class="dot" style="background:#2e86de;"></i>Sisi Kertas Diam</span>
+        <span><i class="dot" style="background:#ff7b00;"></i>Sisi Kertas Dilipat</span>
+        <span><i class="dot" style="background:#10ac84;"></i>Sumbu Simetri Ditemukan</span>
+      </div>
+    </main>
+
+    <!-- Panel Kanan (Hasil Uji Berimpit & Catatan Simetri) -->
+    <aside class="panel">
+      <div class="sym-status-card" id="symStatusCard">
+        <b id="symStatusTitle">Kertas Terbuka (0%)</b>
+        <small id="symStatusSub">Atur garis lipat lalu tarik lipatan ke 100% untuk menguji apakah kedua sisi berimpit tepat.</small>
+      </div>
+
+      <button type="button" class="stamp-btn" id="btnStampAxis" disabled>⭐ Tandai Sumbu Simetri Ditemukan</button>
+
+      <div class="sym-counter-box">
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:900;">
+          <span>Sumbu Simetri Ditemukan:</span>
+          <span id="symCountTxt" style="color:var(--mint-dark);">0 / 4</span>
+        </div>
+        <div class="sym-dots" id="symFoundBadges"></div>
+      </div>
+
+      <div class="real-card" id="foldFactCard">
+        <h4>💡 Fakta Simetri Bangun Ini</h4>
+        <div id="foldFactText">–</div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ==================== 3. TANTANGAN LAB ==================== -->
+  <section class="view" id="viewQuiz">
+    <div class="panel quiz-stage">
+      <svg id="quizSvg" viewBox="0 0 560 350"></svg>
+    </div>
+
+    <aside class="panel quiz-side">
+      <div>
+        <div class="q-scorebar">
+          <span>⭐ Skor: <b id="qScore">0 / 0</b></span>
+          <span>🔥 Streak: <b id="qStreak">0</b></span>
+        </div>
+        <div class="q-prompt" id="qPrompt">–</div>
+        <div class="q-opts" id="qOpts"></div>
+        <div class="q-fb" id="qFb"></div>
+      </div>
+      <button type="button" class="btn-next" id="btnQuizNext" hidden>Soal Berikutnya ➡️</button>
+    </aside>
+  </section>
+</div>
+
+<script>
+/* ==========================================================================
+   0. AUDIO SYNTHESIZER (BUNYI KLIK SIKU-SIKU & EFEK INTERAKSI)
+   ========================================================================== */
+const FX = {
+  on: true,
+  ctx: null,
+  tone(f = 520, dur = 0.045, type = 'sine', vol = 0.05) {
+    if (!this.on) return;
+    try {
+      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(f, this.ctx.currentTime);
+      g.gain.setValueAtTime(vol, this.ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + dur);
+      osc.connect(g);
+      g.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + dur);
+    } catch (_) {}
+  },
+  snapClick() {
+    // Bunyi klik mekanis tegas saat tepat 90° atau 180°
+    this.tone(880, 0.035, 'triangle', 0.09);
+    setTimeout(() => this.tone(1320, 0.045, 'sine', 0.07), 25);
+  },
+  tick() { this.tone(620, 0.018, 'sine', 0.025); },
+  ok() {
+    this.tone(523.25, 0.08, 'triangle', 0.08);
+    setTimeout(() => this.tone(659.25, 0.13, 'triangle', 0.08), 80);
+  },
+  err() {
+    this.tone(205, 0.16, 'sawtooth', 0.05);
+  }
+};
+
+/* ==========================================================================
+   1. MODUL 1: BUSUR DERAJAT & JENIS SUDUT INTERAKTIF
+   ========================================================================== */
+const angleState = {
+  baseDeg: 0,      // arah kaki sudut A (0 = kanan horizontal, berlawanan jarum jam = positif)
+  armBDeg: 90,     // arah kaki sudut B (0..360 berlawanan jarum jam)
+  snap: true,
+  showNumbers: true,
+  reflexMode: false,
+  dragging: null,  // 'A' | 'B'
+  lastSpecial: 90  // melacak agar bunyi klik hanya berbunyi saat baru masuk 90°/180°
+};
+
+function normDeg(d) {
+  return ((Math.round(d) % 360) + 360) % 360;
+}
+
+function getCurrentAngleDeg() {
+  const diff = normDeg(angleState.armBDeg - angleState.baseDeg);
+  if (angleState.reflexMode) {
+    return diff; // 0..359
+  }
+  // Mode busur standar (0..180)
+  return diff <= 180 ? diff : 360 - diff;
+}
+
+function classifyAngle(deg) {
+  if (deg === 0) {
+    return {
+      cls: 'zero',
+      name: 'Sudut Nol (0°)',
+      color: '#7f8fa6',
+      fill: 'rgba(127, 143, 166, 0.25)',
+      desc: 'Kedua kaki sudut berimpit pada satu garis yang sama sehingga belum membentuk bukaan sudut (<b>0°</b>).',
+      examples: '• Jarum jam dan jarum menit tepat berimpit pada pukul 12:00<br>• Buku yang tertutup rapat'
+    };
+  }
+  if (deg < 90) {
+    return {
+      cls: 'acute',
+      name: 'Sudut Lancip',
+      color: '#10ac84',
+      fill: 'rgba(16, 172, 132, 0.26)',
+      desc: `Besar sudut <b>${deg}°</b> berada di antara <b>0° dan 90°</b> (lebih kecil dari sudut siku-siku).`,
+      examples: '• Ujung potongan pizza & ujung pensil yang diraut<br>• Gunting yang dibuka sedikit<br>• Jarum jam pukul 01:00 (30°) atau 02:00 (60°)'
+    };
+  }
+  if (deg === 90) {
+    return {
+      cls: 'right',
+      name: 'Sudut Siku-Siku (90°)',
+      color: '#2e86de',
+      fill: 'rgba(46, 134, 222, 0.26)',
+      desc: 'Besar sudut tepat <b>90°</b> (seperempat putaran penuh). Kedua kaki sudut saling tegak lurus dan ditandai kotak siku (<b>∟</b>).',
+      examples: '• Pojok papan tulis digital & buku tulis<br>• Sudut meja, pintu, dan ubin lantai<br>• Jarum jam pada pukul 03:00 atau 09:00'
+    };
+  }
+  if (deg < 180) {
+    return {
+      cls: 'obtuse',
+      name: 'Sudut Tumpul',
+      color: '#ff7b00',
+      fill: 'rgba(255, 123, 0, 0.25)',
+      desc: `Besar sudut <b>${deg}°</b> berada di antara <b>90° dan 180°</b> (lebih lebar dari sudut siku-siku, namun belum lurus).`,
+      examples: '• Kursi malas / sandaran sofa yang direbahkan<br>• Atap rumah berbentuk limas lebar<br>• Jarum jam pada pukul 04:00 (120°) atau 05:00 (150°)'
+    };
+  }
+  if (deg === 180) {
+    return {
+      cls: 'straight',
+      name: 'Sudut Lurus (180°)',
+      color: '#6c5ce7',
+      fill: 'rgba(108, 92, 231, 0.25)',
+      desc: 'Besar sudut tepat <b>180°</b> (setengah putaran penuh). Kedua kaki sudut membentuk satu garis lurus berlawanan arah.',
+      examples: '• Penggaris lurus & tepi meja<br>• Buku yang dibuka mendatar 180° di atas meja<br>• Jarum jam pada pukul 06:00'
+    };
+  }
+  return {
+    cls: 'reflex',
+    name: 'Sudut Refleks (> 180°)',
+    color: '#e84393',
+    fill: 'rgba(232, 67, 147, 0.24)',
+    desc: `Besar sudut <b>${deg}°</b> berada di antara <b>180° dan 360°</b> (lebih besar dari setengah putaran penuh).`,
+    examples: '• Bagian luar potongan kue yang sudah diambil seperempat<br>• Putaran jarum jam dari angka 12 melewati angka 6 hingga angka 9 (270°)'
+  };
+}
+
+function degToSvgXY(cx, cy, r, mathDeg) {
+  // mathDeg: 0 = kanan, berlawanan jarum jam positif
+  const rad = (mathDeg * Math.PI) / 180;
+  return [cx + r * Math.cos(rad), cy - r * Math.sin(rad)];
+}
+
+function renderAngleLab() {
+  const deg = getCurrentAngleDeg();
+  const info = classifyAngle(deg);
+
+  // Bunyi klik otomatis saat masuk tepat 90° atau 180°
+  if ((deg === 90 || deg === 180) && angleState.lastSpecial !== deg) {
+    FX.snapClick();
+  }
+  angleState.lastSpecial = (deg === 90 || deg === 180) ? deg : null;
+
+  // Update Kartu Kanan
+  const hero = document.getElementById('angleHero');
+  hero.className = `angle-hero ${info.cls}`;
+  document.getElementById('angleDegBig').textContent = `${deg}°`;
+  document.getElementById('angleTypeBadge').textContent = info.name;
+  document.getElementById('angleDesc').innerHTML = info.desc;
+  document.getElementById('angleExamples').innerHTML = info.examples;
+  document.getElementById('baseRotLbl').textContent = `${angleState.baseDeg}°`;
+
+  // Gambar Busur Derajat Raksasa
+  const svg = document.getElementById('angleSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const cx = 280, cy = angleState.reflexMode ? 225 : 310;
+  const R = angleState.reflexMode ? 175 : 225;
+  const base = angleState.baseDeg;
+
+  // Badan Busur Derajat (Setengah lingkaran atau Lingkaran penuh)
+  if (!angleState.reflexMode) {
+    const [p0x, p0y] = degToSvgXY(cx, cy, R, base);
+    const [p180x, p180y] = degToSvgXY(cx, cy, R, base + 180);
+    el('path', {
+      d: `M ${p0x} ${p0y} A ${R} ${R} 0 0 0 ${p180x} ${p180y} Z`,
+      fill: 'rgba(255, 255, 255, 0.96)', stroke: '#b5c8f0', 'stroke-width': '3'
+    });
+    // Busur dalam dekoratif
+    const rIn = R * 0.62;
+    const [i0x, i0y] = degToSvgXY(cx, cy, rIn, base);
+    const [i180x, i180y] = degToSvgXY(cx, cy, rIn, base + 180);
+    el('path', {
+      d: `M ${i0x} ${i0y} A ${rIn} ${rIn} 0 0 0 ${i180x} ${i180y}`,
+      fill: 'none', stroke: '#dce7fc', 'stroke-width': '2'
+    });
+  } else {
+    el('circle', {
+      cx, cy, r: R,
+      fill: 'rgba(255, 255, 255, 0.96)', stroke: '#b5c8f0', 'stroke-width': '3'
+    });
+  }
+
+  // Skala Derajat pada Busur
+  const maxTick = angleState.reflexMode ? 359 : 180;
+  for (let t = 0; t <= maxTick; t++) {
+    const worldDeg = base + t;
+    const isMajor = t % 10 === 0;
+    const isMed = t % 5 === 0 && !isMajor;
+    const tickLen = isMajor ? 16 : (isMed ? 10 : 5);
+    const [x1, y1] = degToSvgXY(cx, cy, R - tickLen, worldDeg);
+    const [x2, y2] = degToSvgXY(cx, cy, R, worldDeg);
+
+    el('line', {
+      x1, y1, x2, y2,
+      stroke: isMajor ? '#1b2642' : '#8fa3cc',
+      'stroke-width': isMajor ? '2' : '1'
+    });
+
+    if (isMajor && angleState.showNumbers) {
+      const [tx, ty] = degToSvgXY(cx, cy, R - 29, worldDeg);
+      el('text', {
+        x: tx, y: ty + 4, 'text-anchor': 'middle',
+        fill: t === 90 ? '#2e86de' : (t === 180 ? '#6c5ce7' : '#1b2642'),
+        'font-size': (t === 90 || t === 180) ? '13.5' : '11.5',
+        'font-weight': '900'
+      }).textContent = String(t);
+    }
+  }
+
+  // Arsiran Area Sudut Berwarna Dinamis
+  const diffRaw = normDeg(angleState.armBDeg - base);
+  const sweepAngle = angleState.reflexMode ? diffRaw : (diffRaw <= 180 ? diffRaw : diffRaw - 360);
+  const sectorR = R * 0.56;
+
+  if (Math.abs(sweepAngle) > 0) {
+    const [sx1, sy1] = degToSvgXY(cx, cy, sectorR, base);
+    const [sx2, sy2] = degToSvgXY(cx, cy, sectorR, base + sweepAngle);
+    const largeArc = Math.abs(sweepAngle) > 180 ? 1 : 0;
+    const sweepFlag = sweepAngle > 0 ? 0 : 1; // SVG y terbalik (counter-clockwise = 0)
+    el('path', {
+      d: `M ${cx} ${cy} L ${sx1} ${sy1} A ${sectorR} ${sectorR} 0 ${largeArc} ${sweepFlag} ${sx2} ${sy2} Z`,
+      fill: info.fill,
+      stroke: info.color,
+      'stroke-width': '2.5'
+    });
+  }
+
+  // Indikator Kotak Siku-Siku (∟) khusus saat 90°
+  if (deg === 90) {
+    const boxSize = 28;
+    const sign = sweepAngle >= 0 ? 1 : -1;
+    const [b1x, b1y] = degToSvgXY(cx, cy, boxSize, base);
+    const [b2x, b2y] = degToSvgXY(cx, cy, boxSize, base + sign * 90);
+    const [bcx, bcy] = degToSvgXY(cx, cy, boxSize * Math.SQRT2, base + sign * 45);
+    el('polyline', {
+      points: `${b1x},${b1y} ${bcx},${bcy} ${b2x},${b2y}`,
+      fill: 'rgba(46, 134, 222, 0.25)',
+      stroke: '#155396',
+      'stroke-width': '3.5'
+    });
+  }
+
+  // Gambar Kaki Sudut A (Dasar) dan Kaki Sudut B (Aktif) dengan Gagang Besar
+  const armLen = R + 24;
+  const drawArm = (armDeg, label, color, targetKey) => {
+    const [ax, ay] = degToSvgXY(cx, cy, armLen, armDeg);
+    const g = el('g', { style: 'cursor:grab;' });
+
+    // Garis kaki sudut
+    el('line', {
+      x1: cx, y1: cy, x2: ax, y2: ay,
+      stroke: color, 'stroke-width': '6', 'stroke-linecap': 'round'
+    }, g);
+
+    // Panah arah sinar garis
+    const [p1x, p1y] = degToSvgXY(ax, ay, 13, armDeg + 150);
+    const [p2x, p2y] = degToSvgXY(ax, ay, 13, armDeg - 150);
+    el('polygon', { points: `${ax},${ay} ${p1x},${p1y} ${p2x},${p2y}`, fill: color }, g);
+
+    // Gagang Lingkaran Sentuh Besar di dekat ujung kaki sudut
+    const [hx, hy] = degToSvgXY(cx, cy, R - 48, armDeg);
+    el('circle', {
+      cx: hx, cy: hy, r: 22,
+      fill: color, stroke: '#fff', 'stroke-width': '3.5',
+      style: 'filter:drop-shadow(0 4px 8px rgba(0,0,0,0.22));'
+    }, g);
+    el('text', {
+      x: hx, y: hy + 5.5, 'text-anchor': 'middle',
+      fill: '#fff', 'font-size': '15', 'font-weight': '900', 'pointer-events': 'none'
+    }, g).textContent = label;
+
+    g.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      angleState.dragging = targetKey;
+    });
+  };
+
+  drawArm(base, 'A', '#34495e', 'A');
+  drawArm(angleState.armBDeg, 'B', info.color, 'B');
+
+  // Titik Pusat Sudut (O)
+  el('circle', { cx, cy, r: 8, fill: '#1b2642', stroke: '#fff', 'stroke-width': '2.5' });
+  el('text', {
+    x: cx, y: cy + 24, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '14', 'font-weight': '900'
+  }).textContent = 'O';
+}
+
+const aSvg = document.getElementById('angleSvg');
+aSvg.addEventListener('pointermove', e => {
+  if (!angleState.dragging) return;
+  const rect = aSvg.getBoundingClientRect();
+  const cx = 280, cy = angleState.reflexMode ? 225 : 310;
+  const x = ((e.clientX - rect.left) / rect.width) * 560;
+  const y = ((e.clientY - rect.top) / rect.height) * 440;
+
+  let rawDeg = (Math.atan2(-(y - cy), x - cx) * 180) / Math.PI;
+  rawDeg = normDeg(rawDeg);
+
+  if (angleState.dragging === 'B') {
+    let rel = normDeg(rawDeg - angleState.baseDeg);
+    if (angleState.snap) {
+      // Kunci magnetik lembut di 0°, 90°, 180°, 270°
+      [0, 90, 180, 270, 360].forEach(target => {
+        if (Math.abs(rel - target) <= 2) rel = target % 360;
+      });
+    }
+    const nextB = normDeg(angleState.baseDeg + rel);
+    if (nextB !== angleState.armBDeg) {
+      angleState.armBDeg = nextB;
+      if (rel !== 90 && rel !== 180) FX.tick();
+      renderAngleLab();
+    }
+  } else if (angleState.dragging === 'A') {
+    let nextBase = rawDeg;
+    if (angleState.snap) {
+      [0, 90, 180, 270, 360].forEach(target => {
+        if (Math.abs(nextBase - target) <= 2) nextBase = target % 360;
+      });
+    }
+    if (nextBase !== angleState.baseDeg) {
+      angleState.baseDeg = nextBase;
+      document.getElementById('baseRotSlider').value = String(nextBase);
+      FX.tick();
+      renderAngleLab();
+    }
+  }
+});
+window.addEventListener('pointerup', () => { angleState.dragging = null; });
+
+document.getElementById('anglePresets').addEventListener('click', e => {
+  const btn = e.target.closest('.ang-preset');
+  if (!btn) return;
+  const deg = Number(btn.dataset.deg);
+  angleState.armBDeg = normDeg(angleState.baseDeg + deg);
+  if (deg !== 90 && deg !== 180) FX.tone(540, 0.05);
+  renderAngleLab();
+});
+
+document.getElementById('angleStepRow').addEventListener('click', e => {
+  const btn = e.target.closest('.step-btn');
+  if (!btn) return;
+  const d = Number(btn.dataset.d);
+  angleState.armBDeg = normDeg(angleState.armBDeg + d);
+  FX.tick();
+  renderAngleLab();
+});
+
+document.getElementById('tglSnap').addEventListener('click', e => {
+  angleState.snap = !angleState.snap;
+  e.target.classList.toggle('active', angleState.snap);
+  FX.tone(540, 0.04);
+});
+
+document.getElementById('tglNumbers').addEventListener('click', e => {
+  angleState.showNumbers = !angleState.showNumbers;
+  e.target.classList.toggle('active', angleState.showNumbers);
+  FX.tone(540, 0.04);
+  renderAngleLab();
+});
+
+document.getElementById('tglReflex').addEventListener('click', e => {
+  angleState.reflexMode = !angleState.reflexMode;
+  e.target.classList.toggle('active', angleState.reflexMode);
+  FX.tone(540, 0.04);
+  renderAngleLab();
+});
+
+document.getElementById('baseRotSlider').addEventListener('input', e => {
+  const oldBase = angleState.baseDeg;
+  const newBase = Number(e.target.value);
+  const diff = angleState.armBDeg - oldBase;
+  angleState.baseDeg = newBase;
+  angleState.armBDeg = normDeg(newBase + diff);
+  renderAngleLab();
+});
+
+/* ==========================================================================
+   2. MODUL 2: KERTAS LIPAT DIGITAL (SIMETRI LIPAT INTERAKTIF)
+   ========================================================================== */
+const FOLD_SHAPES = {
+  square: {
+    name: 'Persegi',
+    expectedAxes: 4,
+    pts: [[-115, -115], [115, -115], [115, 115], [-115, 115]],
+    fact: 'Persegi memiliki <b>4 sumbu simetri</b> (vertikal, horizontal, dan kedua diagonalnya) karena keempat sisinya sama panjang dan keempat sudutnya 90°.'
+  },
+  rect: {
+    name: 'Persegi Panjang',
+    expectedAxes: 2,
+    pts: [[-145, -95], [145, -95], [145, 95], [-145, 95]],
+    fact: 'Persegi panjang memiliki <b>2 sumbu simetri</b> (vertikal dan horizontal). Coba lipat pada garis diagonalnya — sudut-sudutnya akan meleset dan <b>tidak berimpit</b>!'
+  },
+  eqtri: {
+    name: 'Segitiga Sama Sisi',
+    expectedAxes: 3,
+    pts: [[0, -135], [130, 90], [-130, 90]],
+    fact: 'Segitiga sama sisi memiliki <b>3 sumbu simetri</b> yang ditarik dari masing-masing titik sudut ke pertengahan sisi di hadapannya.'
+  },
+  isotri: {
+    name: 'Segitiga Sama Kaki',
+    expectedAxes: 1,
+    pts: [[0, -135], [105, 105], [-105, 105]],
+    fact: 'Segitiga sama kaki memiliki tepat <b>1 sumbu simetri</b> (garis vertikal tengah yang membagi dua sisi kaki sama panjang).'
+  },
+  scalenetri: {
+    name: 'Segitiga Sembarang',
+    expectedAxes: 0,
+    pts: [[-45, -125], [140, 95], [-120, 75]],
+    fact: 'Segitiga sembarang memiliki <b>0 sumbu simetri</b> karena ketiga sisinya berbeda panjang sehingga lipatan mana pun tidak pernah berimpit tepat.'
+  },
+  rhombus: {
+    name: 'Belah Ketupat',
+    expectedAxes: 2,
+    pts: [[0, -135], [105, 0], [0, 135], [-105, 0]],
+    fact: 'Belah ketupat memiliki <b>2 sumbu simetri</b> yang berimpit tepat dengan kedua garis diagonalnya.'
+  },
+  kite: {
+    name: 'Layang-Layang',
+    expectedAxes: 1,
+    pts: [[0, -140], [100, -35], [0, 140], [-100, -35]],
+    fact: 'Layang-layang memiliki tepat <b>1 sumbu simetri</b> pada diagonal utamanya (sumbu vertikal), sedangkan diagonal mendatarnya tidak membagi dua sama besar.'
+  },
+  isotrap: {
+    name: 'Trapesium Sama Kaki',
+    expectedAxes: 1,
+    pts: [[-80, -90], [80, -90], [140, 90], [-140, 90]],
+    fact: 'Trapesium sama kaki memiliki <b>1 sumbu simetri</b> vertikal yang membagi sejajar sisi atas dan bawah sama panjang.'
+  },
+  parallelogram: {
+    name: 'Jajar Genjang',
+    expectedAxes: 0,
+    pts: [[-85, -90], [135, -90], [85, 90], [-135, 90]],
+    fact: 'Hati-hati! Jajar genjang memiliki <b>0 sumbu simetri lipat</b> (meskipun punya 2 simetri putar). Silakan uji lipat pada garis diagonal maupun tengahnya!'
+  },
+  hexagon: {
+    name: 'Segi Enam Beraturan',
+    expectedAxes: 6,
+    pts: [0, 60, 120, 180, 240, 300].map(a => [130 * Math.cos((a * Math.PI) / 180), 130 * Math.sin((a * Math.PI) / 180)]),
+    fact: 'Segi enam beraturan memiliki <b>6 sumbu simetri</b> (3 garis melalui titik sudut berhadapan dan 3 garis melalui titik tengah sisi berhadapan).'
+  }
+};
+
+const foldState = {
+  shapeKey: 'square',
+  axisDeg: 90,      // 90 = garis vertikal, 0 = garis horizontal
+  axisOffset: 0,    // pergeseran tegak lurus dari pusat (px)
+  foldProgress: 0,  // 0..1 (0 = datar, 1 = terlipat penuh 180°)
+  foundAxes: [],    // array { deg, off }
+  dragHandle: null, // 'p1' | 'p2' | 'line'
+  animId: null
+};
+
+// Geometri Pemotongan & Pencerminan Poligon
+function getLineVectors() {
+  const rad = (foldState.axisDeg * Math.PI) / 180;
+  // u = arah garis lipat, n = normal garis lipat
+  const ux = Math.cos(rad), uy = -Math.sin(rad);
+  const nx = -uy, ny = ux;
+  const ax = nx * foldState.axisOffset;
+  const ay = ny * foldState.axisOffset;
+  return { ax, ay, ux, uy, nx, ny };
+}
+
+function splitPolygonByLine(pts, line) {
+  const stay = []; // d <= 0
+  const fold = []; // d >= 0
+  const dists = pts.map(([x, y]) => (x - line.ax) * line.nx + (y - line.ay) * line.ny);
+
+  for (let i = 0; i < pts.length; i++) {
+    const curr = pts[i];
+    const next = pts[(i + 1) % pts.length];
+    const d1 = dists[i];
+    const d2 = dists[(i + 1) % pts.length];
+
+    if (d1 <= 1e-6) stay.push(curr);
+    if (d1 >= -1e-6) fold.push(curr);
+
+    if ((d1 < -1e-6 && d2 > 1e-6) || (d1 > 1e-6 && d2 < -1e-6)) {
+      const t = d1 / (d1 - d2);
+      const ix = curr[0] + t * (next[0] - curr[0]);
+      const iy = curr[1] + t * (next[1] - curr[1]);
+      stay.push([ix, iy]);
+      fold.push([ix, iy]);
+    }
+  }
+  return { stay, fold };
+}
+
+function foldPolygonPoints(polyPts, line, progress) {
+  const cosPhi = Math.cos(progress * Math.PI);
+  return polyPts.map(([x, y]) => {
+    const d = (x - line.ax) * line.nx + (y - line.ay) * line.ny;
+    const px = x - d * line.nx;
+    const py = y - d * line.ny;
+    return [px + d * cosPhi * line.nx, py + d * cosPhi * line.ny];
+  });
+}
+
+function pointToSegDist(px, py, x1, y1, x2, y2) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len2 = dx * dx + dy * dy;
+  if (len2 === 0) return Math.hypot(px - x1, py - y1);
+  let t = ((px - x1) * dx + (py - y1) * dy) / len2;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+}
+
+function checkPolygonsCongruent(polyA, polyB, tol = 7) {
+  if (polyA.length < 3 || polyB.length < 3) return false;
+  const sampleCheck = (src, dst) => {
+    for (let i = 0; i < src.length; i++) {
+      const [x1, y1] = src[i];
+      const [x2, y2] = src[(i + 1) % src.length];
+      for (let s = 0; s < 12; s++) {
+        const t = s / 12;
+        const sx = x1 + t * (x2 - x1);
+        const sy = y1 + t * (y2 - y1);
+        let minD = Infinity;
+        for (let j = 0; j < dst.length; j++) {
+          const [dx1, dy1] = dst[j];
+          const [dx2, dy2] = dst[(j + 1) % dst.length];
+          const d = pointToSegDist(sx, sy, dx1, dy1, dx2, dy2);
+          if (d < minD) minD = d;
+        }
+        if (minD > tol) return false;
+      }
+    }
+    return true;
+  };
+  return sampleCheck(polyA, polyB) && sampleCheck(polyB, polyA);
+}
+
+function renderFoldLab() {
+  const shape = FOLD_SHAPES[foldState.shapeKey];
+  const line = getLineVectors();
+  const { stay, fold } = splitPolygonByLine(shape.pts, line);
+  const foldedCurr = foldPolygonPoints(fold, line, foldState.foldProgress);
+  const foldedFull = foldPolygonPoints(fold, line, 1.0);
+
+  const isValidSplit = stay.length >= 3 && fold.length >= 3;
+  const isSymmetric = isValidSplit && checkPolygonsCongruent(stay, foldedFull, 7.5);
+
+  // Update Label Kontrol Kiri
+  document.getElementById('foldAngLbl').textContent = `${foldState.axisDeg}°`;
+  document.getElementById('foldOffLbl').textContent = `${foldState.axisOffset} px`;
+  document.getElementById('foldProgLbl').textContent = `${Math.round(foldState.foldProgress * 100)}%`;
+
+  const btnAnim = document.getElementById('btnAnimateFold');
+  if (foldState.foldProgress >= 0.99) {
+    btnAnim.textContent = '📖 Buka Lipatan Kertas (0%)';
+    btnAnim.classList.add('unfold');
+  } else {
+    btnAnim.textContent = '📄 Lipat Kertas (100%)';
+    btnAnim.classList.remove('unfold');
+  }
+
+  // Update Kartu Status Kanan
+  const card = document.getElementById('symStatusCard');
+  const title = document.getElementById('symStatusTitle');
+  const sub = document.getElementById('symStatusSub');
+  const btnStamp = document.getElementById('btnStampAxis');
+
+  card.classList.remove('yes', 'no');
+  btnStamp.disabled = true;
+
+  if (!isValidSplit) {
+    title.textContent = 'Garis di Luar Bangun';
+    sub.textContent = 'Geser garis lipat ke arah tengah bangun datar agar membelah kertas menjadi dua bagian.';
+  } else if (foldState.foldProgress < 0.95) {
+    title.textContent = `Proses Melipat (${Math.round(foldState.foldProgress * 100)}%)`;
+    sub.textContent = 'Tarik pengatur lipatan hingga 100% atau tekan tombol Lipat Kertas untuk mengecek apakah berimpit tepat.';
+  } else if (isSymmetric) {
+    card.classList.add('yes');
+    title.textContent = '✅ BERIMPIT TEPAT! (Sumbu Simetri)';
+    sub.textContent = `Kedua sisi ${shape.name} menutup sempurna tanpa sisa. Garis ini adalah sumbu simetri!`;
+    btnStamp.disabled = false;
+  } else {
+    card.classList.add('no');
+    title.textContent = '❌ TIDAK BERIMPIT (Bukan Simetri)';
+    sub.textContent = `Sisi yang dilipat meleset dari sisi pasangannya sehingga tidak menutupi bangun secara tepat.`;
+  }
+
+  // Update Counter Sumbu Simetri Ditemukan
+  document.getElementById('symCountTxt').textContent = `${foldState.foundAxes.length} / ${shape.expectedAxes}`;
+  const badgeBox = document.getElementById('symFoundBadges');
+  badgeBox.innerHTML = '';
+  if (shape.expectedAxes === 0) {
+    badgeBox.innerHTML = '<span class="s-badge">Bangun ini memiliki 0 sumbu simetri</span>';
+  } else {
+    for (let i = 0; i < shape.expectedAxes; i++) {
+      const sp = document.createElement('span');
+      const found = foldState.foundAxes[i];
+      sp.className = 's-badge' + (found ? ' found' : '');
+      sp.textContent = found ? `✓ Sumbu ${i + 1} (${found.deg}°)` : `Sumbu ${i + 1}`;
+      badgeBox.appendChild(sp);
+    }
+  }
+  document.getElementById('foldFactText').innerHTML = shape.fact;
+
+  // Gambar SVG Kertas Lipat
+  const svg = document.getElementById('foldSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const cx = 280, cy = 220;
+  const toScreen = ([x, y]) => `${cx + x},${cy + y}`;
+
+  // Grid alas kerja lembut
+  for (let gx = 40; gx <= 520; gx += 30) {
+    el('line', { x1: gx, y1: 20, x2: gx, y2: 420, stroke: '#edf3ff', 'stroke-width': '1' });
+  }
+  for (let gy = 20; gy <= 420; gy += 30) {
+    el('line', { x1: 40, y1: gy, x2: 520, y2: gy, stroke: '#edf3ff', 'stroke-width': '1' });
+  }
+
+  // Bayangan outline bangun asli (agar terlihat bagian yang meleset saat dilipat)
+  el('polygon', {
+    points: shape.pts.map(toScreen).join(' '),
+    fill: 'none', stroke: '#b4c6ea', 'stroke-width': '2', 'stroke-dasharray': '5,4'
+  });
+
+  // Sumbu simetri yang sudah berhasil ditemukan & ditandai siswa
+  foldState.foundAxes.forEach(ax => {
+    const r = (ax.deg * Math.PI) / 180;
+    const ux = Math.cos(r), uy = -Math.sin(r);
+    const nx = -uy, ny = ux;
+    const ox = cx + nx * ax.off, oy = cy + ny * ax.off;
+    el('line', {
+      x1: ox - ux * 185, y1: oy - uy * 185,
+      x2: ox + ux * 185, y2: oy + uy * 185,
+      stroke: '#10ac84', 'stroke-width': '2.5', 'stroke-dasharray': '7,5'
+    });
+  });
+
+  // Bagian Kertas Diam (Stationary Half)
+  if (stay.length >= 3) {
+    el('polygon', {
+      points: stay.map(toScreen).join(' '),
+      fill: 'rgba(46, 134, 222, 0.25)',
+      stroke: '#2e86de',
+      'stroke-width': '3',
+      'stroke-linejoin': 'round'
+    });
+  }
+
+  // Bagian Kertas yang Sedang Dilipat (Folding Half)
+  if (foldedCurr.length >= 3) {
+    const isCompleteMatch = foldState.foldProgress >= 0.95 && isSymmetric;
+    const isCompleteMiss = foldState.foldProgress >= 0.95 && !isSymmetric;
+    el('polygon', {
+      points: foldedCurr.map(toScreen).join(' '),
+      fill: isCompleteMatch
+        ? 'rgba(16, 172, 132, 0.42)'
+        : (isCompleteMiss ? 'rgba(255, 71, 87, 0.34)' : 'rgba(255, 123, 0, 0.34)'),
+      stroke: isCompleteMatch ? '#087559' : (isCompleteMiss ? '#ff4757' : '#ff7b00'),
+      'stroke-width': '3',
+      'stroke-linejoin': 'round'
+    });
+  }
+
+  // Garis Lipat Aktif + Gagang Sentuh P1 dan P2
+  const len = 195;
+  const p1x = cx + line.ax - line.ux * len;
+  const p1y = cy + line.ay - line.uy * len;
+  const p2x = cx + line.ax + line.ux * len;
+  const p2y = cy + line.ay + line.uy * len;
+
+  const gLine = el('g', { style: 'cursor:move;' });
+  el('line', {
+    x1: p1x, y1: p1y, x2: p2x, y2: p2y,
+    stroke: '#6c5ce7', 'stroke-width': '4', 'stroke-dasharray': '9,6'
+  }, gLine);
+  gLine.addEventListener('pointerdown', e => {
+    e.stopPropagation();
+    foldState.dragHandle = 'line';
+  });
+
+  // Gagang P1 & P2 untuk memutar garis lipat langsung pakai jari
+  const drawCreaseHandle = (hx, hy, label, key) => {
+    const gh = el('g', { style: 'cursor:grab;' });
+    el('circle', {
+      cx: hx, cy: hy, r: 19,
+      fill: '#6c5ce7', stroke: '#fff', 'stroke-width': '3',
+      style: 'filter:drop-shadow(0 3px 7px rgba(0,0,0,0.22));'
+    }, gh);
+    el('text', {
+      x: hx, y: hy + 4.5, 'text-anchor': 'middle',
+      fill: '#fff', 'font-size': '12', 'font-weight': '900', 'pointer-events': 'none'
+    }, gh).textContent = label;
+    gh.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      foldState.dragHandle = key;
+    });
+  };
+
+  drawCreaseHandle(p1x, p1y, 'P₁', 'p1');
+  drawCreaseHandle(p2x, p2y, 'P₂', 'p2');
+}
+
+const fSvg = document.getElementById('foldSvg');
+fSvg.addEventListener('pointermove', e => {
+  if (!foldState.dragHandle) return;
+  const rect = fSvg.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 560 - 280;
+  const y = ((e.clientY - rect.top) / rect.height) * 440 - 220;
+
+  if (foldState.dragHandle === 'p1' || foldState.dragHandle === 'p2') {
+    let deg = (Math.atan2(-y, x) * 180) / Math.PI;
+    deg = ((Math.round(deg) % 180) + 180) % 180;
+    // Magnet lembut di 0°, 45°, 90°, 135°
+    [0, 30, 45, 60, 90, 120, 135, 150, 180].forEach(snap => {
+      if (Math.abs(deg - snap) <= 3) deg = snap % 180;
+    });
+    foldState.axisDeg = deg;
+    document.getElementById('foldAngSlider').value = String(deg);
+    renderFoldLab();
+  } else if (foldState.dragHandle === 'line') {
+    const line = getLineVectors();
+    const off = Math.max(-110, Math.min(110, Math.round(x * line.nx + y * line.ny)));
+    foldState.axisOffset = Math.abs(off) <= 6 ? 0 : off;
+    document.getElementById('foldOffSlider').value = String(foldState.axisOffset);
+    renderFoldLab();
+  }
+});
+window.addEventListener('pointerup', () => { foldState.dragHandle = null; });
+
+document.getElementById('foldShapeGrid').addEventListener('click', e => {
+  const btn = e.target.closest('.fs-btn');
+  if (!btn) return;
+  FX.tone(540, 0.04);
+  foldState.shapeKey = btn.dataset.fshape;
+  foldState.foundAxes = [];
+  foldState.foldProgress = 0;
+  document.getElementById('foldProgSlider').value = '0';
+  document.querySelectorAll('#foldShapeGrid .fs-btn').forEach(b => b.classList.toggle('active', b === btn));
+  renderFoldLab();
+});
+
+document.getElementById('axisPresets').addEventListener('click', e => {
+  const btn = e.target.closest('.ax-btn');
+  if (!btn) return;
+  FX.tone(520, 0.04);
+  foldState.axisDeg = Number(btn.dataset.ang);
+  foldState.axisOffset = Number(btn.dataset.off);
+  document.getElementById('foldAngSlider').value = String(foldState.axisDeg);
+  document.getElementById('foldOffSlider').value = String(foldState.axisOffset);
+  renderFoldLab();
+});
+
+document.getElementById('foldAngSlider').addEventListener('input', e => {
+  foldState.axisDeg = Number(e.target.value);
+  renderFoldLab();
+});
+
+document.getElementById('foldOffSlider').addEventListener('input', e => {
+  foldState.axisOffset = Number(e.target.value);
+  renderFoldLab();
+});
+
+document.getElementById('foldProgSlider').addEventListener('input', e => {
+  foldState.foldProgress = Number(e.target.value) / 100;
+  renderFoldLab();
+});
+
+document.getElementById('btnAnimateFold').addEventListener('click', () => {
+  if (foldState.animId) cancelAnimationFrame(foldState.animId);
+  const target = foldState.foldProgress >= 0.95 ? 0 : 1;
+  const start = foldState.foldProgress;
+  const t0 = performance.now();
+  const duration = 480;
+
+  const step = now => {
+    const p = Math.min(1, (now - t0) / duration);
+    const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+    foldState.foldProgress = start + (target - start) * ease;
+    document.getElementById('foldProgSlider').value = String(Math.round(foldState.foldProgress * 100));
+    renderFoldLab();
+    if (p < 1) {
+      foldState.animId = requestAnimationFrame(step);
+    } else {
+      foldState.animId = null;
+      if (target === 1) {
+        const shape = FOLD_SHAPES[foldState.shapeKey];
+        const line = getLineVectors();
+        const { stay, fold } = splitPolygonByLine(shape.pts, line);
+        const ok = stay.length >= 3 && fold.length >= 3 && checkPolygonsCongruent(stay, foldPolygonPoints(fold, line, 1), 7.5);
+        ok ? FX.ok() : FX.err();
+      }
+    }
+  };
+  foldState.animId = requestAnimationFrame(step);
+});
+
+document.getElementById('btnStampAxis').addEventListener('click', () => {
+  const deg = foldState.axisDeg % 180;
+  const off = foldState.axisOffset;
+  const already = foldState.foundAxes.some(a => Math.abs(a.deg - deg) <= 4 && Math.abs(a.off - off) <= 8);
+  if (already) {
+    FX.err();
+    return;
+  }
+  foldState.foundAxes.push({ deg, off });
+  FX.ok();
+  // Buka kertas kembali agar siswa siap mencari sumbu simetri berikutnya
+  foldState.foldProgress = 0;
+  document.getElementById('foldProgSlider').value = '0';
+  renderFoldLab();
+});
+
+/* ==========================================================================
+   3. MODUL 3: TANTANGAN LAB (KUIS VISUAL SUDUT & SIMETRI LIPAT)
+   ========================================================================== */
+const quizState = {
+  score: 0,
+  total: 0,
+  streak: 0,
+  answered: false,
+  correct: '',
+  explain: ''
+};
+
+function generateQuiz() {
+  quizState.answered = false;
+  document.getElementById('btnQuizNext').hidden = true;
+  const fb = document.getElementById('qFb');
+  fb.textContent = '';
+  fb.className = 'q-fb';
+
+  const svg = document.getElementById('quizSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const mode = Math.floor(Math.random() * 2); // 0: Klasifikasi/Baca Sudut, 1: Uji Sumbu Simetri
+  let prompt = '', choices = [];
+
+  if (mode === 0) {
+    const sampleAngles = [
+      { deg: 35, type: 'Sudut Lancip', exp: '35° lebih kecil dari 90°, sehingga termasuk Sudut Lancip.' },
+      { deg: 65, type: 'Sudut Lancip', exp: '65° berada di antara 0° dan 90°, sehingga termasuk Sudut Lancip.' },
+      { deg: 90, type: 'Sudut Siku-Siku', exp: '90° adalah seperempat putaran penuh (tegak lurus), disebut Sudut Siku-Siku.' },
+      { deg: 125, type: 'Sudut Tumpul', exp: '125° berada di antara 90° dan 180°, sehingga termasuk Sudut Tumpul.' },
+      { deg: 150, type: 'Sudut Tumpul', exp: '150° lebih lebar dari 90° namun kurang dari 180°, disebut Sudut Tumpul.' },
+      { deg: 180, type: 'Sudut Lurus', exp: '180° membentuk garis lurus setengah putaran, disebut Sudut Lurus.' }
+    ];
+    const pick = sampleAngles[Math.floor(Math.random() * sampleAngles.length)];
+    prompt = `Perhatikan besar bukaan sudut <b>${pick.deg}°</b> pada busur derajat. Termasuk jenis apakah sudut tersebut?`;
+    quizState.correct = pick.type;
+    quizState.explain = pick.exp;
+    choices = ['Sudut Lancip', 'Sudut Siku-Siku', 'Sudut Tumpul', 'Sudut Lurus'];
+
+    const cx = 280, cy = 265, R = 175;
+    el('path', { d: `M ${cx + R} ${cy} A ${R} ${R} 0 0 0 ${cx - R} ${cy} Z`, fill: '#fff', stroke: '#b5c8f0', 'stroke-width': '3' });
+    const [bx, by] = degToSvgXY(cx, cy, R, pick.deg);
+    const [sx, sy] = degToSvgXY(cx, cy, 95, pick.deg);
+    el('path', {
+      d: `M ${cx} ${cy} L ${cx + 95} ${cy} A 95 95 0 0 0 ${sx} ${sy} Z`,
+      fill: 'rgba(46, 134, 222, 0.25)', stroke: '#2e86de', 'stroke-width': '2'
+    });
+    el('line', { x1: cx, y1: cy, x2: cx + R, y2: cy, stroke: '#1b2642', 'stroke-width': '5', 'stroke-linecap': 'round' });
+    el('line', { x1: cx, y1: cy, x2: bx, y2: by, stroke: '#2e86de', 'stroke-width': '5', 'stroke-linecap': 'round' });
+    el('circle', { cx, cy, r: 7, fill: '#1b2642' });
+    el('text', { x: cx, y: 55, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '22', 'font-weight': '900' }).textContent = `Besar Sudut = ${pick.deg}°`;
+  } else {
+    const cases = [
+      {
+        shapeName: 'Persegi Panjang',
+        pts: [[-130, -80], [130, -80], [130, 80], [-130, 80]],
+        line: [[-150, -92], [150, 92]],
+        ans: 'Bukan Sumbu Simetri',
+        opts: ['Bukan Sumbu Simetri', 'Sumbu Simetri Tepat', 'Simetri Putar', 'Garis Tinggi'],
+        exp: 'Diagonal persegi panjang bukan sumbu simetri karena jika dilipat, kedua sudutnya tidak berimpit tepat.'
+      },
+      {
+        shapeName: 'Jajar Genjang',
+        pts: [[-75, -80], [125, -80], [75, 80], [-125, 80]],
+        line: [[0, -110], [0, 110]],
+        ans: 'Bukan Sumbu Simetri',
+        opts: ['Bukan Sumbu Simetri', 'Sumbu Simetri Tepat', 'Garis Tegak Lurus', 'Sumbu Utama'],
+        exp: 'Jajar genjang tidak memiliki sumbu simetri lipat (0). Sisi miring kiri dan kanan tidak saling menutupi saat dilipat.'
+      },
+      {
+        shapeName: 'Belah Ketupat',
+        pts: [[0, -120], [95, 0], [0, 120], [-95, 0]],
+        line: [[0, -145], [0, 145]],
+        ans: 'Sumbu Simetri Tepat',
+        opts: ['Sumbu Simetri Tepat', 'Bukan Sumbu Simetri', 'Sisi Miring', 'Garis Sejajar'],
+        exp: 'Diagonal belah ketupat membagi bangun menjadi dua segitiga kongruen yang berimpit tepat saat dilipat!'
+      },
+      {
+        shapeName: 'Trapesium Sama Kaki',
+        pts: [[-70, -80], [70, -80], [125, 80], [-125, 80]],
+        line: [[0, -110], [0, 110]],
+        ans: 'Sumbu Simetri Tepat',
+        opts: ['Sumbu Simetri Tepat', 'Bukan Sumbu Simetri', 'Garis Diagonal', 'Sisi Alas'],
+        exp: 'Garis vertikal di tengah trapesium sama kaki membagi kedua kakinya sama panjang dan berimpit tepat.'
+      }
+    ];
+    const c = cases[Math.floor(Math.random() * cases.length)];
+    prompt = `Jika kertas berbentuk <b>${c.shapeName}</b> ini dilipat tepat pada <b>garis putus-putus merah</b>, apakah kedua sisinya berimpit?`;
+    quizState.correct = c.ans;
+    quizState.explain = c.exp;
+    choices = c.opts;
+
+    const cx = 280, cy = 180;
+    el('polygon', {
+      points: c.pts.map(([x, y]) => `${cx + x},${cy + y}`).join(' '),
+      fill: '#d6eaff', stroke: '#2e86de', 'stroke-width': '3.5'
+    });
+    el('line', {
+      x1: cx + c.line[0][0], y1: cy + c.line[0][1],
+      x2: cx + c.line[1][0], y2: cy + c.line[1][1],
+      stroke: '#ff4757', 'stroke-width': '4', 'stroke-dasharray': '8,6'
+    });
+  }
+
+  document.getElementById('qPrompt').innerHTML = prompt;
+  const optsEl = document.getElementById('qOpts');
+  optsEl.innerHTML = '';
+  [...new Set(choices)].sort(() => Math.random() - 0.5).forEach(ch => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'q-opt';
+    b.textContent = ch;
+    b.addEventListener('click', () => handleQuizPick(b, ch));
+    optsEl.appendChild(b);
+  });
+}
+
+function handleQuizPick(btn, chosen) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  quizState.total++;
+
+  const ok = chosen === quizState.correct;
+  if (ok) {
+    quizState.score++;
+    quizState.streak++;
+    FX.ok();
+  } else {
+    quizState.streak = 0;
+    FX.err();
+  }
+
+  document.querySelectorAll('#qOpts .q-opt').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === quizState.correct) b.classList.add('ok');
+  });
+  if (!ok) btn.classList.add('no');
+
+  document.getElementById('qScore').textContent = `${quizState.score} / ${quizState.total}`;
+  document.getElementById('qStreak').textContent = String(quizState.streak);
+
+  const fb = document.getElementById('qFb');
+  fb.textContent = (ok ? '🎉 Benar Sekali! ' : '😊 Belum tepat. ') + quizState.explain;
+  fb.className = 'q-fb ' + (ok ? 'ok' : 'no');
+  document.getElementById('btnQuizNext').hidden = false;
+}
+
+document.getElementById('btnQuizNext').addEventListener('click', generateQuiz);
+
+/* ==========================================================================
+   4. NAVIGASI GLOBAL & INISIALISASI
+   ========================================================================== */
+document.getElementById('mainTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  FX.tone(490, 0.05);
+  const target = btn.dataset.tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === target));
+});
+
+document.getElementById('btnSound').addEventListener('click', e => {
+  FX.on = !FX.on;
+  e.target.textContent = FX.on ? '🔊 Suara' : '🔇 Senyap';
+});
+
+document.getElementById('btnFull').addEventListener('click', () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+  else document.exitFullscreen?.().catch(() => {});
+});
+
+// Mulai semua modul
+renderAngleLab();
+renderFoldLab();
+generateQuiz();
+</script>
+</body>
+</html>
