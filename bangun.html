@@ -1,0 +1,2474 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lab Geometri: Luas, Keliling, Bangun Datar & Pengukuran Panjang</title>
+<style>
+  :root{
+    --ink:#1b2642;
+    --muted:#5c6e94;
+    --card:rgba(255,255,255,0.93);
+    --line:#dce6fa;
+    --blue:#2e86de;
+    --blue-dark:#175aa1;
+    --blue-soft:#eaf4ff;
+    --coral:#ff6b4a;
+    --coral-dark:#c73e1f;
+    --coral-soft:#fff0ec;
+    --mint:#10ac84;
+    --mint-dark:#09785b;
+    --mint-soft:#e6fbf5;
+    --purple:#6c5ce7;
+    --purple-soft:#f1efff;
+    --gold:#ffb800;
+  }
+
+  *{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  html, body{
+    margin:0;
+    padding:0;
+    height:100%;
+    font-family:"Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 520px at 5% -5%, #dcebff 0%, transparent 55%),
+      radial-gradient(900px 500px at 95% 0%, #f3e8ff 0%, transparent 50%),
+      linear-gradient(170deg, #f6f9ff 0%, #eaf1ff 100%);
+    overflow:hidden;
+  }
+
+  /* ================= LAYOUT UTAMA ================= */
+  #app{
+    display:grid;
+    grid-template-rows:auto auto minmax(0, 1fr);
+    height:100dvh;
+    gap:9px;
+    padding:9px 14px 11px;
+  }
+
+  /* ================= HEADER ================= */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    background:var(--card);
+    border:1.5px solid #fff;
+    border-radius:18px;
+    padding:7px 14px;
+    box-shadow:0 8px 24px rgba(40,70,140,.09);
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .logo{
+    width:38px; height:38px; border-radius:12px;
+    display:grid; place-items:center; font-size:20px;
+    background:linear-gradient(135deg, #2e86de, #10ac84);
+    color:#fff;
+    box-shadow:0 5px 14px rgba(46,134,222,.3);
+  }
+  .brand h1{
+    margin:0;
+    font-size:16.5px;
+    font-weight:900;
+    letter-spacing:-.2px;
+  }
+  .brand p{
+    margin:1px 0 0;
+    font-size:11px;
+    font-weight:700;
+    color:var(--muted);
+  }
+
+  .unit-bar{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:#eef4ff;
+    padding:4px 8px;
+    border-radius:13px;
+    border:1.5px solid #dbe6ff;
+  }
+  .unit-bar span{
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    color:#425685;
+    padding:0 4px;
+  }
+  .u-btn{
+    border:none;
+    background:transparent;
+    color:#4b5f8a;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    padding:5px 10px;
+    border-radius:9px;
+    cursor:pointer;
+    transition:.13s;
+  }
+  .u-btn.active{
+    background:#fff;
+    color:var(--blue-dark);
+    box-shadow:0 3px 9px rgba(45,85,170,.16);
+  }
+
+  .hdr-tools{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .tool-btn{
+    border:1.5px solid var(--line);
+    background:#f7faff;
+    color:#32456e;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    padding:6px 11px;
+    border-radius:11px;
+    cursor:pointer;
+    transition:.13s;
+  }
+  .tool-btn:hover{ background:#e8f0ff; }
+
+  /* ================= TABS ================= */
+  .tabs{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:8px;
+  }
+  .tab-btn{
+    border:2px solid #fff;
+    background:rgba(255,255,255,.8);
+    color:#485a82;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:800;
+    padding:8px 10px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:.14s;
+    box-shadow:0 4px 12px rgba(45,75,140,.06);
+  }
+  .tab-btn:hover{ background:#fff; transform:translateY(-1px); }
+  .tab-btn.active{
+    background:linear-gradient(135deg, #2e86de, #54a0ff);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 8px 18px rgba(46,134,222,.3);
+  }
+
+  /* ================= VIEWS & PANELS ================= */
+  .view{
+    display:none;
+    min-height:0;
+    height:100%;
+  }
+  .view.active{
+    display:grid;
+  }
+
+  .panel{
+    background:var(--card);
+    backdrop-filter:blur(12px);
+    border:1.5px solid #fff;
+    border-radius:20px;
+    padding:13px;
+    box-shadow:0 10px 26px rgba(45,75,140,.09);
+    overflow-y:auto;
+    min-height:0;
+  }
+  .panel::-webkit-scrollbar{ width:6px; }
+  .panel::-webkit-scrollbar-thumb{ background:#d2dff7; border-radius:8px; }
+
+  .sec-title{
+    font-size:10.5px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.75px;
+    color:var(--muted);
+    margin:0 0 7px;
+  }
+
+  /* ================= VIEW 1: EKSPLORASI BANGUN DATAR ================= */
+  #viewShapes{
+    grid-template-columns:285px minmax(0, 1fr) 340px;
+    gap:11px;
+  }
+
+  .shape-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .sh-btn{
+    padding:8px 7px;
+    border:1.5px solid #dfe9fc;
+    border-radius:12px;
+    background:#f7faff;
+    color:#33466f;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+    text-align:left;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    transition:.12s;
+  }
+  .sh-btn:hover{ background:#eaf2ff; }
+  .sh-btn.active{
+    background:linear-gradient(135deg, #2e86de, #4895ef);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 4px 12px rgba(46,134,222,.28);
+  }
+
+  .subtype-row{
+    display:flex;
+    gap:5px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
+  .sub-chip{
+    flex:1 1 auto;
+    padding:6px 8px;
+    border:1.5px solid #d9e6ff;
+    border-radius:10px;
+    background:#f3f7ff;
+    color:#3b4f7a;
+    font-family:inherit;
+    font-size:11.5px;
+    font-weight:800;
+    cursor:pointer;
+    text-align:center;
+  }
+  .sub-chip.active{
+    background:var(--purple);
+    color:#fff;
+    border-color:transparent;
+  }
+
+  .dim-card{
+    background:#f4f8ff;
+    border:1.5px solid #e0ecff;
+    border-radius:15px;
+    padding:9px 11px;
+    margin-bottom:10px;
+  }
+  .dim-item{
+    margin-bottom:8px;
+  }
+  .dim-item:last-child{ margin-bottom:0; }
+  .dim-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:4px;
+  }
+  .dim-top b{
+    color:var(--blue-dark);
+    font-size:13px;
+  }
+  .dim-ctrl{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .dim-ctrl input[type="range"]{
+    flex:1;
+    accent-color:var(--blue);
+    height:6px;
+    cursor:pointer;
+  }
+  .mini-step{
+    width:26px; height:26px;
+    border:none;
+    border-radius:8px;
+    background:#fff;
+    color:var(--ink);
+    font-weight:900;
+    font-size:15px;
+    cursor:pointer;
+    box-shadow:0 2px 5px rgba(0,0,0,.1);
+  }
+
+  .layer-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+  }
+  .layer-btn{
+    padding:7px 8px;
+    border:1.5px solid #dce6fa;
+    border-radius:11px;
+    background:#fff;
+    color:#445780;
+    font-family:inherit;
+    font-size:11.5px;
+    font-weight:800;
+    cursor:pointer;
+    text-align:left;
+    transition:.12s;
+  }
+  .layer-btn.active{
+    background:var(--mint-soft);
+    border-color:var(--mint);
+    color:var(--mint-dark);
+  }
+
+  /* Center Stage */
+  .stage-panel{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    background:radial-gradient(circle at 50% 45%, #ffffff 0%, #f1f6ff 100%);
+  }
+  .stage-badge{
+    font-size:12px;
+    font-weight:800;
+    color:#3a4e78;
+    background:#eef4ff;
+    padding:5px 14px;
+    border-radius:99px;
+  }
+  #shapeSvg{
+    width:100%;
+    flex:1 1 auto;
+    min-height:0;
+    max-height:440px;
+  }
+  .legend-bar{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    justify-content:center;
+    font-size:11.5px;
+    font-weight:800;
+    color:var(--muted);
+  }
+  .leg-dot{
+    display:inline-block;
+    width:10px; height:10px;
+    border-radius:3px;
+    margin-right:4px;
+    vertical-align:middle;
+  }
+
+  /* Right Panel: Rumus & Ciri-Ciri */
+  .calc-cards{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .res-box{
+    border-radius:16px;
+    padding:10px 11px;
+    color:#fff;
+    box-shadow:0 8px 18px rgba(35,65,130,.16);
+  }
+  .res-box.area{ background:linear-gradient(145deg, #2e86de, #54a0ff); }
+  .res-box.perim{ background:linear-gradient(145deg, #ff6b4a, #ff8e72); }
+  .res-box span{
+    display:block;
+    font-size:10px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    opacity:.92;
+  }
+  .res-box b{
+    display:block;
+    font-size:21px;
+    font-weight:900;
+    margin:3px 0 2px;
+  }
+  .res-box small{
+    font-size:11px;
+    font-weight:700;
+    opacity:.92;
+  }
+
+  .formula-box{
+    background:#f6f9ff;
+    border:1.5px solid #e0ebff;
+    border-radius:15px;
+    padding:10px 12px;
+    margin-bottom:10px;
+    font-size:12.5px;
+    font-weight:700;
+    line-height:1.55;
+  }
+  .formula-box h4{
+    margin:0 0 4px;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    color:var(--blue-dark);
+  }
+
+  .props-box{
+    background:#fffaf0;
+    border:1.5px solid #ffe4ab;
+    border-radius:15px;
+    padding:10px 12px;
+  }
+  .props-box h4{
+    margin:0 0 7px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    color:#9c6500;
+  }
+  .prop-pills{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:5px;
+    margin-bottom:8px;
+  }
+  .p-stat{
+    background:#fff;
+    border:1px solid #f7dfa8;
+    border-radius:10px;
+    padding:5px 4px;
+    text-align:center;
+  }
+  .p-stat span{
+    display:block;
+    font-size:9px;
+    font-weight:800;
+    color:#8c6a23;
+  }
+  .p-stat b{
+    font-size:13.5px;
+    font-weight:900;
+    color:#4a3300;
+  }
+  .prop-list{
+    margin:0;
+    padding-left:17px;
+    font-size:12px;
+    font-weight:700;
+    color:#5c4310;
+    line-height:1.55;
+  }
+
+  /* ================= VIEW 2: ENSIKLOPEDIA & PERBANDINGAN CIRI ================= */
+  #viewProps{
+    grid-template-rows:auto minmax(0, 1fr);
+    gap:10px;
+  }
+  .filter-bar{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex-wrap:wrap;
+    background:var(--card);
+    border:1.5px solid #fff;
+    border-radius:18px;
+    padding:9px 14px;
+    box-shadow:0 6px 20px rgba(45,75,140,.08);
+  }
+  .f-chip{
+    padding:7px 12px;
+    border:1.5px solid #dce6fa;
+    border-radius:11px;
+    background:#f6f9ff;
+    color:#3a4d78;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.13s;
+  }
+  .f-chip.active{
+    background:linear-gradient(135deg, #6c5ce7, #8e7ff5);
+    color:#fff;
+    border-color:transparent;
+  }
+
+  .ency-layout{
+    display:grid;
+    grid-template-columns:minmax(0, 1.35fr) minmax(320px, 0.95fr);
+    gap:11px;
+    min-height:0;
+  }
+  .cards-catalog{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(185px, 1fr));
+    gap:10px;
+    align-content:start;
+  }
+  .cat-card{
+    background:#fff;
+    border:2px solid #e3ecff;
+    border-radius:18px;
+    padding:11px;
+    text-align:center;
+    transition:.15s;
+    cursor:pointer;
+  }
+  .cat-card:hover{ transform:translateY(-2px); border-color:#adcaff; }
+  .cat-card.dimmed{ opacity:0.28; filter:grayscale(0.8); }
+  .cat-card.matched{ border-color:var(--mint); background:#f5fffb; box-shadow:0 6px 16px rgba(16,172,132,.14); }
+  .cat-card h3{ margin:4px 0 4px; font-size:14.5px; font-weight:900; }
+  .cat-card p{ margin:0; font-size:11.5px; font-weight:700; color:var(--muted); line-height:1.4; }
+
+  .compare-panel{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .cmp-selectors{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:8px;
+  }
+  .cmp-select{
+    width:100%;
+    padding:9px 10px;
+    border-radius:12px;
+    border:2px solid #dce6fa;
+    background:#f7faff;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:900;
+    color:var(--ink);
+  }
+  .cmp-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
+    font-weight:700;
+  }
+  .cmp-table th, .cmp-table td{
+    padding:8px 8px;
+    border-bottom:1px solid #e6eeff;
+    text-align:left;
+    vertical-align:top;
+  }
+  .cmp-table th{
+    background:#f2f6ff;
+    font-weight:900;
+    color:#33466f;
+  }
+
+  /* ================= VIEW 3: LAB PENGUKURAN PANJANG & TANGGA SATUAN ================= */
+  #viewMeasure{
+    grid-template-rows:minmax(0, 1.15fr) minmax(0, 0.95fr);
+    gap:11px;
+  }
+  .ruler-bench{
+    display:grid;
+    grid-template-columns:260px minmax(0, 1fr);
+    gap:12px;
+    min-height:0;
+  }
+  .obj-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    margin-bottom:10px;
+  }
+  .obj-btn{
+    padding:8px 6px;
+    border:1.5px solid #dce6fa;
+    border-radius:11px;
+    background:#f7faff;
+    color:#364973;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .obj-btn.active{
+    background:var(--coral);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 4px 12px rgba(255,107,74,.28);
+  }
+  .readout-box{
+    background:#f3f8ff;
+    border:1.5px solid #d9e8ff;
+    border-radius:14px;
+    padding:9px 11px;
+    font-size:12.5px;
+    font-weight:800;
+    line-height:1.55;
+  }
+  .readout-box b{
+    font-size:17px;
+    color:var(--blue-dark);
+  }
+
+  .ruler-stage{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%);
+    position:relative;
+  }
+  #rulerSvg{
+    width:100%;
+    height:100%;
+    touch-action:none;
+  }
+
+  /* Tangga Satuan Panjang */
+  .stair-bench{
+    display:grid;
+    grid-template-columns:minmax(0, 1.2fr) minmax(300px, 0.9fr);
+    gap:12px;
+    min-height:0;
+  }
+  .stair-controls{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .conv-inputs{
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr auto 0.9fr;
+    gap:7px;
+    align-items:center;
+  }
+  .num-in, .unit-sel{
+    width:100%;
+    padding:9px 10px;
+    border-radius:12px;
+    border:2px solid #dce6fa;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:900;
+    color:var(--ink);
+    background:#fff;
+    user-select:text;
+    -webkit-user-select:text;
+  }
+  .stair-result-banner{
+    background:linear-gradient(135deg, #10ac84, #1dd1a1);
+    color:#fff;
+    border-radius:16px;
+    padding:12px 14px;
+    box-shadow:0 8px 18px rgba(16,172,132,.24);
+  }
+  .stair-result-banner .big{
+    font-size:23px;
+    font-weight:900;
+  }
+  .stair-result-banner .sub{
+    font-size:12px;
+    font-weight:700;
+    opacity:.94;
+    margin-top:3px;
+  }
+
+  /* ================= VIEW 4: TANTANGAN LAB ================= */
+  #viewQuiz{
+    grid-template-columns:minmax(0, 1.25fr) minmax(320px, 0.9fr);
+    gap:12px;
+  }
+  .quiz-stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  #quizSvg{
+    width:100%;
+    height:100%;
+    max-height:390px;
+  }
+  .quiz-side{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+  }
+  .q-scorebar{
+    display:flex;
+    justify-content:space-between;
+    background:linear-gradient(135deg, #fff4d4, #ffe6a8);
+    padding:10px 14px;
+    border-radius:14px;
+    font-size:13.5px;
+    font-weight:900;
+    color:#8f5e00;
+    margin-bottom:12px;
+  }
+  .q-prompt{
+    font-size:16.5px;
+    font-weight:900;
+    line-height:1.45;
+    margin-bottom:14px;
+  }
+  .q-opts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+  .q-opt{
+    padding:14px 10px;
+    border:2.5px solid #dce6fa;
+    border-radius:15px;
+    background:#f8fbff;
+    font-family:inherit;
+    font-size:15.5px;
+    font-weight:900;
+    color:var(--ink);
+    cursor:pointer;
+    transition:.13s;
+  }
+  .q-opt:hover:not(:disabled){ background:#ebf3ff; border-color:#adcaff; transform:translateY(-2px); }
+  .q-opt.ok{ background:#d4f8e8; border-color:#10ac84; color:#096b52; }
+  .q-opt.no{ background:#ffe0e5; border-color:#ff4757; color:#a61426; }
+  .q-fb{
+    margin-top:12px;
+    padding:11px 13px;
+    border-radius:14px;
+    font-size:13px;
+    font-weight:800;
+    line-height:1.45;
+  }
+  .q-fb:empty{ display:none; }
+  .q-fb.ok{ background:#e6fbf5; color:#0b7559; border:1.5px solid #b5f0de; }
+  .q-fb.no{ background:#fff0f2; color:#b81d31; border:1.5px solid #ffc7cf; }
+  .btn-next{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:15px;
+    background:linear-gradient(135deg, #2e86de, #6c5ce7);
+    color:#fff;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+    margin-top:12px;
+    box-shadow:0 8px 20px rgba(65,105,225,.3);
+  }
+
+  @media (max-width:980px){
+    html, body{ overflow:auto; }
+    #app{ height:auto; min-height:100dvh; }
+    .tabs{ grid-template-columns:1fr 1fr; }
+    #viewShapes, .ency-layout, .ruler-bench, .stair-bench, #viewQuiz{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- HEADER -->
+  <header>
+    <div class="brand">
+      <div class="logo">📐</div>
+      <div>
+        <h1>Lab Luas, Keliling, Bangun Datar &amp; Pengukuran</h1>
+        <p>Eksplorasi geometri visual, sifat bangun datar, dan alat ukur panjang</p>
+      </div>
+    </div>
+
+    <div class="unit-bar" id="unitBar">
+      <span>Satuan Geometri:</span>
+      <button type="button" class="u-btn active" data-u="cm">cm</button>
+      <button type="button" class="u-btn" data-u="m">m</button>
+      <button type="button" class="u-btn" data-u="dm">dm</button>
+      <button type="button" class="u-btn" data-u="mm">mm</button>
+    </div>
+
+    <div class="hdr-tools">
+      <button type="button" class="tool-btn" id="btnSound">🔊 Suara</button>
+      <button type="button" class="tool-btn" id="btnFull">⛶ Layar Penuh</button>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <nav class="tabs" id="mainTabs">
+    <button type="button" class="tab-btn active" data-tab="viewShapes">📐 Luas, Keliling &amp; Bangun Datar</button>
+    <button type="button" class="tab-btn" data-tab="viewProps">🔍 Ciri-Ciri &amp; Perbandingan</button>
+    <button type="button" class="tab-btn" data-tab="viewMeasure">📏 Pengukuran Panjang &amp; Tangga Satuan</button>
+    <button type="button" class="tab-btn" data-tab="viewQuiz">🎯 Tantangan Lab</button>
+  </nav>
+
+  <!-- ==================== 1. EKSPLORASI BANGUN DATAR ==================== -->
+  <section class="view active" id="viewShapes">
+    <!-- Panel Kiri -->
+    <aside class="panel">
+      <h2 class="sec-title">1. Pilih Bangun Datar</h2>
+      <div class="shape-grid" id="shapeSelector">
+        <button type="button" class="sh-btn active" data-shape="square">🟦 Persegi</button>
+        <button type="button" class="sh-btn" data-shape="rect">▭ Persegi Panjang</button>
+        <button type="button" class="sh-btn" data-shape="triangle">🔺 Segitiga</button>
+        <button type="button" class="sh-btn" data-shape="parallelogram">▱ Jajar Genjang</button>
+        <button type="button" class="sh-btn" data-shape="trapezoid">⏢ Trapesium</button>
+        <button type="button" class="sh-btn" data-shape="rhombus">💠 Belah Ketupat</button>
+        <button type="button" class="sh-btn" data-shape="kite">🪁 Layang-Layang</button>
+        <button type="button" class="sh-btn" data-shape="circle">⚪ Lingkaran</button>
+      </div>
+
+      <div class="subtype-row" id="subtypeRow" hidden></div>
+
+      <h2 class="sec-title">2. Atur Ukuran Sisi / Dimensi</h2>
+      <div class="dim-card" id="dimControls"></div>
+
+      <h2 class="sec-title">3. Lapisan Visual Papan Tulis</h2>
+      <div class="layer-grid" id="layerControls">
+        <button type="button" class="layer-btn active" data-layer="grid">🟩 Kotak Satuan Luas</button>
+        <button type="button" class="layer-btn active" data-layer="perim">🟧 Garis Keliling</button>
+        <button type="button" class="layer-btn" data-layer="sym">🪞 Sumbu Simetri</button>
+        <button type="button" class="layer-btn active" data-layer="diag">📐 Diagonal &amp; Sudut</button>
+      </div>
+    </aside>
+
+    <!-- Panel Tengah (Kanvas Geometri) -->
+    <main class="panel stage-panel">
+      <div class="stage-badge" id="shapeStageTitle">Persegi — Semua sisi sama panjang &amp; 4 sudut siku-siku</div>
+      <svg id="shapeSvg" viewBox="0 0 600 400"></svg>
+      <div class="legend-bar">
+        <span><i class="leg-dot" style="background:#2e86de;"></i>Daerah Luas (L)</span>
+        <span><i class="leg-dot" style="background:#ff6b4a;"></i>Garis Keliling (K)</span>
+        <span><i class="leg-dot" style="background:#9b59b6;"></i>Sumbu Simetri</span>
+        <span><i class="leg-dot" style="background:#10ac84;"></i>Tinggi / Diagonal</span>
+      </div>
+    </main>
+
+    <!-- Panel Kanan (Hasil & Ciri-Ciri) -->
+    <aside class="panel">
+      <div class="calc-cards">
+        <div class="res-box area">
+          <span>Luas Bangun (L)</span>
+          <b id="valArea">36 cm²</b>
+          <small id="subArea">36 petak satuan</small>
+        </div>
+        <div class="res-box perim">
+          <span>Keliling Bangun (K)</span>
+          <b id="valPerim">24 cm</b>
+          <small id="subPerim">Jumlah seluruh tepi</small>
+        </div>
+      </div>
+
+      <div class="formula-box">
+        <h4>🧮 Rumus &amp; Langkah Perhitungan</h4>
+        <div id="formulaSteps">–</div>
+      </div>
+
+      <div class="props-box">
+        <h4>📋 Ciri-Ciri &amp; Sifat Bangun Datar</h4>
+        <div class="prop-pills">
+          <div class="p-stat"><span>Sisi</span><b id="propSides">4</b></div>
+          <div class="p-stat"><span>Sudut</span><b id="propAngles">4</b></div>
+          <div class="p-stat"><span>Sim. Lipat</span><b id="propSymFold">4</b></div>
+          <div class="p-stat"><span>Sim. Putar</span><b id="propSymRot">4</b></div>
+        </div>
+        <ul class="prop-list" id="propBullets"></ul>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ==================== 2. ENSIKLOPEDIA & PERBANDINGAN CIRI ==================== -->
+  <section class="view" id="viewProps">
+    <div class="filter-bar" id="propFilterBar">
+      <span style="font-size:11.5px;font-weight:900;color:#425685;">Filter Ciri-Ciri:</span>
+      <button type="button" class="f-chip active" data-filter="all">Semua Bangun (8)</button>
+      <button type="button" class="f-chip" data-filter="quad">Segi Empat (4 Sisi)</button>
+      <button type="button" class="f-chip" data-filter="eqsides">Semua Sisi Sama Panjang</button>
+      <button type="button" class="f-chip" data-filter="perpdiag">Diagonal Tegak Lurus (90°)</button>
+      <button type="button" class="f-chip" data-filter="rightangle">Punya Sudut Siku-Siku</button>
+      <button type="button" class="f-chip" data-filter="sym2">Simetri Lipat ≥ 2</button>
+    </div>
+
+    <div class="ency-layout">
+      <div class="panel cards-catalog" id="catalogGrid"></div>
+
+      <aside class="panel compare-panel">
+        <h2 class="sec-title" style="margin:0;">⚖️ Bandingkan 2 Bangun Datar</h2>
+        <div class="cmp-selectors">
+          <select class="cmp-select" id="cmpSelA"></select>
+          <strong style="color:var(--muted);">VS</strong>
+          <select class="cmp-select" id="cmpSelB"></select>
+        </div>
+        <div style="overflow-y:auto;flex:1;">
+          <table class="cmp-table" id="cmpTable"></table>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ==================== 3. PENGUKURAN PANJANG & TANGGA SATUAN ==================== -->
+  <section class="view" id="viewMeasure">
+    <!-- Bagian Atas: Meja Ukur Penggaris Virtual -->
+    <div class="ruler-bench">
+      <aside class="panel">
+        <h2 class="sec-title">1. Pilih Benda untuk Diukur</h2>
+        <div class="obj-list" id="objSelector">
+          <button type="button" class="obj-btn active" data-obj="pencil">✏️ Pensil (8,4 cm)</button>
+          <button type="button" class="obj-btn" data-obj="key">🔑 Kunci (5,7 cm)</button>
+          <button type="button" class="obj-btn" data-obj="eraser">🧽 Penghapus (4,2 cm)</button>
+          <button type="button" class="obj-btn" data-obj="brush">🖌️ Kuas (11,6 cm)</button>
+          <button type="button" class="obj-btn" data-obj="nail">🔩 Paku (6,8 cm)</button>
+          <button type="button" class="obj-btn" data-obj="custom">🎗️ Pita Bebas</button>
+        </div>
+
+        <div class="readout-box" style="margin-bottom:8px;">
+          <div>Panjang Benda Sebenarnya:</div>
+          <b id="measReadout">8,4 cm = 84 mm</b>
+          <div style="font-size:11.5px;color:var(--muted);margin-top:3px;" id="measTip">
+            Geser benda atau penggaris di kanvas! Coba mulai ukur tidak dari angka 0 (misal dari 2 cm) untuk melatih selisih skala.
+          </div>
+        </div>
+
+        <div style="display:flex;gap:6px;">
+          <button type="button" class="tool-btn" id="btnAlignZero" style="flex:1;">📐 Sejajarkan ke 0 cm</button>
+          <button type="button" class="tool-btn" id="btnRandomMeasure" style="flex:1;">🎲 Acak Posisi</button>
+        </div>
+      </aside>
+
+      <div class="panel ruler-stage">
+        <svg id="rulerSvg" viewBox="0 0 760 265"></svg>
+      </div>
+    </div>
+
+    <!-- Bagian Bawah: Tangga Satuan Panjang (km - mm) -->
+    <div class="stair-bench">
+      <div class="panel" style="display:flex;flex-direction:column;justify-content:center;">
+        <svg id="stairSvg" viewBox="0 0 640 225" style="width:100%;height:100%;max-height:225px;"></svg>
+      </div>
+
+      <aside class="panel stair-controls">
+        <div>
+          <h2 class="sec-title">2. Konversi Tangga Satuan Panjang</h2>
+          <div class="conv-inputs">
+            <input type="text" inputmode="decimal" class="num-in" id="stairInput" value="2,5">
+            <select class="unit-sel" id="stairFrom">
+              <option value="0">km</option>
+              <option value="1">hm</option>
+              <option value="2">dam</option>
+              <option value="3" selected>m</option>
+              <option value="4">dm</option>
+              <option value="5">cm</option>
+              <option value="6">mm</option>
+            </select>
+            <strong style="text-align:center;">➡️</strong>
+            <select class="unit-sel" id="stairTo">
+              <option value="0">km</option>
+              <option value="1">hm</option>
+              <option value="2">dam</option>
+              <option value="3">m</option>
+              <option value="4">dm</option>
+              <option value="5" selected>cm</option>
+              <option value="6">mm</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="stair-result-banner">
+          <div class="big" id="stairResBig">2,5 m = 250 cm</div>
+          <div class="sub" id="stairResStep">Turun 2 tangga → dikali 10 × 10 = × 100</div>
+        </div>
+
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button type="button" class="tool-btn" data-st-preset="1.5,0,3">1,5 km → m</button>
+          <button type="button" class="tool-btn" data-st-preset="350,5,3">350 cm → m</button>
+          <button type="button" class="tool-btn" data-st-preset="4.2,5,6">4,2 cm → mm</button>
+          <button type="button" class="tool-btn" data-st-preset="1200,3,0">1.200 m → km</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ==================== 4. TANTANGAN LAB ==================== -->
+  <section class="view" id="viewQuiz">
+    <div class="panel quiz-stage">
+      <svg id="quizSvg" viewBox="0 0 560 350"></svg>
+    </div>
+
+    <aside class="panel quiz-side">
+      <div>
+        <div class="q-scorebar">
+          <span>⭐ Skor: <b id="qScore">0 / 0</b></span>
+          <span>🔥 Streak: <b id="qStreak">0</b></span>
+        </div>
+        <div class="q-prompt" id="qPrompt">–</div>
+        <div class="q-opts" id="qOpts"></div>
+        <div class="q-fb" id="qFb"></div>
+      </div>
+      <button type="button" class="btn-next" id="btnQuizNext" hidden>Soal Berikutnya ➡️</button>
+    </aside>
+  </section>
+</div>
+
+<script>
+/* ==========================================================================
+   0. AUDIO SYNTHESIZER & FORMATTER
+   ========================================================================== */
+const FX = {
+  on: true,
+  ctx: null,
+  tone(f = 520, dur = 0.05, type = 'sine', vol = 0.05) {
+    if (!this.on) return;
+    try {
+      if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(f, this.ctx.currentTime);
+      g.gain.setValueAtTime(vol, this.ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + dur);
+      osc.connect(g);
+      g.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + dur);
+    } catch (_) {}
+  },
+  ok() {
+    this.tone(523.25, 0.08, 'triangle', 0.08);
+    setTimeout(() => this.tone(659.25, 0.13, 'triangle', 0.08), 80);
+  },
+  err() {
+    this.tone(205, 0.16, 'sawtooth', 0.05);
+  }
+};
+
+function fmt(n, maxDec = 2) {
+  const val = Number(n.toFixed(maxDec));
+  return val.toLocaleString('id-ID', { maximumFractionDigits: maxDec });
+}
+
+let geoUnit = 'cm';
+
+/* ==========================================================================
+   1. DATABASE LENGKAP BANGUN DATAR & CIRI-CIRI
+   ========================================================================== */
+const SHAPES_DB = {
+  square: {
+    name: 'Persegi',
+    icon: '🟦',
+    tagline: 'Keempat sisi sama panjang & keempat sudut siku-siku (90°)',
+    sides: '4', angles: '4 (90°)', symFold: '4', symRot: '4',
+    tags: ['quad', 'eqsides', 'perpdiag', 'rightangle', 'sym2'],
+    formulaArea: 'L = s × s = s²',
+    formulaPerim: 'K = 4 × s',
+    props: [
+      'Memiliki 4 sisi yang seluruhnya sama panjang.',
+      'Memiliki 4 sudut siku-siku (masing-masing 90°, total 360°).',
+      'Memiliki 2 diagonal sama panjang yang berpotongan tegak lurus.',
+      'Memiliki 4 sumbu simetri lipat dan 4 simetri putar.'
+    ]
+  },
+  rect: {
+    name: 'Persegi Panjang',
+    icon: '▭',
+    tagline: 'Dua pasang sisi berhadapan sama panjang & sejajar, 4 sudut 90°',
+    sides: '4', angles: '4 (90°)', symFold: '2', symRot: '2',
+    tags: ['quad', 'rightangle', 'sym2'],
+    formulaArea: 'L = p × l',
+    formulaPerim: 'K = 2 × (p + l)',
+    props: [
+      'Memiliki 2 pasang sisi berhadapan yang sejajar dan sama panjang.',
+      'Keempat sudutnya siku-siku (90°).',
+      'Memiliki 2 diagonal sama panjang yang saling membagi dua sama panjang (tidak tegak lurus).',
+      'Memiliki 2 sumbu simetri lipat dan 2 simetri putar.'
+    ]
+  },
+  triangle: {
+    name: 'Segitiga',
+    icon: '🔺',
+    tagline: 'Bangun datar bersisi tiga dengan jumlah besar sudut dalam 180°',
+    sides: '3', angles: '3 (180°)', symFold: '0 – 3', symRot: '0 / 3',
+    tags: [],
+    formulaArea: 'L = ½ × alas × tinggi',
+    formulaPerim: 'K = sisi a + sisi b + sisi c',
+    props: [
+      'Memiliki 3 buah sisi dan 3 titik sudut dengan jumlah sudut 180°.',
+      'Segitiga Sama Sisi: 3 sisi sama panjang, sudut 60°, 3 simetri lipat & 3 simetri putar.',
+      'Segitiga Sama Kaki: 2 sisi sama panjang, 2 sudut alas sama besar, 1 simetri lipat.',
+      'Segitiga Siku-Siku: memiliki tepat satu sudut 90° (berlaku Teorema Pythagoras).'
+    ]
+  },
+  parallelogram: {
+    name: 'Jajar Genjang',
+    icon: '▱',
+    tagline: 'Dua pasang sisi berhadapan sejajar & sama panjang, sudut berhadapan sama',
+    sides: '4', angles: '4 (360°)', symFold: '0', symRot: '2',
+    tags: ['quad'],
+    formulaArea: 'L = alas × tinggi',
+    formulaPerim: 'K = 2 × (alas + sisi miring)',
+    props: [
+      'Memiliki 2 pasang sisi berhadapan yang sejajar dan sama panjang.',
+      'Sudut-sudut yang berhadapan sama besar; sudut berdekatan berjumlah 180°.',
+      'Kedua diagonalnya saling membagi dua sama panjang (tidak sama panjang).',
+      'Tidak memiliki sumbu simetri lipat (0), memiliki 2 simetri putar.'
+    ]
+  },
+  trapezoid: {
+    name: 'Trapesium',
+    icon: '⏢',
+    tagline: 'Segi empat yang memiliki tepat sepasang sisi berhadapan sejajar',
+    sides: '4', angles: '4 (360°)', symFold: '0 – 1', symRot: '0',
+    tags: ['quad'],
+    formulaArea: 'L = ½ × (sisi atas + sisi bawah) × tinggi',
+    formulaPerim: 'K = jumlah keempat sisinya',
+    props: [
+      'Memiliki tepat sepasang sisi berhadapan yang sejajar (sisi atas & sisi bawah).',
+      'Jumlah dua sudut yang berdekatan di antara dua sisi sejajar adalah 180°.',
+      'Trapesium Sama Kaki: kaki sama panjang, diagonal sama panjang, 1 simetri lipat.',
+      'Trapesium Siku-Siku: memiliki 2 sudut siku-siku (90°) pada salah satu kakinya.'
+    ]
+  },
+  rhombus: {
+    name: 'Belah Ketupat',
+    icon: '💠',
+    tagline: 'Keempat sisi sama panjang & diagonal berpotongan tegak lurus',
+    sides: '4', angles: '4 (360°)', symFold: '2', symRot: '2',
+    tags: ['quad', 'eqsides', 'perpdiag', 'sym2'],
+    formulaArea: 'L = ½ × d₁ × d₂',
+    formulaPerim: 'K = 4 × sisi',
+    props: [
+      'Memiliki 4 sisi yang sama panjang (seperti persegi yang dimiringkan).',
+      'Sudut-sudut yang berhadapan sama besar.',
+      'Kedua diagonalnya berpotongan tegak lurus (90°) dan membagi dua sama panjang.',
+      'Memiliki 2 sumbu simetri lipat (pada diagonalnya) dan 2 simetri putar.'
+    ]
+  },
+  kite: {
+    name: 'Layang-Layang',
+    icon: '🪁',
+    tagline: 'Dua pasang sisi berdekatan sama panjang & diagonal tegak lurus',
+    sides: '4', angles: '4 (360°)', symFold: '1', symRot: '0',
+    tags: ['quad', 'perpdiag'],
+    formulaArea: 'L = ½ × d₁ × d₂',
+    formulaPerim: 'K = 2 × (sisi pendek + sisi panjang)',
+    props: [
+      'Memiliki 2 pasang sisi yang berdekatan sama panjang.',
+      'Memiliki sepasang sudut berhadapan yang sama besar.',
+      'Kedua diagonal berpotongan tegak lurus (90°); salah satu diagonal terbagi dua sama panjang.',
+      'Memiliki tepat 1 sumbu simetri lipat dan tidak memiliki simetri putar.'
+    ]
+  },
+  circle: {
+    name: 'Lingkaran',
+    icon: '⚪',
+    tagline: 'Kumpulan titik berjarak sama (jari-jari r) terhadap titik pusat',
+    sides: '1 lengkung', angles: '0 (360°)', symFold: '∞', symRot: '∞',
+    tags: ['sym2'],
+    formulaArea: 'L = π × r²',
+    formulaPerim: 'K = 2 × π × r  atau  π × d',
+    props: [
+      'Memiliki 1 sisi lengkung tertutup dan tidak memiliki titik sudut.',
+      'Jarak dari titik pusat ke tepi lingkaran selalu tetap, disebut jari-jari (r).',
+      'Diameter (d) adalah garis tengah melalui pusat dengan panjang d = 2 × r.',
+      'Memiliki sumbu simetri lipat dan simetri putar tak terhingga (∞).'
+    ]
+  }
+};
+
+/* ==========================================================================
+   2. STATE & KONTROL EKSPLORASI BANGUN DATAR
+   ========================================================================== */
+const shapeState = {
+  type: 'square',
+  subtype: 'equilateral', // triangle: equilateral|isosceles|right ; trapezoid: isosceles|right
+  params: {
+    s: 6,
+    p: 8, l: 5,
+    a: 8, t: 6,
+    shift: 2,
+    top: 5, bot: 9,
+    d1: 8, d2: 6,
+    t1: 2, t2: 5,
+    r: 7
+  },
+  layers: {
+    grid: true,
+    perim: true,
+    sym: false,
+    diag: true
+  }
+};
+
+const DIM_CONFIGS = {
+  square: () => [
+    { key: 's', label: 'Panjang Sisi (s)', min: 2, max: 12, step: 1 }
+  ],
+  rect: () => [
+    { key: 'p', label: 'Panjang (p)', min: 3, max: 14, step: 1 },
+    { key: 'l', label: 'Lebar (l)', min: 2, max: 10, step: 1 }
+  ],
+  triangle: () => {
+    if (shapeState.subtype === 'equilateral') {
+      return [{ key: 's', label: 'Panjang Sisi (s)', min: 3, max: 12, step: 1 }];
+    }
+    return [
+      { key: 'a', label: 'Alas (a)', min: 3, max: 12, step: 1 },
+      { key: 't', label: 'Tinggi (t)', min: 3, max: 10, step: 1 }
+    ];
+  },
+  parallelogram: () => [
+    { key: 'a', label: 'Alas (a)', min: 4, max: 12, step: 1 },
+    { key: 't', label: 'Tinggi (t)', min: 3, max: 9, step: 1 },
+    { key: 'shift', label: 'Kemiringan (geser)', min: 1, max: 5, step: 1 }
+  ],
+  trapezoid: () => [
+    { key: 'top', label: 'Sisi Atas (a)', min: 3, max: 10, step: 1 },
+    { key: 'bot', label: 'Sisi Bawah (b)', min: 5, max: 14, step: 1 },
+    { key: 't', label: 'Tinggi (t)', min: 3, max: 9, step: 1 }
+  ],
+  rhombus: () => [
+    { key: 'd1', label: 'Diagonal Horizontal (d₁)', min: 4, max: 14, step: 2 },
+    { key: 'd2', label: 'Diagonal Vertikal (d₂)', min: 4, max: 12, step: 2 }
+  ],
+  kite: () => [
+    { key: 'd1', label: 'Diagonal Horizontal (d₁)', min: 4, max: 12, step: 2 },
+    { key: 't1', label: 'Sumbu Atas (t₁)', min: 1, max: 4, step: 1 },
+    { key: 't2', label: 'Sumbu Bawah (t₂)', min: 3, max: 8, step: 1 }
+  ],
+  circle: () => [
+    { key: 'r', label: 'Jari-jari (r)', min: 2, max: 10, step: 1 }
+  ]
+};
+
+function buildShapeControls() {
+  const subRow = document.getElementById('subtypeRow');
+  subRow.innerHTML = '';
+
+  if (shapeState.type === 'triangle') {
+    subRow.hidden = false;
+    if (!['equilateral', 'isosceles', 'right'].includes(shapeState.subtype)) {
+      shapeState.subtype = 'equilateral';
+    }
+    [
+      { id: 'equilateral', lbl: 'Sama Sisi' },
+      { id: 'isosceles', lbl: 'Sama Kaki' },
+      { id: 'right', lbl: 'Siku-Siku' }
+    ].forEach(st => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'sub-chip' + (shapeState.subtype === st.id ? ' active' : '');
+      b.textContent = st.lbl;
+      b.addEventListener('click', () => {
+        FX.tone(540, 0.04);
+        shapeState.subtype = st.id;
+        buildShapeControls();
+        renderShapeExplorer();
+      });
+      subRow.appendChild(b);
+    });
+  } else if (shapeState.type === 'trapezoid') {
+    subRow.hidden = false;
+    if (!['isosceles', 'right'].includes(shapeState.subtype)) {
+      shapeState.subtype = 'isosceles';
+    }
+    [
+      { id: 'isosceles', lbl: 'Trapesium Sama Kaki' },
+      { id: 'right', lbl: 'Trapesium Siku-Siku' }
+    ].forEach(st => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'sub-chip' + (shapeState.subtype === st.id ? ' active' : '');
+      b.textContent = st.lbl;
+      b.addEventListener('click', () => {
+        FX.tone(540, 0.04);
+        shapeState.subtype = st.id;
+        buildShapeControls();
+        renderShapeExplorer();
+      });
+      subRow.appendChild(b);
+    });
+  } else {
+    subRow.hidden = true;
+  }
+
+  // Build dimension sliders
+  const dimBox = document.getElementById('dimControls');
+  dimBox.innerHTML = '';
+  const defs = DIM_CONFIGS[shapeState.type]();
+
+  defs.forEach(d => {
+    const val = shapeState.params[d.key];
+    const item = document.createElement('div');
+    item.className = 'dim-item';
+    item.innerHTML = `
+      <div class="dim-top">
+        <span>${d.label}</span>
+        <b id="lbl_${d.key}">${val} ${geoUnit}</b>
+      </div>
+      <div class="dim-ctrl">
+        <button type="button" class="mini-step" data-k="${d.key}" data-dir="-1">−</button>
+        <input type="range" min="${d.min}" max="${d.max}" step="${d.step}" value="${val}" data-k="${d.key}">
+        <button type="button" class="mini-step" data-k="${d.key}" data-dir="1">+</button>
+      </div>
+    `;
+    dimBox.appendChild(item);
+  });
+}
+
+function computeShapeGeometry() {
+  const t = shapeState.type;
+  const p = shapeState.params;
+  let area = 0, perim = 0, steps = [];
+  let poly = []; // koordinat dalam satuan matematika (unit)
+  let extra = {}; // info tambahan untuk gambar SVG
+
+  if (t === 'square') {
+    const s = p.s;
+    area = s * s;
+    perim = 4 * s;
+    poly = [[0, 0], [s, 0], [s, s], [0, s]];
+    steps = [
+      `<b>Luas:</b> s × s = ${s} × ${s} = <b>${fmt(area)} ${geoUnit}²</b>`,
+      `<b>Keliling:</b> 4 × s = 4 × ${s} = <b>${fmt(perim)} ${geoUnit}</b>`
+    ];
+    extra = { symFold: '4', symRot: '4', rightAngles: [0, 1, 2, 3], diags: [[0, 2], [1, 3]] };
+  }
+  else if (t === 'rect') {
+    area = p.p * p.l;
+    perim = 2 * (p.p + p.l);
+    poly = [[0, 0], [p.p, 0], [p.p, p.l], [0, p.l]];
+    steps = [
+      `<b>Luas:</b> p × l = ${p.p} × ${p.l} = <b>${fmt(area)} ${geoUnit}²</b>`,
+      `<b>Keliling:</b> 2 × (${p.p} + ${p.l}) = 2 × ${p.p + p.l} = <b>${fmt(perim)} ${geoUnit}</b>`
+    ];
+    extra = { symFold: '2', symRot: '2', rightAngles: [0, 1, 2, 3], diags: [[0, 2], [1, 3]] };
+  }
+  else if (t === 'triangle') {
+    if (shapeState.subtype === 'equilateral') {
+      const s = p.s;
+      const h = (Math.sqrt(3) / 2) * s;
+      area = 0.5 * s * h;
+      perim = 3 * s;
+      poly = [[0, h], [s, h], [s / 2, 0]];
+      steps = [
+        `<b>Tinggi (t):</b> ½√3 × ${s} ≈ <b>${fmt(h)} ${geoUnit}</b>`,
+        `<b>Luas:</b> ½ × ${s} × ${fmt(h)} ≈ <b>${fmt(area)} ${geoUnit}²</b>`,
+        `<b>Keliling:</b> 3 × ${s} = <b>${fmt(perim)} ${geoUnit}</b>`
+      ];
+      extra = { symFold: '3', symRot: '3', altLine: [[s / 2, 0], [s / 2, h]], hVal: h };
+    } else if (shapeState.subtype === 'isosceles') {
+      const a = p.a, h = p.t;
+      const slant = Math.hypot(a / 2, h);
+      area = 0.5 * a * h;
+      perim = a + 2 * slant;
+      poly = [[0, h], [a, h], [a / 2, 0]];
+      steps = [
+        `<b>Sisi Miring:</b> √(${fmt(a / 2)}² + ${h}²) ≈ <b>${fmt(slant)} ${geoUnit}</b>`,
+        `<b>Luas:</b> ½ × ${a} × ${h} = <b>${fmt(area)} ${geoUnit}²</b>`,
+        `<b>Keliling:</b> ${a} + 2(${fmt(slant)}) ≈ <b>${fmt(perim)} ${geoUnit}</b>`
+      ];
+      extra = { symFold: '1', symRot: '0', altLine: [[a / 2, 0], [a / 2, h]], hVal: h, slant };
+    } else {
+      // Siku-siku
+      const a = p.a, h = p.t;
+      const hyp = Math.hypot(a, h);
+      area = 0.5 * a * h;
+      perim = a + h + hyp;
+      poly = [[0, 0], [0, h], [a, h]];
+      steps = [
+        `<b>Sisi Miring (c):</b> √(${a}² + ${h}²) ≈ <b>${fmt(hyp)} ${geoUnit}</b>`,
+        `<b>Luas:</b> ½ × ${a} × ${h} = <b>${fmt(area)} ${geoUnit}²</b>`,
+        `<b>Keliling:</b> ${a} + ${h} + ${fmt(hyp)} ≈ <b>${fmt(perim)} ${geoUnit}</b>`
+      ];
+      extra = { symFold: '0', symRot: '0', rightAngles: [1], hyp };
+    }
+  }
+  else if (t === 'parallelogram') {
+    const a = p.a, h = p.t, sh = p.shift;
+    const slant = Math.hypot(sh, h);
+    area = a * h;
+    perim = 2 * (a + slant);
+    poly = [[sh, 0], [sh + a, 0], [a, h], [0, h]];
+    steps = [
+      `<b>Sisi Miring:</b> √(${sh}² + ${h}²) ≈ <b>${fmt(slant)} ${geoUnit}</b>`,
+      `<b>Luas:</b> alas × tinggi = ${a} × ${h} = <b>${fmt(area)} ${geoUnit}²</b>`,
+      `<b>Keliling:</b> 2 × (${a} + ${fmt(slant)}) ≈ <b>${fmt(perim)} ${geoUnit}</b>`
+    ];
+    extra = { symFold: '0', symRot: '2', altLine: [[sh, 0], [sh, h]], diags: [[0, 2], [1, 3]], slant };
+  }
+  else if (t === 'trapezoid') {
+    const a = p.top, b = p.bot, h = p.t;
+    area = 0.5 * (a + b) * h;
+    if (shapeState.subtype === 'isosceles') {
+      const dx = Math.abs(b - a) / 2;
+      const slant = Math.hypot(dx, h);
+      perim = a + b + 2 * slant;
+      const topX = b >= a ? dx : 0;
+      const botX = b >= a ? 0 : dx;
+      poly = [[topX, 0], [topX + a, 0], [botX + b, h], [botX, h]];
+      steps = [
+        `<b>Sisi Kaki:</b> √(${fmt(dx)}² + ${h}²) ≈ <b>${fmt(slant)} ${geoUnit}</b>`,
+        `<b>Luas:</b> ½ × (${a} + ${b}) × ${h} = <b>${fmt(area)} ${geoUnit}²</b>`,
+        `<b>Keliling:</b> ${a} + ${b} + 2(${fmt(slant)}) ≈ <b>${fmt(perim)} ${geoUnit}</b>`
+      ];
+      extra = { symFold: '1', symRot: '0', altLine: [[topX, 0], [topX, h]], diags: [[0, 2], [1, 3]], slant };
+    } else {
+      const slant = Math.hypot(Math.abs(b - a), h);
+      perim = a + b + h + slant;
+      poly = [[0, 0], [a, 0], [b, h], [0, h]];
+      steps = [
+        `<b>Sisi Miring:</b> √(${Math.abs(b - a)}² + ${h}²) ≈ <b>${fmt(slant)} ${geoUnit}</b>`,
+        `<b>Luas:</b> ½ × (${a} + ${b}) × ${h} = <b>${fmt(area)} ${geoUnit}²</b>`,
+        `<b>Keliling:</b> ${a} + ${b} + ${h} + ${fmt(slant)} ≈ <b>${fmt(perim)} ${geoUnit}</b>`
+      ];
+      extra = { symFold: '0', symRot: '0', rightAngles: [0, 3], diags: [[0, 2], [1, 3]], slant };
+    }
+  }
+  else if (t === 'rhombus') {
+    const d1 = p.d1, d2 = p.d2;
+    const s = Math.hypot(d1 / 2, d2 / 2);
+    area = 0.5 * d1 * d2;
+    perim = 4 * s;
+    poly = [[d1 / 2, 0], [d1, d2 / 2], [d1 / 2, d2], [0, d2 / 2]];
+    steps = [
+      `<b>Panjang Sisi:</b> √(${d1 / 2}² + ${d2 / 2}²) ≈ <b>${fmt(s)} ${geoUnit}</b>`,
+      `<b>Luas:</b> ½ × d₁ × d₂ = ½ × ${d1} × ${d2} = <b>${fmt(area)} ${geoUnit}²</b>`,
+      `<b>Keliling:</b> 4 × ${fmt(s)} ≈ <b>${fmt(perim)} ${geoUnit}</b>`
+    ];
+    extra = { symFold: '2', symRot: '2', diags: [[0, 2], [1, 3]], perpCenter: [d1 / 2, d2 / 2], sideVal: s };
+  }
+  else if (t === 'kite') {
+    const d1 = p.d1, t1 = p.t1, t2 = p.t2;
+    const d2 = t1 + t2;
+    const s1 = Math.hypot(d1 / 2, t1);
+    const s2 = Math.hypot(d1 / 2, t2);
+    area = 0.5 * d1 * d2;
+    perim = 2 * (s1 + s2);
+    poly = [[d1 / 2, 0], [d1, t1], [d1 / 2, d2], [0, t1]];
+    steps = [
+      `<b>Diagonal 2 (d₂):</b> ${t1} + ${t2} = <b>${d2} ${geoUnit}</b>`,
+      `<b>Luas:</b> ½ × ${d1} × ${d2} = <b>${fmt(area)} ${geoUnit}²</b>`,
+      `<b>Keliling:</b> 2 × (${fmt(s1)} + ${fmt(s2)}) ≈ <b>${fmt(perim)} ${geoUnit}</b>`
+    ];
+    extra = { symFold: '1', symRot: '0', diags: [[0, 2], [1, 3]], perpCenter: [d1 / 2, t1], s1, s2 };
+  }
+  else if (t === 'circle') {
+    const r = p.r;
+    const isMult7 = r % 7 === 0;
+    const pi = isMult7 ? (22 / 7) : 3.14;
+    const piTxt = isMult7 ? '22/7' : '3,14';
+    area = pi * r * r;
+    perim = 2 * pi * r;
+    steps = [
+      `<b>Diameter (d):</b> 2 × r = 2 × ${r} = <b>${2 * r} ${geoUnit}</b>`,
+      `<b>Luas:</b> π × r² = ${piTxt} × ${r}² = <b>${fmt(area)} ${geoUnit}²</b>`,
+      `<b>Keliling:</b> 2 × π × r = 2 × ${piTxt} × ${r} = <b>${fmt(perim)} ${geoUnit}</b>`
+    ];
+    extra = { symFold: '∞', symRot: '∞', r };
+  }
+
+  return { area, perim, steps, poly, extra };
+}
+
+function renderShapeExplorer() {
+  const info = SHAPES_DB[shapeState.type];
+  const geom = computeShapeGeometry();
+
+  // Update label slider
+  DIM_CONFIGS[shapeState.type]().forEach(d => {
+    const lbl = document.getElementById(`lbl_${d.key}`);
+    if (lbl) lbl.textContent = `${shapeState.params[d.key]} ${geoUnit}`;
+  });
+
+  document.getElementById('shapeStageTitle').textContent = `${info.name} — ${info.tagline}`;
+  document.getElementById('valArea').textContent = `${fmt(geom.area)} ${geoUnit}²`;
+  document.getElementById('subArea').textContent = `≈ ${fmt(geom.area, 1)} petak satuan`;
+  document.getElementById('valPerim').textContent = `${fmt(geom.perim)} ${geoUnit}`;
+  document.getElementById('formulaSteps').innerHTML = geom.steps.join('<br>');
+
+  // Ciri-ciri
+  document.getElementById('propSides').textContent = info.sides;
+  document.getElementById('propAngles').textContent = info.angles;
+  document.getElementById('propSymFold').textContent = geom.extra.symFold || info.symFold;
+  document.getElementById('propSymRot').textContent = geom.extra.symRot || info.symRot;
+  document.getElementById('propBullets').innerHTML = info.props.map(pr => `<li>${pr}</li>`).join('');
+
+  drawShapeSVG(geom);
+}
+
+function drawShapeSVG(geom) {
+  const svg = document.getElementById('shapeSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const W = 600, H = 400;
+  const cx = 300, cy = 200;
+
+  if (shapeState.type === 'circle') {
+    const r = geom.extra.r;
+    const scale = 25; // 25 px per 1 satuan
+    const rPx = r * scale;
+
+    // Latar grid halus
+    for (let x = cx % scale; x < W; x += scale) {
+      el('line', { x1: x, y1: 0, x2: x, y2: H, stroke: '#edf3ff', 'stroke-width': '1' });
+    }
+    for (let y = cy % scale; y < H; y += scale) {
+      el('line', { x1: 0, y1: y, x2: W, y2: y, stroke: '#edf3ff', 'stroke-width': '1' });
+    }
+
+    // Clip path untuk petak satuan di dalam lingkaran
+    const defs = el('defs', {});
+    const cp = el('clipPath', { id: 'circleClip' }, defs);
+    el('circle', { cx, cy, r: rPx }, cp);
+
+    // Fill area
+    el('circle', {
+      cx, cy, r: rPx,
+      fill: 'rgba(46, 134, 222, 0.22)',
+      stroke: shapeState.layers.perim ? '#ff6b4a' : '#1b2642',
+      'stroke-width': shapeState.layers.perim ? '4.5' : '2.5'
+    });
+
+    // Kotak satuan luas di dalam lingkaran
+    if (shapeState.layers.grid) {
+      const gGrid = el('g', { 'clip-path': 'url(#circleClip)' });
+      for (let gx = cx - r * scale; gx <= cx + r * scale; gx += scale) {
+        el('line', { x1: gx, y1: cy - rPx, x2: gx, y2: cy + rPx, stroke: 'rgba(46,134,222,0.45)', 'stroke-width': '1.2' }, gGrid);
+      }
+      for (let gy = cy - r * scale; gy <= cy + r * scale; gy += scale) {
+        el('line', { x1: cx - rPx, y1: gy, x2: cx + rPx, y2: gy, stroke: 'rgba(46,134,222,0.45)', 'stroke-width': '1.2' }, gGrid);
+      }
+    }
+
+    // Sumbu simetri (contoh 4 garis melewati pusat)
+    if (shapeState.layers.sym) {
+      [0, 45, 90, 135].forEach(deg => {
+        const rad = (deg * Math.PI) / 180;
+        const dx = Math.cos(rad) * (rPx + 24);
+        const dy = Math.sin(rad) * (rPx + 24);
+        el('line', {
+          x1: cx - dx, y1: cy - dy, x2: cx + dx, y2: cy + dy,
+          stroke: '#9b59b6', 'stroke-width': '2', 'stroke-dasharray': '6,5'
+        });
+      });
+    }
+
+    // Diameter & Jari-jari
+    if (shapeState.layers.diag) {
+      el('line', {
+        x1: cx - rPx, y1: cy, x2: cx + rPx, y2: cy,
+        stroke: '#10ac84', 'stroke-width': '2', 'stroke-dasharray': '5,4'
+      });
+    }
+    el('line', { x1: cx, y1: cy, x2: cx + rPx, y2: cy, stroke: '#1b2642', 'stroke-width': '3' });
+    el('circle', { cx, cy, r: 4.5, fill: '#1b2642' });
+
+    // Label r
+    el('rect', { x: cx + rPx / 2 - 36, y: cy - 26, width: 72, height: 21, rx: 6, fill: '#1b2642' });
+    el('text', {
+      x: cx + rPx / 2, y: cy - 11, 'text-anchor': 'middle', fill: '#fff', 'font-size': '12', 'font-weight': '900'
+    }).textContent = `r = ${r} ${geoUnit}`;
+    return;
+  }
+
+  // Bangun Poligon (dengan koordinat satuan)
+  const pts = geom.poly;
+  const xs = pts.map(p => p[0]);
+  const ys = pts.map(p => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const uW = maxX - minX || 1;
+  const uH = maxY - minY || 1;
+
+  // Skala adaptif agar muat cantik di tengah kanvas dengan margin label
+  const scale = Math.min(390 / uW, 255 / uH, 34);
+  const ox = cx - (uW * scale) / 2 - minX * scale;
+  const oy = cy - (uH * scale) / 2 - minY * scale;
+
+  const toPx = ([ux, uy]) => [ox + ux * scale, oy + uy * scale];
+  const pxPts = pts.map(toPx);
+
+  // Latar grid halus
+  for (let x = ox % scale; x < W; x += scale) {
+    el('line', { x1: x, y1: 0, x2: x, y2: H, stroke: '#edf3ff', 'stroke-width': '1' });
+  }
+  for (let y = oy % scale; y < H; y += scale) {
+    el('line', { x1: 0, y1: y, x2: W, y2: y, stroke: '#edf3ff', 'stroke-width': '1' });
+  }
+
+  const polyStr = pxPts.map(p => p.join(',')).join(' ');
+
+  // ClipPath untuk Kotak Satuan Luas
+  const defs = el('defs', {});
+  const cp = el('clipPath', { id: 'polyClip' }, defs);
+  el('polygon', { points: polyStr }, cp);
+
+  // Isi Bangun Datar
+  el('polygon', {
+    points: polyStr,
+    fill: 'rgba(46, 134, 222, 0.22)',
+    stroke: shapeState.layers.perim ? '#ff6b4a' : '#1b2642',
+    'stroke-width': shapeState.layers.perim ? '4.5' : '2.5',
+    'stroke-linejoin': 'round'
+  });
+
+  // Kotak Satuan Luas 1x1
+  if (shapeState.layers.grid) {
+    const gGrid = el('g', { 'clip-path': 'url(#polyClip)' });
+    for (let ux = Math.floor(minX); ux <= Math.ceil(maxX); ux++) {
+      const gx = ox + ux * scale;
+      el('line', { x1: gx, y1: 0, x2: gx, y2: H, stroke: 'rgba(46, 134, 222, 0.5)', 'stroke-width': '1.2' }, gGrid);
+    }
+    for (let uy = Math.floor(minY); uy <= Math.ceil(maxY); uy++) {
+      const gy = oy + uy * scale;
+      el('line', { x1: 0, y1: gy, x2: W, y2: gy, stroke: 'rgba(46, 134, 222, 0.5)', 'stroke-width': '1.2' }, gGrid);
+    }
+  }
+
+  // Garis Tinggi (Altitude) jika ada
+  if (geom.extra.altLine) {
+    const [p1, p2] = geom.extra.altLine.map(toPx);
+    el('line', {
+      x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1],
+      stroke: '#10ac84', 'stroke-width': '2.5', 'stroke-dasharray': '5,4'
+    });
+    // Kotak siku-siku kecil di kaki tinggi
+    el('rect', { x: p2[0], y: p2[1] - 10, width: 10, height: 10, fill: 'none', stroke: '#10ac84', 'stroke-width': '1.8' });
+    el('text', {
+      x: p1[0] + 8, y: (p1[1] + p2[1]) / 2, fill: '#09785b', 'font-size': '12', 'font-weight': '900'
+    }).textContent = `t = ${fmt(geom.extra.hVal || shapeState.params.t)} ${geoUnit}`;
+  }
+
+  // Diagonal & Sudut Siku-Siku
+  if (shapeState.layers.diag) {
+    if (geom.extra.diags) {
+      geom.extra.diags.forEach(([i1, i2]) => {
+        const [x1, y1] = pxPts[i1];
+        const [x2, y2] = pxPts[i2];
+        el('line', {
+          x1, y1, x2, y2,
+          stroke: '#10ac84', 'stroke-width': '2', 'stroke-dasharray': '6,4'
+        });
+      });
+    }
+    if (geom.extra.perpCenter) {
+      const [pcx, pcy] = toPx(geom.extra.perpCenter);
+      el('rect', { x: pcx, y: pcy - 10, width: 10, height: 10, fill: 'none', stroke: '#10ac84', 'stroke-width': '2' });
+    }
+    if (geom.extra.rightAngles) {
+      geom.extra.rightAngles.forEach(idx => {
+        const curr = pxPts[idx];
+        const prev = pxPts[(idx - 1 + pxPts.length) % pxPts.length];
+        const next = pxPts[(idx + 1) % pxPts.length];
+        const v1 = [prev[0] - curr[0], prev[1] - curr[1]];
+        const v2 = [next[0] - curr[0], next[1] - curr[1]];
+        const l1 = Math.hypot(...v1) || 1, l2 = Math.hypot(...v2) || 1;
+        const d = 12;
+        const pA = [curr[0] + (v1[0] / l1) * d, curr[1] + (v1[1] / l1) * d];
+        const pB = [curr[0] + (v2[0] / l2) * d, curr[1] + (v2[1] / l2) * d];
+        const pC = [pA[0] + (v2[0] / l2) * d, pA[1] + (v2[1] / l2) * d];
+        el('polyline', {
+          points: `${pA[0]},${pA[1]} ${pC[0]},${pC[1]} ${pB[0]},${pB[1]}`,
+          fill: 'none', stroke: '#10ac84', 'stroke-width': '2'
+        });
+      });
+    }
+  }
+
+  // Sumbu Simetri
+  if (shapeState.layers.sym) {
+    const midX = cx, midY = cy;
+    const halfW = (uW * scale) / 2 + 22;
+    const halfH = (uH * scale) / 2 + 22;
+    const t = shapeState.type;
+
+    const drawSymLine = (x1, y1, x2, y2) => {
+      el('line', { x1, y1, x2, y2, stroke: '#9b59b6', 'stroke-width': '2.4', 'stroke-dasharray': '7,5' });
+    };
+
+    if (t === 'square') {
+      drawSymLine(midX, midY - halfH, midX, midY + halfH);
+      drawSymLine(midX - halfW, midY, midX + halfW, midY);
+      drawSymLine(pxPts[0][0] - 16, pxPts[0][1] - 16, pxPts[2][0] + 16, pxPts[2][1] + 16);
+      drawSymLine(pxPts[1][0] + 16, pxPts[1][1] - 16, pxPts[3][0] - 16, pxPts[3][1] + 16);
+    } else if (t === 'rect') {
+      drawSymLine(midX, midY - halfH, midX, midY + halfH);
+      drawSymLine(midX - halfW, midY, midX + halfW, midY);
+    } else if (t === 'rhombus') {
+      drawSymLine(pxPts[0][0], pxPts[0][1] - 20, pxPts[2][0], pxPts[2][1] + 20);
+      drawSymLine(pxPts[3][0] - 20, pxPts[3][1], pxPts[1][0] + 20, pxPts[1][1]);
+    } else if (t === 'kite' || (t === 'trapezoid' && shapeState.subtype === 'isosceles')) {
+      drawSymLine(midX, midY - halfH, midX, midY + halfH);
+    } else if (t === 'triangle' && shapeState.subtype === 'isosceles') {
+      drawSymLine(midX, midY - halfH, midX, midY + halfH);
+    } else if (t === 'triangle' && shapeState.subtype === 'equilateral') {
+      pxPts.forEach((pt, idx) => {
+        const opp1 = pxPts[(idx + 1) % 3], opp2 = pxPts[(idx + 2) % 3];
+        const mx = (opp1[0] + opp2[0]) / 2, my = (opp1[1] + opp2[1]) / 2;
+        drawSymLine(pt[0], pt[1] - (pt[1] < my ? 16 : 0), mx, my + (pt[1] < my ? 16 : 0));
+      });
+    }
+  }
+
+  // Titik sudut & Label ukuran tiap sisi
+  pxPts.forEach((pt, i) => {
+    el('circle', { cx: pt[0], cy: pt[1], r: 4.5, fill: '#1b2642', stroke: '#fff', 'stroke-width': '1.5' });
+
+    const next = pxPts[(i + 1) % pxPts.length];
+    const uCurr = pts[i], uNext = pts[(i + 1) % pts.length];
+    const sideLen = Math.hypot(uNext[0] - uCurr[0], uNext[1] - uCurr[1]);
+
+    // Tampilkan label panjang sisi
+    const mx = (pt[0] + next[0]) / 2;
+    const my = (pt[1] + next[1]) / 2;
+    const dx = next[0] - pt[0], dy = next[1] - pt[1];
+    const len = Math.hypot(dx, dy) || 1;
+    // Normal mengarah keluar poligon (clockwise)
+    const nx = dy / len, ny = -dx / len;
+    const lx = mx + nx * 18;
+    const ly = my + ny * 18;
+
+    el('rect', { x: lx - 28, y: ly - 10, width: 56, height: 19, rx: 6, fill: 'rgba(255,255,255,0.92)', stroke: '#dce6fa' });
+    el('text', {
+      x: lx, y: ly + 4, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '11.5', 'font-weight': '900'
+    }).textContent = `${fmt(sideLen)} ${geoUnit}`;
+  });
+}
+
+// Event Listeners Modul 1
+document.getElementById('shapeSelector').addEventListener('click', e => {
+  const btn = e.target.closest('.sh-btn');
+  if (!btn) return;
+  FX.tone(540, 0.05);
+  shapeState.type = btn.dataset.shape;
+  document.querySelectorAll('#shapeSelector .sh-btn').forEach(b => b.classList.toggle('active', b === btn));
+  buildShapeControls();
+  renderShapeExplorer();
+});
+
+document.getElementById('dimControls').addEventListener('input', e => {
+  const inp = e.target.closest('input[type="range"]');
+  if (!inp) return;
+  shapeState.params[inp.dataset.k] = Number(inp.value);
+  renderShapeExplorer();
+});
+
+document.getElementById('dimControls').addEventListener('click', e => {
+  const btn = e.target.closest('.mini-step');
+  if (!btn) return;
+  FX.tone(500, 0.04);
+  const k = btn.dataset.k;
+  const dir = Number(btn.dataset.dir);
+  const def = DIM_CONFIGS[shapeState.type]().find(d => d.key === k);
+  if (!def) return;
+  const next = Math.min(def.max, Math.max(def.min, shapeState.params[k] + dir * def.step));
+  shapeState.params[k] = next;
+  const slider = document.querySelector(`#dimControls input[data-k="${k}"]`);
+  if (slider) slider.value = next;
+  renderShapeExplorer();
+});
+
+document.getElementById('layerControls').addEventListener('click', e => {
+  const btn = e.target.closest('.layer-btn');
+  if (!btn) return;
+  FX.tone(560, 0.04);
+  const l = btn.dataset.layer;
+  shapeState.layers[l] = !shapeState.layers[l];
+  btn.classList.toggle('active', shapeState.layers[l]);
+  renderShapeExplorer();
+});
+
+/* ==========================================================================
+   3. MODUL 2: ENSIKLOPEDIA & PERBANDINGAN CIRI-CIRI
+   ========================================================================== */
+function buildEncyclopedia() {
+  const grid = document.getElementById('catalogGrid');
+  const selA = document.getElementById('cmpSelA');
+  const selB = document.getElementById('cmpSelB');
+  grid.innerHTML = '';
+  selA.innerHTML = '';
+  selB.innerHTML = '';
+
+  const miniSVGs = {
+    square: '<rect x="18" y="10" width="44" height="44" fill="#d6eaff" stroke="#2e86de" stroke-width="3"/>',
+    rect: '<rect x="10" y="16" width="60" height="32" fill="#d6eaff" stroke="#2e86de" stroke-width="3"/>',
+    triangle: '<polygon points="40,10 68,54 12,54" fill="#ffe6df" stroke="#ff6b4a" stroke-width="3"/>',
+    parallelogram: '<polygon points="22,14 70,14 58,50 10,50" fill="#e2f9f1" stroke="#10ac84" stroke-width="3"/>',
+    trapezoid: '<polygon points="24,14 56,14 70,50 10,50" fill="#ede9ff" stroke="#6c5ce7" stroke-width="3"/>',
+    rhombus: '<polygon points="40,8 68,32 40,56 12,32" fill="#d6eaff" stroke="#2e86de" stroke-width="3"/>',
+    kite: '<polygon points="40,6 64,24 40,58 16,24" fill="#ffe6df" stroke="#ff6b4a" stroke-width="3"/>',
+    circle: '<circle cx="40" cy="32" r="23" fill="#e2f9f1" stroke="#10ac84" stroke-width="3"/>'
+  };
+
+  Object.entries(SHAPES_DB).forEach(([key, item]) => {
+    const card = document.createElement('div');
+    card.className = 'cat-card matched';
+    card.dataset.shape = key;
+    card.innerHTML = `
+      <svg width="80" height="64" viewBox="0 0 80 64">${miniSVGs[key]}</svg>
+      <h3>${item.name}</h3>
+      <p><b>${item.formulaArea}</b><br>${item.formulaPerim}</p>
+    `;
+    card.addEventListener('click', () => {
+      // Lompat ke tab Eksplorasi dengan bangun yang diklik
+      FX.tone(580, 0.05);
+      shapeState.type = key;
+      document.querySelectorAll('#shapeSelector .sh-btn').forEach(b => b.classList.toggle('active', b.dataset.shape === key));
+      buildShapeControls();
+      renderShapeExplorer();
+      document.querySelector('#mainTabs [data-tab="viewShapes"]').click();
+    });
+    grid.appendChild(card);
+
+    selA.add(new Option(`${item.icon} ${item.name}`, key));
+    selB.add(new Option(`${item.icon} ${item.name}`, key));
+  });
+
+  selA.value = 'square';
+  selB.value = 'rhombus';
+  renderComparisonTable();
+}
+
+function renderComparisonTable() {
+  const kA = document.getElementById('cmpSelA').value;
+  const kB = document.getElementById('cmpSelB').value;
+  const a = SHAPES_DB[kA];
+  const b = SHAPES_DB[kB];
+
+  document.getElementById('cmpTable').innerHTML = `
+    <thead>
+      <tr>
+        <th style="width:28%;">Aspek</th>
+        <th style="width:36%;color:var(--blue-dark);">${a.icon} ${a.name}</th>
+        <th style="width:36%;color:var(--coral-dark);">${b.icon} ${b.name}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><b>Jumlah Sisi</b></td><td>${a.sides}</td><td>${b.sides}</td></tr>
+      <tr><td><b>Titik Sudut</b></td><td>${a.angles}</td><td>${b.angles}</td></tr>
+      <tr><td><b>Simetri Lipat</b></td><td>${a.symFold}</td><td>${b.symFold}</td></tr>
+      <tr><td><b>Simetri Putar</b></td><td>${a.symRot}</td><td>${b.symRot}</td></tr>
+      <tr><td><b>Rumus Luas</b></td><td><b>${a.formulaArea}</b></td><td><b>${b.formulaArea}</b></td></tr>
+      <tr><td><b>Rumus Keliling</b></td><td><b>${a.formulaPerim}</b></td><td><b>${b.formulaPerim}</b></td></tr>
+      <tr><td><b>Sifat Utama</b></td><td>${a.props[0]} ${a.props[2]}</td><td>${b.props[0]} ${b.props[2]}</td></tr>
+    </tbody>
+  `;
+}
+
+document.getElementById('propFilterBar').addEventListener('click', e => {
+  const chip = e.target.closest('.f-chip');
+  if (!chip) return;
+  FX.tone(520, 0.04);
+  document.querySelectorAll('#propFilterBar .f-chip').forEach(c => c.classList.toggle('active', c === chip));
+  const f = chip.dataset.filter;
+
+  document.querySelectorAll('#catalogGrid .cat-card').forEach(card => {
+    const info = SHAPES_DB[card.dataset.shape];
+    const ok = f === 'all' || info.tags.includes(f);
+    card.classList.toggle('matched', ok);
+    card.classList.toggle('dimmed', !ok);
+  });
+});
+
+document.getElementById('cmpSelA').addEventListener('change', renderComparisonTable);
+document.getElementById('cmpSelB').addEventListener('change', renderComparisonTable);
+
+/* ==========================================================================
+   4. MODUL 3A: MEJA UKUR PENGGARIS VIRTUAL SENTUH
+   ========================================================================== */
+const rulerLab = {
+  objKey: 'pencil',
+  lengthCm: 8.4,
+  objX: 110, // posisi kiri benda (px)
+  rulerX: 110, // posisi angka 0 cm penggaris (px)
+  rulerY: 122,
+  pxPerCm: 38, // 1 cm = 38 px (3.8 px per mm)
+  dragTarget: null, // 'ruler' | 'obj' | 'stretch'
+  dragOffsetX: 0
+};
+
+const OBJECTS_META = {
+  pencil: { name: 'Pensil Kayu', cm: 8.4, color: '#f39c12' },
+  key: { name: 'Kunci Kuningan', cm: 5.7, color: '#e1b12c' },
+  eraser: { name: 'Penghapus Karet', cm: 4.2, color: '#ff6b81' },
+  brush: { name: 'Kuas Lukis', cm: 11.6, color: '#2e86de' },
+  nail: { name: 'Paku Besi', cm: 6.8, color: '#7f8fa6' },
+  custom: { name: 'Pita Tarik Bebas', cm: 7.5, color: '#10ac84' }
+};
+
+function drawRulerBench() {
+  const svg = document.getElementById('rulerSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const cm = rulerLab.lengthCm;
+  const mm = Math.round(cm * 10);
+  document.getElementById('measReadout').textContent = `${fmt(cm, 1)} cm = ${mm} mm`;
+
+  const ox = rulerLab.objX;
+  const oy = 68;
+  const objW = cm * rulerLab.pxPerCm;
+
+  // Garis bantu vertikal putus-putus di pangkal & ujung benda
+  el('line', { x1: ox, y1: oy - 12, x2: ox, y2: 225, stroke: '#ff6b4a', 'stroke-width': '1.6', 'stroke-dasharray': '4,3' });
+  el('line', { x1: ox + objW, y1: oy - 12, x2: ox + objW, y2: 225, stroke: '#10ac84', 'stroke-width': '1.8', 'stroke-dasharray': '4,3' });
+
+  // Gambar Benda yang Diukur (Grup Draggable)
+  const gObj = el('g', { style: 'cursor:grab;' });
+  gObj.addEventListener('pointerdown', e => {
+    rulerLab.dragTarget = 'obj';
+    rulerLab.dragOffsetX = getSvgX(svg, e) - rulerLab.objX;
+  });
+
+  if (rulerLab.objKey === 'pencil') {
+    const bodyW = Math.max(12, objW - 22);
+    el('rect', { x: ox, y: oy - 11, width: 14, height: 22, rx: 4, fill: '#ff7675', stroke: '#2d3436', 'stroke-width': '1.5' }, gObj);
+    el('rect', { x: ox + 12, y: oy - 11, width: bodyW - 12, height: 22, fill: '#fdcb6e', stroke: '#2d3436', 'stroke-width': '1.5' }, gObj);
+    el('polygon', { points: `${ox + bodyW},${oy - 11} ${ox + objW},${oy} ${ox + bodyW},${oy + 11}`, fill: '#ffeaa7', stroke: '#2d3436', 'stroke-width': '1.5' }, gObj);
+    el('polygon', { points: `${ox + objW - 7},${oy - 3.5} ${ox + objW},${oy} ${ox + objW - 7},${oy + 3.5}`, fill: '#2d3436' }, gObj);
+  } else if (rulerLab.objKey === 'key') {
+    el('circle', { cx: ox + 16, cy: oy, r: 16, fill: '#f1c40f', stroke: '#7f6000', 'stroke-width': '2' }, gObj);
+    el('circle', { cx: ox + 16, cy: oy, r: 6, fill: '#fff', stroke: '#7f6000', 'stroke-width': '1.5' }, gObj);
+    el('rect', { x: ox + 30, y: oy - 5, width: Math.max(10, objW - 30), height: 10, rx: 3, fill: '#f1c40f', stroke: '#7f6000', 'stroke-width': '1.8' }, gObj);
+    el('rect', { x: ox + objW - 18, y: oy + 5, width: 6, height: 9, fill: '#f1c40f', stroke: '#7f6000', 'stroke-width': '1.5' }, gObj);
+    el('rect', { x: ox + objW - 9, y: oy + 5, width: 7, height: 12, fill: '#f1c40f', stroke: '#7f6000', 'stroke-width': '1.5' }, gObj);
+  } else if (rulerLab.objKey === 'eraser') {
+    el('rect', { x: ox, y: oy - 15, width: objW, height: 30, rx: 6, fill: '#ff7675', stroke: '#2d3436', 'stroke-width': '2' }, gObj);
+    el('rect', { x: ox + objW * 0.25, y: oy - 15, width: objW * 0.5, height: 30, fill: '#74b9ff', stroke: '#2d3436', 'stroke-width': '1.8' }, gObj);
+  } else if (rulerLab.objKey === 'nail') {
+    el('rect', { x: ox, y: oy - 13, width: 7, height: 26, rx: 2, fill: '#7f8fa6', stroke: '#2f3640', 'stroke-width': '1.8' }, gObj);
+    el('rect', { x: ox + 7, y: oy - 4.5, width: Math.max(10, objW - 19), height: 9, fill: '#dcdde1', stroke: '#2f3640', 'stroke-width': '1.8' }, gObj);
+    el('polygon', { points: `${ox + objW - 12},${oy - 4.5} ${ox + objW},${oy} ${ox + objW - 12},${oy + 4.5}`, fill: '#7f8fa6', stroke: '#2f3640', 'stroke-width': '1.5' }, gObj);
+  } else {
+    // Kuas / Pita Bebas
+    el('rect', {
+      x: ox, y: oy - 13, width: objW, height: 26, rx: 7,
+      fill: OBJECTS_META[rulerLab.objKey].color, stroke: '#1b2642', 'stroke-width': '2'
+    }, gObj);
+    el('text', {
+      x: ox + objW / 2, y: oy + 4, 'text-anchor': 'middle', fill: '#fff', 'font-size': '11.5', 'font-weight': '900'
+    }, gObj).textContent = OBJECTS_META[rulerLab.objKey].name;
+  }
+
+  // Handle tarik panjang khusus mode "Pita Tarik Bebas"
+  if (rulerLab.objKey === 'custom') {
+    const hdl = el('circle', {
+      cx: ox + objW, cy: oy, r: 10, fill: '#10ac84', stroke: '#fff', 'stroke-width': '2.5', style: 'cursor:ew-resize;'
+    });
+    hdl.addEventListener('pointerdown', e => {
+      e.stopPropagation();
+      rulerLab.dragTarget = 'stretch';
+    });
+  }
+
+  // Gambar Penggaris Virtual 0 - 15 cm (Draggable)
+  const rx = rulerLab.rulerX;
+  const ry = rulerLab.rulerY;
+  const rW = 15 * rulerLab.pxPerCm + 28;
+  const rH = 66;
+
+  const gRuler = el('g', { style: 'cursor:grab;' });
+  gRuler.addEventListener('pointerdown', e => {
+    rulerLab.dragTarget = 'ruler';
+    rulerLab.dragOffsetX = getSvgX(svg, e) - rulerLab.rulerX;
+  });
+
+  el('rect', {
+    x: rx - 14, y: ry, width: rW, height: rH, rx: 8,
+    fill: 'rgba(255, 248, 214, 0.94)', stroke: '#d4a017', 'stroke-width': '2.2'
+  }, gRuler);
+
+  for (let m = 0; m <= 150; m++) {
+    const tx = rx + (m / 10) * rulerLab.pxPerCm;
+    const isCm = m % 10 === 0;
+    const isHalf = m % 5 === 0 && !isCm;
+    const tickH = isCm ? 24 : (isHalf ? 16 : 10);
+
+    el('line', {
+      x1: tx, y1: ry, x2: tx, y2: ry + tickH,
+      stroke: '#3d2c00', 'stroke-width': isCm ? '2' : '1.1'
+    }, gRuler);
+
+    if (isCm) {
+      el('text', {
+        x: tx, y: ry + 41, 'text-anchor': 'middle', fill: '#3d2c00', 'font-size': '13', 'font-weight': '900'
+      }, gRuler).textContent = String(m / 10);
+    }
+  }
+  el('text', {
+    x: rx + 15 * rulerLab.pxPerCm + 2, y: ry + 57, 'text-anchor': 'end', fill: '#8a6800', 'font-size': '10.5', 'font-weight': '900'
+  }, gRuler).textContent = '↔ Geser Penggaris (cm / mm)';
+
+  // KACA PEMBESAR (MAGNIFIER) DI UJUNG KANAN BENDA
+  const tipX = ox + objW;
+  const magCx = 665, magCy = 86, magR = 62;
+  const zoom = 2.4;
+
+  el('text', {
+    x: magCx, y: 16, 'text-anchor': 'middle', fill: '#09785b', 'font-size': '11.5', 'font-weight': '900'
+  }).textContent = '🔍 Zoom Ujung Benda';
+
+  const defs = el('defs', {});
+  const magClip = el('clipPath', { id: 'magClip' }, defs);
+  el('circle', { cx: magCx, cy: magCy, r: magR }, magClip);
+
+  el('circle', { cx: magCx, cy: magCy, r: magR, fill: '#fff', stroke: '#10ac84', 'stroke-width': '4' });
+  const gMag = el('g', { 'clip-path': 'url(#magClip)' });
+
+  // Render skala penggaris yang diperbesar di dalam kaca pembesar
+  const scaleZoom = rulerLab.pxPerCm * zoom;
+  el('rect', { x: magCx - magR, y: magCy, width: magR * 2, height: magR, fill: '#fff7d1', stroke: '#d4a017', 'stroke-width': '2' }, gMag);
+
+  const relCm = (tipX - rx) / rulerLab.pxPerCm;
+  const minMm = Math.max(0, Math.floor((relCm - 1.2) * 10));
+  const maxMm = Math.min(150, Math.ceil((relCm + 1.2) * 10));
+
+  for (let m = minMm; m <= maxMm; m++) {
+    const mx = magCx + ((m / 10) - relCm) * scaleZoom;
+    const isCm = m % 10 === 0;
+    const isHalf = m % 5 === 0 && !isCm;
+    const th = isCm ? 28 : (isHalf ? 19 : 12);
+    el('line', { x1: mx, y1: magCy, x2: mx, y2: magCy + th, stroke: '#3d2c00', 'stroke-width': isCm ? '2.5' : '1.4' }, gMag);
+    if (isCm) {
+      el('text', { x: mx, y: magCy + 46, 'text-anchor': 'middle', fill: '#3d2c00', 'font-size': '15', 'font-weight': '900' }, gMag).textContent = String(m / 10);
+    }
+  }
+  // Garis bidik ujung benda di tengah kaca pembesar
+  el('line', { x1: magCx, y1: magCy - magR, x2: magCx, y2: magCy + magR, stroke: '#10ac84', 'stroke-width': '2.5', 'stroke-dasharray': '4,3' }, gMag);
+
+  const readingAtTip = Math.max(0, Math.min(15, relCm));
+  el('text', {
+    x: magCx, y: magCy + magR + 18, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '12', 'font-weight': '900'
+  }).textContent = `Titik Ujung: ${fmt(readingAtTip, 1)} cm`;
+}
+
+function getSvgX(svg, evt) {
+  const rect = svg.getBoundingClientRect();
+  return ((evt.clientX - rect.left) / rect.width) * 760;
+}
+
+const rSvg = document.getElementById('rulerSvg');
+rSvg.addEventListener('pointermove', e => {
+  if (!rulerLab.dragTarget) return;
+  const x = getSvgX(rSvg, e);
+  if (rulerLab.dragTarget === 'ruler') {
+    rulerLab.rulerX = Math.max(25, Math.min(180, x - rulerLab.dragOffsetX));
+  } else if (rulerLab.dragTarget === 'obj') {
+    rulerLab.objX = Math.max(25, Math.min(340, x - rulerLab.dragOffsetX));
+  } else if (rulerLab.dragTarget === 'stretch') {
+    const rawCm = (x - rulerLab.objX) / rulerLab.pxPerCm;
+    rulerLab.lengthCm = Math.max(1.0, Math.min(14.5, Math.round(rawCm * 10) / 10));
+  }
+  drawRulerBench();
+});
+window.addEventListener('pointerup', () => { rulerLab.dragTarget = null; });
+
+document.getElementById('objSelector').addEventListener('click', e => {
+  const btn = e.target.closest('.obj-btn');
+  if (!btn) return;
+  FX.tone(540, 0.04);
+  document.querySelectorAll('#objSelector .obj-btn').forEach(b => b.classList.toggle('active', b === btn));
+  rulerLab.objKey = btn.dataset.obj;
+  rulerLab.lengthCm = OBJECTS_META[rulerLab.objKey].cm;
+  drawRulerBench();
+});
+
+document.getElementById('btnAlignZero').addEventListener('click', () => {
+  FX.tone(580, 0.05);
+  rulerLab.objX = 80;
+  rulerLab.rulerX = 80;
+  drawRulerBench();
+});
+
+document.getElementById('btnRandomMeasure').addEventListener('click', () => {
+  FX.tone(520, 0.05);
+  const startCm = Math.floor(Math.random() * 5) + 1; // mulai dari 1..5 cm
+  rulerLab.rulerX = 50;
+  rulerLab.objX = 50 + startCm * rulerLab.pxPerCm;
+  if (rulerLab.objKey === 'custom') {
+    rulerLab.lengthCm = (Math.floor(Math.random() * 75) + 20) / 10;
+  }
+  drawRulerBench();
+});
+
+/* ==========================================================================
+   5. MODUL 3B: TANGGA SATUAN PANJANG INTERAKTIF (km - mm)
+   ========================================================================== */
+const STAIR_UNITS = ['km', 'hm', 'dam', 'm', 'dm', 'cm', 'mm'];
+
+function renderStaircase() {
+  const raw = parseFloat(String(document.getElementById('stairInput').value).replace(',', '.'));
+  const val = isFinite(raw) ? raw : 0;
+  const fromIdx = Number(document.getElementById('stairFrom').value);
+  const toIdx = Number(document.getElementById('stairTo').value);
+
+  const diff = toIdx - fromIdx; // > 0 berarti turun tangga (dikali), < 0 naik tangga (dibagi)
+  const factor = Math.pow(10, Math.abs(diff));
+  const result = diff >= 0 ? val * factor : val / factor;
+
+  const uFrom = STAIR_UNITS[fromIdx];
+  const uTo = STAIR_UNITS[toIdx];
+
+  document.getElementById('stairResBig').textContent = `${fmt(val, 6)} ${uFrom} = ${fmt(result, 6)} ${uTo}`;
+  if (diff === 0) {
+    document.getElementById('stairResStep').textContent = 'Satuan asal dan tujuan sama (tetap × 1)';
+  } else if (diff > 0) {
+    document.getElementById('stairResStep').textContent = `Turun ${diff} tangga → dikali ${factor.toLocaleString('id-ID')}`;
+  } else {
+    document.getElementById('stairResStep').textContent = `Naik ${Math.abs(diff)} tangga → dibagi ${factor.toLocaleString('id-ID')}`;
+  }
+
+  // Gambar Tangga SVG
+  const svg = document.getElementById('stairSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const stepW = 76, stepH = 26;
+  const startX = 45, startY = 22;
+
+  STAIR_UNITS.forEach((u, i) => {
+    const sx = startX + i * stepW;
+    const sy = startY + i * stepH;
+    const isFrom = i === fromIdx;
+    const isTo = i === toIdx;
+    const inRange = (i >= Math.min(fromIdx, toIdx) && i <= Math.max(fromIdx, toIdx));
+
+    // Anak tangga
+    el('polyline', {
+      points: `${sx},${sy} ${sx + stepW},${sy} ${sx + stepW},${sy + stepH}`,
+      fill: 'none',
+      stroke: inRange ? '#10ac84' : '#9fb3d9',
+      'stroke-width': inRange ? '4' : '2.5'
+    });
+
+    // Kotak label satuan (bisa diklik langsung!)
+    const pill = el('rect', {
+      x: sx + 8, y: sy - 20, width: 58, height: 22, rx: 7,
+      fill: isFrom ? '#2e86de' : (isTo ? '#10ac84' : '#eef4ff'),
+      stroke: isFrom ? '#175aa1' : (isTo ? '#09785b' : '#c6d6f5'),
+      'stroke-width': '1.6', style: 'cursor:pointer;'
+    });
+    const txt = el('text', {
+      x: sx + 37, y: sy - 5, 'text-anchor': 'middle',
+      fill: (isFrom || isTo) ? '#fff' : '#1b2642',
+      'font-size': '12.5', 'font-weight': '900', 'pointer-events': 'none'
+    });
+    txt.textContent = u;
+
+    pill.addEventListener('click', () => {
+      FX.tone(480 + i * 35, 0.05);
+      document.getElementById('stairTo').value = String(i);
+      renderStaircase();
+    });
+  });
+
+  // Panah lengkung lompatan antar tangga
+  if (diff !== 0) {
+    const dir = diff > 0 ? 1 : -1;
+    for (let k = fromIdx; k !== toIdx; k += dir) {
+      const next = k + dir;
+      const x1 = startX + k * stepW + 37;
+      const y1 = startY + k * stepH - 22;
+      const x2 = startX + next * stepW + 37;
+      const y2 = startY + next * stepH - 22;
+      const mx = (x1 + x2) / 2 + (dir > 0 ? 14 : -14);
+      const my = Math.min(y1, y2) - 14;
+
+      el('path', {
+        d: `M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`,
+        fill: 'none', stroke: dir > 0 ? '#ff6b4a' : '#6c5ce7', 'stroke-width': '2.2'
+      });
+      el('text', {
+        x: mx, y: my - 3, 'text-anchor': 'middle',
+        fill: dir > 0 ? '#c73e1f' : '#5142bd', 'font-size': '10.5', 'font-weight': '900'
+      }).textContent = dir > 0 ? '×10' : '÷10';
+    }
+  }
+}
+
+document.getElementById('stairInput').addEventListener('input', renderStaircase);
+document.getElementById('stairFrom').addEventListener('change', renderStaircase);
+document.getElementById('stairTo').addEventListener('change', renderStaircase);
+document.querySelectorAll('[data-st-preset]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    FX.tone(550, 0.05);
+    const [v, f, t] = btn.dataset.stPreset.split(',');
+    document.getElementById('stairInput').value = v.replace('.', ',');
+    document.getElementById('stairFrom').value = f;
+    document.getElementById('stairTo').value = t;
+    renderStaircase();
+  });
+});
+
+/* ==========================================================================
+   6. MODUL 4: TANTANGAN LAB (KUIS VISUAL)
+   ========================================================================== */
+const quizState = {
+  score: 0,
+  total: 0,
+  streak: 0,
+  answered: false,
+  correct: '',
+  explain: ''
+};
+
+function generateQuizQuestion() {
+  quizState.answered = false;
+  document.getElementById('btnQuizNext').hidden = true;
+  const fb = document.getElementById('qFb');
+  fb.textContent = '';
+  fb.className = 'q-fb';
+
+  const svg = document.getElementById('quizSvg');
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent = svg) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    parent.appendChild(node);
+    return node;
+  };
+
+  const mode = Math.floor(Math.random() * 4); // 0: Luas, 1: Keliling, 2: Ciri-ciri, 3: Penggaris/Tangga
+  let prompt = '', choices = [];
+
+  if (mode === 0) {
+    // Hitung Luas Bangun
+    const kind = Math.floor(Math.random() * 3);
+    if (kind === 0) {
+      const p = 6 + Math.floor(Math.random() * 6);
+      const l = 3 + Math.floor(Math.random() * 4);
+      const ans = p * l;
+      prompt = `Hitunglah <b>Luas</b> persegi panjang dengan panjang <b>${p} cm</b> dan lebar <b>${l} cm</b>!`;
+      quizState.correct = `${ans} cm²`;
+      quizState.explain = `Luas Persegi Panjang = p × l = ${p} × ${l} = ${ans} cm².`;
+      choices = [`${ans} cm²`, `${2 * (p + l)} cm²`, `${ans + p} cm²`, `${p + l} cm²`];
+
+      el('rect', { x: 130, y: 85, width: 300, height: 170, fill: '#d6eaff', stroke: '#2e86de', 'stroke-width': '4' });
+      el('text', { x: 280, y: 74, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '16', 'font-weight': '900' }).textContent = `p = ${p} cm`;
+      el('text', { x: 444, y: 175, fill: '#1b2642', 'font-size': '16', 'font-weight': '900' }).textContent = `l = ${l} cm`;
+    } else if (kind === 1) {
+      const a = [6, 8, 10, 12][Math.floor(Math.random() * 4)];
+      const t = [4, 5, 6, 7][Math.floor(Math.random() * 4)];
+      const ans = 0.5 * a * t;
+      prompt = `Sebuah segitiga memiliki alas <b>${a} cm</b> dan tinggi <b>${t} cm</b>. Berapakah <b>Luasnya</b>?`;
+      quizState.correct = `${ans} cm²`;
+      quizState.explain = `Luas Segitiga = ½ × alas × tinggi = ½ × ${a} × ${t} = ${ans} cm².`;
+      choices = [`${ans} cm²`, `${a * t} cm²`, `${a + t} cm²`, `${ans + 6} cm²`];
+
+      el('polygon', { points: '140,265 420,265 280,85', fill: '#ffe6df', stroke: '#ff6b4a', 'stroke-width': '4' });
+      el('line', { x1: 280, y1: 85, x2: 280, y2: 265, stroke: '#10ac84', 'stroke-width': '3', 'stroke-dasharray': '6,4' });
+      el('text', { x: 280, y: 292, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '16', 'font-weight': '900' }).textContent = `alas = ${a} cm`;
+      el('text', { x: 290, y: 185, fill: '#09785b', 'font-size': '15', 'font-weight': '900' }).textContent = `t = ${t} cm`;
+    } else {
+      const d1 = [6, 8, 10][Math.floor(Math.random() * 3)];
+      const d2 = [4, 6, 8][Math.floor(Math.random() * 3)];
+      const ans = 0.5 * d1 * d2;
+      prompt = `Belah ketupat memiliki diagonal d₁ = <b>${d1} cm</b> dan d₂ = <b>${d2} cm</b>. Berapa <b>Luasnya</b>?`;
+      quizState.correct = `${ans} cm²`;
+      quizState.explain = `Luas Belah Ketupat = ½ × d₁ × d₂ = ½ × ${d1} × ${d2} = ${ans} cm².`;
+      choices = [`${ans} cm²`, `${d1 * d2} cm²`, `${2 * (d1 + d2)} cm²`, `${ans + 4} cm²`];
+
+      el('polygon', { points: '280,65 420,175 280,285 140,175', fill: '#e2f9f1', stroke: '#10ac84', 'stroke-width': '4' });
+      el('line', { x1: 140, y1: 175, x2: 420, y2: 175, stroke: '#1b2642', 'stroke-width': '2', 'stroke-dasharray': '5,4' });
+      el('line', { x1: 280, y1: 65, x2: 280, y2: 285, stroke: '#1b2642', 'stroke-width': '2', 'stroke-dasharray': '5,4' });
+      el('text', { x: 280, y: 52, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '15', 'font-weight': '900' }).textContent = `d₁ = ${d1} cm, d₂ = ${d2} cm`;
+    }
+  }
+  else if (mode === 1) {
+    // Keliling Persegi / Segitiga Sama Sisi
+    const s = 5 + Math.floor(Math.random() * 8);
+    const ans = 4 * s;
+    prompt = `Sebuah <b>Persegi</b> memiliki panjang sisi <b>${s} cm</b>. Berapakah <b>Kelilingnya</b>?`;
+    quizState.correct = `${ans} cm`;
+    quizState.explain = `Keliling Persegi = 4 × sisi = 4 × ${s} = ${ans} cm.`;
+    choices = [`${ans} cm`, `${s * s} cm`, `${2 * s} cm`, `${ans + 4} cm`];
+
+    el('rect', { x: 185, y: 75, width: 190, height: 190, fill: '#d6eaff', stroke: '#ff6b4a', 'stroke-width': '5' });
+    el('text', { x: 280, y: 62, 'text-anchor': 'middle', fill: '#1b2642', 'font-size': '16', 'font-weight': '900' }).textContent = `s = ${s} cm`;
+  }
+  else if (mode === 2) {
+    // Tebak Bangun dari Ciri-ciri
+    const riddles = [
+      {
+        clue: '• Memiliki 4 sisi sama panjang\n• Sudut berhadapan sama besar (bukan 90°)\n• Diagonal berpotongan tegak lurus\n• Memiliki 2 simetri lipat',
+        ans: 'Belah Ketupat',
+        opts: ['Belah Ketupat', 'Persegi', 'Jajar Genjang', 'Layang-Layang']
+      },
+      {
+        clue: '• Memiliki tepat sepasang sisi sejajar\n• Jumlah sudut dalam 360°\n• Tidak semua sisi sejajar',
+        ans: 'Trapesium',
+        opts: ['Trapesium', 'Jajar Genjang', 'Persegi Panjang', 'Belah Ketupat']
+      },
+      {
+        clue: '• Memiliki 2 pasang sisi berdekatan sama panjang\n• Diagonal berpotongan tegak lurus\n• Memiliki tepat 1 sumbu simetri lipat',
+        ans: 'Layang-Layang',
+        opts: ['Layang-Layang', 'Belah Ketupat', 'Trapesium', 'Segitiga Sama Kaki']
+      }
+    ];
+    const r = riddles[Math.floor(Math.random() * riddles.length)];
+    prompt = `Bangun datar manakah yang memiliki ciri-ciri di samping?`;
+    quizState.correct = r.ans;
+    quizState.explain = `Ciri-ciri tersebut adalah sifat khas bangun datar ${r.ans}.`;
+    choices = r.opts;
+
+    el('rect', { x: 55, y: 55, width: 450, height: 230, rx: 18, fill: '#fffaf0', stroke: '#ffd67a', 'stroke-width': '3' });
+    r.clue.split('\n').forEach((line, idx) => {
+      el('text', { x: 80, y: 105 + idx * 42, fill: '#4a3300', 'font-size': '15.5', 'font-weight': '800' }).textContent = line;
+    });
+  }
+  else {
+    // Baca Penggaris (Mulai dari angka bukan 0!)
+    const startCm = 1 + Math.floor(Math.random() * 4);
+    const lenMm = 32 + Math.floor(Math.random() * 45); // 3.2 cm s.d 7.6 cm
+    const endCm = startCm + lenMm / 10;
+    const ansCm = lenMm / 10;
+
+    prompt = `Amati ujung pangkal dan ujung kanan balok pada penggaris. Berapakah <b>panjang balok</b> tersebut?`;
+    quizState.correct = `${fmt(ansCm, 1)} cm`;
+    quizState.explain = `Ujung kanan di ${fmt(endCm, 1)} cm dikurangi pangkal di ${startCm},0 cm = ${fmt(ansCm, 1)} cm.`;
+    choices = [
+      `${fmt(ansCm, 1)} cm`,
+      `${fmt(endCm, 1)} cm`,
+      `${fmt(ansCm + 1, 1)} cm`,
+      `${fmt(Math.max(0.5, ansCm - 0.5), 1)} cm`
+    ];
+
+    const pxPerCm = 46;
+    const rx = 45, ry = 175;
+    // Balok di atas penggaris
+    el('rect', {
+      x: rx + startCm * pxPerCm, y: 112, width: ansCm * pxPerCm, height: 34, rx: 6,
+      fill: '#2e86de', stroke: '#1b2642', 'stroke-width': '2'
+    });
+    el('line', { x1: rx + startCm * pxPerCm, y1: 112, x2: rx + startCm * pxPerCm, y2: 195, stroke: '#ff6b4a', 'stroke-width': '2', 'stroke-dasharray': '4,3' });
+    el('line', { x1: rx + endCm * pxPerCm, y1: 112, x2: rx + endCm * pxPerCm, y2: 195, stroke: '#10ac84', 'stroke-width': '2', 'stroke-dasharray': '4,3' });
+
+    // Penggaris 0..10 cm
+    el('rect', { x: rx - 10, y: ry, width: 10 * pxPerCm + 20, height: 64, rx: 8, fill: '#fff8d6', stroke: '#d4a017', 'stroke-width': '2' });
+    for (let m = 0; m <= 100; m++) {
+      const tx = rx + (m / 10) * pxPerCm;
+      const isCm = m % 10 === 0;
+      const isHalf = m % 5 === 0 && !isCm;
+      el('line', { x1: tx, y1: ry, x2: tx, y2: ry + (isCm ? 24 : isHalf ? 16 : 10), stroke: '#3d2c00', 'stroke-width': isCm ? '2' : '1.1' });
+      if (isCm) {
+        el('text', { x: tx, y: ry + 42, 'text-anchor': 'middle', fill: '#3d2c00', 'font-size': '13', 'font-weight': '900' }).textContent = String(m / 10);
+      }
+    }
+  }
+
+  document.getElementById('qPrompt').innerHTML = prompt;
+  const optsEl = document.getElementById('qOpts');
+  optsEl.innerHTML = '';
+  [...new Set(choices)].sort(() => Math.random() - 0.5).forEach(ch => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'q-opt';
+    b.textContent = ch;
+    b.addEventListener('click', () => handleQuizPick(b, ch));
+    optsEl.appendChild(b);
+  });
+}
+
+function handleQuizPick(btn, chosen) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  quizState.total++;
+
+  const ok = chosen === quizState.correct;
+  if (ok) {
+    quizState.score++;
+    quizState.streak++;
+    FX.ok();
+  } else {
+    quizState.streak = 0;
+    FX.err();
+  }
+
+  document.querySelectorAll('#qOpts .q-opt').forEach(b => {
+    b.disabled = true;
+    if (b.textContent === quizState.correct) b.classList.add('ok');
+  });
+  if (!ok) btn.classList.add('no');
+
+  document.getElementById('qScore').textContent = `${quizState.score} / ${quizState.total}`;
+  document.getElementById('qStreak').textContent = String(quizState.streak);
+
+  const fb = document.getElementById('qFb');
+  fb.textContent = (ok ? '🎉 Benar! ' : '😊 Kurang tepat. ') + quizState.explain;
+  fb.className = 'q-fb ' + (ok ? 'ok' : 'no');
+  document.getElementById('btnQuizNext').hidden = false;
+}
+
+document.getElementById('btnQuizNext').addEventListener('click', generateQuizQuestion);
+
+/* ==========================================================================
+   7. NAVIGASI GLOBAL & INISIALISASI
+   ========================================================================== */
+document.getElementById('unitBar').addEventListener('click', e => {
+  const btn = e.target.closest('.u-btn');
+  if (!btn) return;
+  FX.tone(540, 0.04);
+  geoUnit = btn.dataset.u;
+  document.querySelectorAll('#unitBar .u-btn').forEach(b => b.classList.toggle('active', b === btn));
+  renderShapeExplorer();
+});
+
+document.getElementById('mainTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  FX.tone(490, 0.05);
+  const target = btn.dataset.tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === target));
+});
+
+document.getElementById('btnSound').addEventListener('click', e => {
+  FX.on = !FX.on;
+  e.target.textContent = FX.on ? '🔊 Suara' : '🔇 Senyap';
+});
+
+document.getElementById('btnFull').addEventListener('click', () => {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+  else document.exitFullscreen?.().catch(() => {});
+});
+
+// Mulai semua modul
+buildShapeControls();
+renderShapeExplorer();
+buildEncyclopedia();
+drawRulerBench();
+renderStaircase();
+generateQuizQuestion();
+</script>
+</body>
+</html>
